@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Rutherfords Guldfolie-experiment</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #000;
+            color: #fff;
+        }
+        canvas {
+            background-color: #000;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #fff;
+        }
+        #controls {
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Rutherfords Guldfolie-experiment</h1>
+<div id="controls">
+    <button id="startButton">Skjuta iväg partiklar</button>
+</div>
+<canvas id="experimentCanvas" width="800" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('experimentCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    const numParticles = 200;
+
+    const goldFoilX = 400;
+    const goldFoilWidth = 10;
+
+    let animationId;
+
+    // Ljudinställningar
+    let audioContext; // Deklarera variabeln utan att initiera den
+
+    function playPing() {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 1000; // Frekvens i Hz
+
+        gainNode.gain.value = 1;
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.start();
+
+        // Stoppa oscillatorn efter kort tid
+        setTimeout(() => {
+            oscillator.stop();
+        }, 100); // 100 millisekunder
+    }
+
+    function initParticles() {
+        particles = []; // Skapa en ny array för partiklar
+        for (let i = 0; i < numParticles; i++) {
+            particles.push({
+                x: 50,
+                y: Math.random() * canvas.height,
+                angle: 0,
+                speed: 2,
+                deflected: false,
+                pinged: false
+            });
+        }
+    }
+
+    function drawGoldFoil() {
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(goldFoilX, 0, goldFoilWidth, canvas.height);
+    }
+
+    function updateParticles() {
+        particles.forEach(p => {
+            // Uppdatera partikelns position
+            p.x += p.speed * Math.cos(p.angle);
+            p.y += p.speed * Math.sin(p.angle);
+
+            // Kontrollera om partikel träffar guldfolien
+            if (!p.deflected && p.x >= goldFoilX && p.x <= goldFoilX + goldFoilWidth) {
+                const rand = Math.random();
+                if (rand < 0.95) {
+                    // Går rakt igenom
+                    p.deflected = true;
+                } else {
+                    // Sprids i en vinkel
+                    p.angle = (Math.random() - 0.5) * Math.PI;
+                    p.deflected = true;
+                }
+            }
+
+            // Spela ljud om spridd partikel träffar sidoväggarna (inte den bortre väggen)
+            if (p.deflected && !p.pinged) {
+                if ((p.x < 0 || p.y < 0 || p.y > canvas.height) && p.x <= canvas.width) {
+                    playPing();
+                    p.pinged = true;
+                }
+            }
+        });
+
+        // Ta bort partiklar som har lämnat canvasen
+        particles = particles.filter(p => !(p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height));
+        
+        // Stoppa animationen när alla partiklar är borta
+        if (particles.length === 0) {
+            cancelAnimationFrame(animationId);
+        }
+    }
+
+    function drawParticles() {
+        ctx.fillStyle = 'red';
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGoldFoil();
+        updateParticles();
+        drawParticles();
+        animationId = requestAnimationFrame(animate);
+    }
+
+    document.getElementById('startButton').addEventListener('click', () => {
+        // Skapa AudioContext efter användarinteraktion
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        cancelAnimationFrame(animationId); // Stoppa eventuell pågående animation
+        initParticles();
+        animate();
+    });
+</script>
+
+</body>
+</html>
