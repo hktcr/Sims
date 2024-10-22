@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Kol-14 Halveringstidssimulering</title>
+    <style>
+        /* CSS-stilar */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        #canvas {
+            border: 1px solid black;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+        #barCanvas {
+            border: 1px solid black;
+            background-color: #fff;
+            margin-left: 20px;
+            position: relative;
+        }
+        #chart {
+            width: 800px;
+            height: 400px;
+            margin: 20px auto;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        button, input[type="range"] {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #decayTotal {
+            position: absolute;
+            top: -30px;
+            left: 10px;
+            font-size: 16px;
+            color: black;
+        }
+    </style>
+    <!-- Lägg till Chart.js-biblioteket -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h1>Kol-14 Halveringstidssimulering</h1>
+<div id="container">
+    <div style="position: relative;">
+        <canvas id="barCanvas" width="100" height="400"></canvas>
+        <div id="decayTotal">Sönderfallna: 0</div>
+    </div>
+    <canvas id="canvas" width="600" height="400"></canvas>
+</div>
+<canvas id="chart"></canvas>
+<div id="controls">
+    <button onclick="startSimulation()">Starta Simulering</button>
+    <button onclick="stopSimulation()">Stoppa Simulering</button>
+    <button onclick="calculateHalfLife()">Beräkna Halveringstid</button>
+    <br>
+    <label for="speed">Hastighet:</label>
+    <input type="range" id="speed" min="1" max="1000" value="1">
+    <span id="speedValue">1</span>
+</div>
+<div id="result"></div>
+
+<script>
+    // JavaScript-koden
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const barCanvas = document.getElementById('barCanvas');
+    const barCtx = barCanvas.getContext('2d');
+
+    const decayTotalDisplay = document.getElementById('decayTotal');
+
+    let partiklar = [];
+    const totalaPartiklar = 100000; // Justerat antal partiklar för prestanda
+    let antalKol12 = 0;
+    let antalKol14 = 0;
+    let initialKol14 = 0; // Initialt antal Kol-14
+
+    const halveringstidKol14 = 5730; // år
+    let tid = 0;
+    let intervall;
+    let chart;
+    let dataProcentKol14 = [];
+    const speedControl = document.getElementById('speed');
+    const speedValueDisplay = document.getElementById('speedValue');
+
+    const resultDiv = document.getElementById('result');
+
+    const naturligFrekvensKol14 = 0.0000000001; // Naturlig förekomst i %
+
+    function initieraPartiklar() {
+        partiklar = [];
+        antalKol12 = 0;
+        antalKol14 = 0;
+        for (let i = 0; i < totalaPartiklar; i++) {
+            let isotopeType;
+            if (Math.random() < 0.99) {
+                isotopeType = 'C12'; // Stabil kolisotop
+                antalKol12++;
+            } else {
+                isotopeType = 'C14'; // Radioaktiv kolisotop
+                antalKol14++;
+            }
+
+            if (isotopeType === 'C14') {
+                partiklar.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    sönderfallit: false,
+                    alpha: 1,
+                    blinkTimer: 0,
+                    pulseRadius: 0, // Startvärde för pulsstorlek
+                    pulseSpeed: 0.5 // Hastighet för pulstillväxt
+                });
+            }
+        }
+        initialKol14 = antalKol14;
+    }
+
+    function uppdateraPartiklar(deltaTid) {
+        const sönderfallsKonstant = Math.log(2) / halveringstidKol14;
+        partiklar.forEach(p => {
+            if (!p.sönderfallit) {
+                const sannolikhet = 1 - Math.exp(-sönderfallsKonstant * deltaTid);
+                if (Math.random() < sannolikhet) {
+                    p.sönderfallit = true;
+                    antalKol14--;
+                    antalKol12++;
+                    p.alpha = 1; // Starta fade-out
+                }
+            }
+            if (p.sönderfallit && p.alpha > 0) {
+                p.alpha -= 0.01 * deltaTid; // Fade-out effekt
+                if (p.alpha < 0) p.alpha = 0;
+            }
+        });
+    }
+
+    function ritaPartiklar() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        partiklar.forEach(p => {
+            // Rita pulsen om partikeln har sönderfallit
+            if (p.sönderfallit) {
+                p.pulseRadius += p.pulseSpeed; // Öka pulsens radie
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.pulseRadius, 0, 2 * Math.PI);
+                ctx.strokeStyle = `rgba(255, 0, 0, ${1 - p.pulseRadius / 50})`; // Minskande transparens
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Rita själva partikeln
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 1, 0, 2 * Math.PI);
+            
+            if (p.sönderfallit) {
+                p.blinkTimer += 0.1;
+                if (Math.sin(p.blinkTimer) > 0) {
+                    ctx.fillStyle = 'red';
+                } else {
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0)';
+                }
+            } else {
+                ctx.fillStyle = 'orange';
+            }
+            
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        });
+    }
+
+    function ritaStapeldiagram() {
+        const sönderfallnaKol14 = initialKol14 - antalKol14;
+        const stapelHöjd = (barCanvas.height * sönderfallnaKol14) / initialKol14;
+
+        barCtx.clearRect(0, 0, barCanvas.width, barCanvas.height);
+
+        // Rita stapeln
+        barCtx.fillStyle = 'orange';
+        barCtx.fillRect(0, barCanvas.height - stapelHöjd, barCanvas.width, stapelHöjd);
+
+        // Uppdatera antalet sönderfallna Kol-14-partiklar
+        decayTotalDisplay.textContent = `Sönderfallna: ${sönderfallnaKol14}`;
+    }
+
+    function uppdateraDiagram() {
+        // Beräkna andelen Kol-14 som ett decimaltal utifrån naturlig förekomst
+        const proportionKol14 = (antalKol14 / initialKol14) * naturligFrekvensKol14;
+        dataProcentKol14.push({ x: tid, y: proportionKol14 });
+
+        chart.update();
+    }
+
+    function startSimulation() {
+        initieraPartiklar();
+        dataProcentKol14 = [];
+        tid = 0;
+        resultDiv.textContent = ''; // Rensa resultatet
+
+        if (chart) {
+            chart.destroy();
+        }
+
+        chart = new Chart(document.getElementById('chart'), {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Andel Kol-14',
+                        data: dataProcentKol14,
+                        borderColor: 'orange',
+                        fill: false,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: { display: true, text: 'Tid (år)' },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    },
+                    y: {
+                        title: { display: true, text: 'Andel Kol-14 (decimaltal)' },
+                        min: 0,
+                        max: naturligFrekvensKol14,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(10); // Visar som decimaltal med 10 decimalers precision
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        clearInterval(intervall);
+        intervall = setInterval(() => {
+            let speed = parseInt(speedControl.value);
+            speedValueDisplay.textContent = speed;
+
+            const deltaTid = speed;
+            tid += deltaTid;
+
+            uppdateraPartiklar(deltaTid);
+            uppdateraDiagram();
+            ritaPartiklar();
+            ritaStapeldiagram();
+
+            if (antalKol14 <= 0) {
+                clearInterval(intervall);
+            }
+        }, 100);
+    }
+
+    function stopSimulation() {
+        clearInterval(intervall);
+    }
+
+    function calculateHalfLife() {
+        if (dataProcentKol14.length < 2) {
+            alert('För lite data för att beräkna halveringstid.');
+            return;
+        }
+
+        const lnProcentKol14 = dataProcentKol14.map(point => ({
+            x: point.x,
+            y: Math.log(point.y)
+        }));
+
+        const n = lnProcentKol14.length;
+        const sumX = lnProcentKol14.reduce((acc, point) => acc + point.x, 0);
+        const sumY = lnProcentKol14.reduce((acc, point) => acc + point.y, 0);
+        const sumXY = lnProcentKol14.reduce((acc, point) => acc + point.x * point.y, 0);
+        const sumX2 = lnProcentKol14.reduce((acc, point) => acc + point.x * point.x, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+
+        const calculatedHalfLife = -Math.log(2) / slope;
+
+        resultDiv.textContent = `Beräknad halveringstid: ${calculatedHalfLife.toFixed(2)} år`;
+    }
+
+    speedControl.addEventListener('input', () => {
+        speedValueDisplay.textContent = speedControl.value;
+    });
+</script>
+
+</body>
+</html>

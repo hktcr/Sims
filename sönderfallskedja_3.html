@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urans Sönderfallskedja</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+        .side-chain {
+            width: 20vw;
+            max-height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding-right: 20px;
+        }
+        .side-step {
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 1em;
+        }
+        .main-step {
+            width: 80vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            font-size: 3em;
+            text-align: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+        .isotope {
+            font-size: 1em;
+            color: #3f51b5;
+        }
+        #decay-description {
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        #extra-info {
+            font-size: 0.5em;
+            margin-top: 20px;
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="side-chain" id="side-chain"></div>
+    <div id="main-step" class="main-step">
+        <span class="isotope" id="main-isotope">Uran-238 (92, 238)</span>
+        <div id="decay-description">➘ Alfapartikel (α) avgår</div>
+        <div id="extra-info"></div>
+    </div>
+    <div class="controls">
+        <button onclick="previousStep()">Föregående</button>
+        <button onclick="togglePause()" id="pause-button">Paus</button>
+        <button onclick="nextStep()">Nästa</button>
+        <label for="interval-time">Tidsintervall (sekunder):</label>
+        <input type="number" id="interval-time" value="5" min="1" onchange="updateInterval()">
+    </div>
+    <script>
+        const steps = [
+            { isotope: "Uran-238 (92, 238)", description: "➘ Alfapartikel (α) avgår", info: "Uran-238 är den vanligaste isotopen av uran och används i kärnkraftverk som bränsle. Uran-238 används även för att producera plutonium-239, vilket kan användas i kärnvapen. Förekommer naturligt i jordskorpan." },
+            { isotope: "Torium-234 (90, 234)", description: "➘ Beta-minus-partikel (β-) avgår", info: "Torium-234 är en radioaktiv isotop som snabbt omvandlas till protaktinium. Torium är relativt vanligt i jordskorpan, men torium-234 är en instabil mellanprodukt i urans sönderfall." },
+            { isotope: "Protaktinium-234 (91, 234)", description: "➘ Beta-minus-partikel (β-) avgår", info: "Protaktinium-234 är en mycket kortlivad isotop som också är radioaktiv och förekommer i små mängder som en del av urans sönderfall. Protaktinium är mycket giftigt och starkt radioaktivt." },
+            { isotope: "Uran-234 (92, 234)", description: "➘ Alfapartikel (α) avgår", info: "Uran-234 är en del av urans sönderfallskedja och utgör en mindre del av naturligt uran. Uran-234 bidrar också till den totala radioaktiviteten hos naturligt uran." },
+            { isotope: "Torium-230 (90, 230)", description: "➘ Alfapartikel (α) avgår", info: "Torium-230 är en mellanprodukt i uranets sönderfall och kan användas för datering av marina sediment och koraller. Torium-230 används också ibland i medicinsk forskning och behandlingar." },
+            { isotope: "Radium-226 (88, 226)", description: "➘ Alfapartikel (α) avgår", info: "Radium-226 är känt för sin starka radioaktivitet och användes förr i tiden i självlysande färger på klockor och instrument. Det används idag i vissa medicinska behandlingar, men hanteras med stor försiktighet på grund av dess höga strålningsnivåer." },
+            { isotope: "Radon-222 (86, 222)", description: "➘ Alfapartikel (α) avgår", info: "Radon-222 är en radioaktiv gas som bildas naturligt från radium. Radon är en stor hälsofara i dåligt ventilerade utrymmen och är en av de främsta orsakerna till lungcancer hos icke-rökare." },
+            { isotope: "Polonium-218 (84, 218)", description: "➘ Alfapartikel (α) avgår", info: "Polonium-218 är en kortlivad radioaktiv isotop som snabbt sönderfaller vidare i urankedjan. Polonium är extremt giftigt och kan vara dödligt i mycket små mängder." },
+            { isotope: "Bly-214 (82, 214)", description: "➘ Beta-minus-partikel (β-) avgår", info: "Bly-214 är en mellanprodukt i radons sönderfallskedja och är också radioaktiv. Det bidrar till strålningsnivåerna från radon i inomhusmiljöer." },
+            { isotope: "Vismut-214 (83, 214)", description: "➘ Beta-minus-partikel (β-) avgår", info: "Vismut-214 är en radioaktiv isotop som snabbt omvandlas vidare till polonium. Vismut-214 bidrar också till den totala radioaktiviteten i radons sönderfall." },
+            { isotope: "Polonium-214 (84, 214)", description: "➘ Alfapartikel (α) avgår", info: "Polonium-214 är mycket kortlivad och extremt radioaktiv. Ämnet är så giftigt att det användes för att förgifta den ryske avhopparen Alexander Litvinenko." },
+            { isotope: "Bly-210 (82, 210)", description: "➘ Beta-minus-partikel (β-) avgår", info: "Bly-210 används ibland för att datera sediment och is, och har en halveringstid på cirka 22 år. Det bidrar också till radioaktiviteten i naturen från radon." },
+            { isotope: "Vismut-210 (83, 210)", description: "➘ Beta-minus-partikel (β-) avgår", info: "Vismut-210 är en kortlivad radioaktiv isotop som omvandlas till polonium-210. Vismut-210 är mycket instabil och en del av radons sönderfall." },
+            { isotope: "Polonium-210 (84, 210)", description: "➘ Alfapartikel (α) avgår", info: "Polonium-210 är känt för sin extremt höga toxicitet och har använts som gift. Det förekommer naturligt i mycket små mängder, och är ett av de mest radioaktiva ämnen som förekommer i tobaksrök." },
+            { isotope: "Bly-206 (82, 206) - Stabil", description: "", info: "Bly-206 är den stabila slutprodukten i urans sönderfallskedja och förekommer naturligt i miljön. Bly-206 är inte radioaktivt och utgör ingen hälsofara." }
+        ];
+
+        let currentIndex = 0;
+        let interval = null;
+        let paused = false;
+        let intervalTime = 5000;
+
+        const sideChain = document.getElementById('side-chain');
+        const mainIsotope = document.getElementById('main-isotope');
+        const decayDescription = document.getElementById('decay-description');
+        const extraInfo = document.getElementById('extra-info');
+
+        function updateMainStep(index) {
+            const step = steps[index];
+            mainIsotope.textContent = step.isotope;
+            decayDescription.textContent = step.description; // Uppdaterar beskrivningen av sönderfallspartikeln
+            extraInfo.textContent = step.info;
+            // Uppdatera sidokedjan
+            updateSideChain(index);
+        }
+
+        function updateSideChain(index) {
+            // Rensa sidokedjan
+            sideChain.innerHTML = '';
+            // Lägg till steg upp till aktuellt index
+            for (let i = 0; i <= index; i++) {
+                const sideStep = document.createElement('div');
+                sideStep.className = 'side-step';
+                sideStep.textContent = steps[i].isotope;
+                sideChain.appendChild(sideStep);
+            }
+        }
+
+        function nextStep() {
+            if (currentIndex < steps.length - 1) {
+                currentIndex++;
+                updateMainStep(currentIndex);
+            } else {
+                clearInterval(interval);
+            }
+        }
+
+        function previousStep() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateMainStep(currentIndex);
+            }
+        }
+
+        function togglePause() {
+            const pauseButton = document.getElementById('pause-button');
+            if (paused) {
+                interval = setInterval(nextStep, intervalTime);
+                pauseButton.textContent = 'Paus';
+            } else {
+                clearInterval(interval);
+                pauseButton.textContent = 'Fortsätt';
+            }
+            paused = !paused;
+        }
+
+        function updateInterval() {
+            const newTime = document.getElementById('interval-time').value;
+            intervalTime = newTime * 1000;
+            if (!paused) {
+                clearInterval(interval);
+                interval = setInterval(nextStep, intervalTime);
+            }
+        }
+
+        // Starta animationen
+        updateMainStep(currentIndex);
+        interval = setInterval(nextStep, intervalTime);
+    </script>
+</body>
+</html>
