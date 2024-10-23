@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Kol-14 Halveringstidssimulering</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        #canvas {
+            border: 1px solid black;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+        #barCanvas {
+            border: 1px solid black;
+            background-color: #fff;
+            margin-left: 20px;
+            position: relative;
+        }
+        #chart {
+            width: 800px;
+            height: 400px;
+            margin: 20px auto;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        button, input[type="range"], input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #decayTotal {
+            position: absolute;
+            top: -30px;
+            left: 10px;
+            font-size: 16px;
+            color: black;
+        }
+        #simulatedHalfLife {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #finalResults {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: left;
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        #infoBox {
+            width: 800px;
+            margin: 20px auto;
+            text-align: left;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0"></script>
+</head>
+<body>
+    <h1>Kol-14 Halveringstidssimulering</h1>
+    <div id="infoBox">
+        <h2>Halveringstid för Kol-14</h2>
+        <p>
+            Kol-14 är en radioaktiv isotop av kol som används för att datera organiskt material.
+            Halveringstiden för Kol-14 är cirka 5730 år, vilket innebär att hälften av mängden
+            Kol-14 har sönderfallit efter denna tid.
+        </p>
+        <p>
+            Genom att mäta mängden kvarvarande Kol-14 i ett prov kan man uppskatta dess ålder.
+            Denna metod kallas kol-14-datering och är viktig inom arkeologi och geologi.
+        </p>
+    </div>
+
+    <div id="container">
+        <div style="position: relative;">
+            <canvas id="barCanvas" width="100" height="400"></canvas>
+            <div id="decayTotal">Sönderfallna: 0</div>
+        </div>
+        <canvas id="canvas" width="600" height="400"></canvas>
+    </div>
+    <canvas id="chart"></canvas>
+    <div id="simulatedHalfLife">Simulerad halveringstid: N/A</div>
+    <div id="finalResults"></div>
+    <div id="controls">
+        <button onclick="startSimulation()">Starta Simulering</button>
+        <button onclick="stopSimulation()">Stoppa Simulering</button>
+        <br>
+        <label for="numParticles">Antal Kol-14 partiklar:</label>
+        <input type="number" id="numParticles" min="1" value="1000">
+        <br>
+        <label for="speed">Hastighet:</label>
+        <input type="range" id="speed" min="1" max="1000" value="1">
+        <span id="speedValue">1</span>
+    </div>
+    <div id="result"></div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const barCanvas = document.getElementById('barCanvas');
+const barCtx = barCanvas.getContext('2d');
+const decayTotalDisplay = document.getElementById('decayTotal');
+const finalResultsDiv = document.getElementById('finalResults');
+
+let partiklar = [];
+let totalaPartiklar = 100000;
+let antalKol12 = 0;
+let antalKol14 = 0;
+let initialKol14 = 0;
+let lastCalculatedHalfLife = 0;
+
+const halveringstidKol14 = 5730;
+let tid = 0;
+let intervall;
+let chart;
+let dataProcentKol14 = [];
+const speedControl = document.getElementById('speed');
+const speedValueDisplay = document.getElementById('speedValue');
+const resultDiv = document.getElementById('result');
+const simulatedHalfLifeDiv = document.getElementById('simulatedHalfLife');
+const numParticlesInput = document.getElementById('numParticles');
+
+let levelsCrossed = {
+    '50%': { crossed: false, time: null },
+    '25%': { crossed: false, time: null },
+    '12.5%': { crossed: false, time: null }
+};
+
+function initieraPartiklar() {
+    partiklar = [];
+    antalKol12 = 0;
+    antalKol14 = parseInt(numParticlesInput.value) || 1000;
+    initialKol14 = antalKol14;
+
+    totalaPartiklar = antalKol14 / 0.01;
+
+    for (let i = 0; i < antalKol14; i++) {
+        partiklar.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            sönderfallit: false,
+            alpha: 1,
+            blinkTimer: 0,
+            pulseRadius: 0,
+            pulseSpeed: 0.5
+        });
+    }
+
+    antalKol12 = totalaPartiklar - antalKol14;
+
+    levelsCrossed = {
+        '50%': { crossed: false, time: null },
+        '25%': { crossed: false, time: null },
+        '12.5%': { crossed: false, time: null }
+    };
+}
+
+function uppdateraPartiklar(deltaTid) {
+    const sönderfallsKonstant = Math.log(2) / halveringstidKol14;
+    partiklar.forEach(p => {
+        if (!p.sönderfallit) {
+            const sannolikhet = 1 - Math.exp(-sönderfallsKonstant * deltaTid);
+            if (Math.random() < sannolikhet) {
+                p.sönderfallit = true;
+                antalKol14--;
+                antalKol12++;
+                p.alpha = 1;
+            }
+        }
+        if (p.sönderfallit && p.alpha > 0) {
+            p.alpha -= 0.01 * deltaTid;
+            if (p.alpha < 0) p.alpha = 0;
+        }
+    });
+}
+
+function ritaPartiklar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    partiklar.forEach(p => {
+        if (p.sönderfallit) {
+            p.pulseRadius += p.pulseSpeed;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.pulseRadius, 0, 2 * Math.PI);
+            ctx.strokeStyle = `rgba(255, 0, 0, ${1 - p.pulseRadius / 50})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1, 0, 2 * Math.PI);
+        
+        if (p.sönderfallit) {
+            p.blinkTimer += 0.1;
+            if (Math.sin(p.blinkTimer) > 0) {
+                ctx.fillStyle = 'red';
+            } else {
+                ctx.fillStyle = 'rgba(255, 0, 0, 0)';
+            }
+        } else {
+            ctx.fillStyle = 'orange';
+        }
+        
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    });
+}
+function ritaStapeldiagram() {
+    const sönderfallnaKol14 = initialKol14 - antalKol14;
+    const stapelHöjd = (barCanvas.height * sönderfallnaKol14) / initialKol14;
+
+    barCtx.clearRect(0, 0, barCanvas.width, barCanvas.height);
+    barCtx.fillStyle = 'orange';
+    barCtx.fillRect(0, barCanvas.height - stapelHöjd, barCanvas.width, stapelHöjd);
+    decayTotalDisplay.textContent = `Sönderfallna: ${sönderfallnaKol14}`;
+}
+
+function uppdateraDiagram() {
+    const proportionKol14 = antalKol14 / initialKol14;
+    dataProcentKol14.push({ x: tid, y: proportionKol14 });
+    checkLevels(proportionKol14, tid);
+    chart.update();
+}
+
+function checkLevels(proportion, time) {
+    const levels = [
+        { value: 0.5, label: '50%' },
+        { value: 0.25, label: '25%' },
+        { value: 0.125, label: '12.5%' }
+    ];
+
+    levels.forEach(level => {
+        if (!levelsCrossed[level.label].crossed && proportion <= level.value) {
+            levelsCrossed[level.label].crossed = true;
+            levelsCrossed[level.label].time = time;
+
+            chart.data.datasets[0].data.push({ x: time, y: proportion });
+
+            chart.options.plugins.annotation.annotations[level.label] = {
+                type: 'point',
+                xValue: time,
+                yValue: proportion,
+                backgroundColor: 'red',
+                radius: 5,
+                label: {
+                    content: `${time.toFixed(0)} år`,
+                    enabled: true,
+                    position: 'top'
+                }
+            };
+        }
+    });
+}
+
+function beräknaHalveringstid() {
+    if (dataProcentKol14.length >= 2) {
+        const lnProcentKol14 = dataProcentKol14.map(point => ({
+            x: point.x,
+            y: Math.log(point.y)
+        }));
+
+        const n = lnProcentKol14.length;
+        const sumX = lnProcentKol14.reduce((acc, point) => acc + point.x, 0);
+        const sumY = lnProcentKol14.reduce((acc, point) => acc + point.y, 0);
+        const sumXY = lnProcentKol14.reduce((acc, point) => acc + point.x * point.y, 0);
+        const sumX2 = lnProcentKol14.reduce((acc, point) => acc + point.x * point.x, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const calculatedHalfLife = -Math.log(2) / slope;
+        lastCalculatedHalfLife = calculatedHalfLife;
+
+        simulatedHalfLifeDiv.textContent = `Simulerad halveringstid: ${calculatedHalfLife.toFixed(2)} år`;
+        
+        updateFinalResults();
+    }
+}
+
+function updateFinalResults() {
+    let resultsText = `<strong>Slutliga resultat:</strong><br>`;
+    resultsText += `• Simulerad halveringstid: ${lastCalculatedHalfLife.toFixed(2)} år<br>`;
+    
+    for (const [level, data] of Object.entries(levelsCrossed)) {
+        if (data.crossed) {
+            resultsText += `• ${level} nåddes vid: ${data.time.toFixed(0)} år<br>`;
+        }
+    }
+    
+    finalResultsDiv.innerHTML = resultsText;
+}
+
+function startSimulation() {
+    initieraPartiklar();
+    dataProcentKol14 = [];
+    tid = 0;
+    resultDiv.textContent = '';
+    finalResultsDiv.innerHTML = '';
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(document.getElementById('chart'), {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Andel Kol-14',
+                data: dataProcentKol14,
+                borderColor: 'orange',
+                fill: false,
+                borderWidth: 2,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            plugins: {
+                annotation: {
+                    annotations: {
+                        line50: {
+                            type: 'line',
+                            yMin: 0.5,
+                            yMax: 0.5,
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                            label: {
+                                content: '50%',
+                                enabled: true,
+                                position: 'end'
+                            }
+                        },
+                        line25: {
+                            type: 'line',
+                            yMin: 0.25,
+                            yMax: 0.25,
+                            borderColor: 'green',
+                            borderWidth: 1,
+                            label: {
+                                content: '25%',
+                                enabled: true,
+                                position: 'end'
+                            }
+                        },
+                        line12_5: {
+                            type: 'line',
+                            yMin: 0.125,
+                            yMax: 0.125,
+                            borderColor: 'purple',
+                            borderWidth: 1,
+                            label: {
+                                content: '12.5%',
+                                enabled: true,
+                                position: 'end'
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: { display: true, text: 'Tid (år)' },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                },
+                y: {
+                    title: { display: true, text: 'Andel Kol-14' },
+                    min: 0,
+                    max: 1,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    clearInterval(intervall);
+    intervall = setInterval(() => {
+        let speed = parseInt(speedControl.value);
+        speedValueDisplay.textContent = speed;
+
+        const deltaTid = speed;
+        tid += deltaTid;
+
+        uppdateraPartiklar(deltaTid);
+        uppdateraDiagram();
+        ritaPartiklar();
+        ritaStapeldiagram();
+
+        beräknaHalveringstid();
+
+        if (antalKol14 <= 0) {
+            clearInterval(intervall);
+            beräknaHalveringstid();
+        }
+    }, 100);
+}
+
+function stopSimulation() {
+    clearInterval(intervall);
+    updateFinalResults();
+}
+
+speedControl.addEventListener('input', () => {
+    speedValueDisplay.textContent = speedControl.value;
+});
+
+</script>
+
+</body>
+</html>
