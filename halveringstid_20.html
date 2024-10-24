@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Kol-14 Halveringstidssimulering</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .layout-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+            min-height: 800px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 180px;
+            gap: 25px;
+            height: 100%;
+            max-height: calc(100vh - 40px);
+            min-height: 800px;
+        }
+
+        .visualization-area {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 50px);
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: 100%;
+            min-height: 0;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 35%;
+            min-height: 250px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        #chart {
+            width: 100%;
+            height: 61%;
+            min-height: 450px;
+            background-color: #fff;
+            border-radius: 8px;
+            margin-top: auto;
+        }
+
+        #barCanvas {
+            width: 130px;
+            height: calc(100% - 40px);
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #36648b;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-weight: 500;
+            color: #333;
+            font-size: 15px;
+        }
+
+        input[type="range"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+
+        input[type="range"] {
+            padding: 5px 0;
+        }
+
+        .stats {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4682b4;
+            font-size: 15px;
+        }
+
+        .bar-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 30px;
+        }
+
+        #decayTotal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 15px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        h1 {
+            color: #4682b4;
+            margin: 0 0 25px 0;
+            font-size: 2em;
+        }
+
+        #simulatedHalfLife {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        #halfLifeResults {
+            margin-top: 25px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .half-life-period {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+            background: white;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        .half-life-period:last-child {
+            border-bottom: none;
+        }
+
+        .period-number {
+            display: inline-block;
+            padding: 3px 10px;
+            background-color: #4682b4;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        .info-text {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #666;
+            border-left: 4px solid #4682b4;
+        }
+
+        #speedValue {
+            display: inline-block;
+            min-width: 30px;
+            text-align: right;
+            font-weight: bold;
+            color: #4682b4;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout-container">
+        <div class="sidebar">
+            <h1>Kol-14 Halveringstid</h1>
+            <div class="controls">
+                <button onclick="startSimulation()">Starta Simulering</button>
+                <button onclick="stopSimulation()">Stoppa Simulering</button>
+                
+                <div class="input-group">
+                    <label for="numParticles">Antal Kol-14 partiklar:</label>
+                    <input type="number" id="numParticles" min="1" value="1000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="speed">Hastighet: <span id="speedValue">1</span></label>
+                    <input type="range" id="speed" min="1" max="1000" value="1">
+                </div>
+            </div>
+            <div id="simulatedHalfLife">Simulerad halveringstid: N/A</div>
+            <div id="halfLifeResults"></div>
+            <div class="info-text">
+                Kol-14 är en radioaktiv isotop med en halveringstid på cirka 5730 år. 
+                Denna simulering visar hur antalet Kol-14 atomer minskar över tid genom radioaktivt sönderfall.
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="visualization-area">
+                <div class="canvas-container">
+                    <canvas id="canvas"></canvas>
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+            <div class="bar-container">
+                <div id="decayTotal">Sönderfallna: 0</div>
+                <canvas id="barCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const barCanvas = document.getElementById('barCanvas');
+const barCtx = barCanvas.getContext('2d');
+const decayTotalDisplay = document.getElementById('decayTotal');
+const halfLifeResultsDiv = document.getElementById('halfLifeResults');
+
+let partiklar = [];
+let totalaPartiklar = 100000;
+let antalKol12 = 0;
+let antalKol14 = 0;
+let initialKol14 = 0;
+let lastCalculatedHalfLife = 0;
+
+const halveringstidKol14 = 5730;
+let tid = 0;
+let intervall;
+let chart;
+let dataProcentKol14 = [];
+const speedControl = document.getElementById('speed');
+const speedValueDisplay = document.getElementById('speedValue');
+const simulatedHalfLifeDiv = document.getElementById('simulatedHalfLife');
+const numParticlesInput = document.getElementById('numParticles');
+
+let levelsCrossed = {};
+
+function resizeCanvases() {
+    function setCanvasSize(canvasElement) {
+        const rect = canvasElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvasElement.width = rect.width * dpr;
+        canvasElement.height = rect.height * dpr;
+        const ctx = canvasElement.getContext('2d');
+        ctx.scale(dpr, dpr);
+    }
+    setCanvasSize(canvas);
+    setCanvasSize(barCanvas);
+}
+
+function initieraPartiklar() {
+    partiklar = [];
+    antalKol12 = 0;
+    antalKol14 = parseInt(numParticlesInput.value) || 1000;
+    initialKol14 = antalKol14;
+    tid = 0;
+
+    totalaPartiklar = antalKol14 / 0.01;
+    resizeCanvases();
+
+    // Förbättrad partikelfördelning med hänsyn till canvas-proportioner
+    const rect = canvas.getBoundingClientRect();
+    const aspectRatio = rect.width / rect.height;
+    const cols = Math.floor(Math.sqrt(antalKol14 * aspectRatio));
+    const rows = Math.ceil(antalKol14 / cols);
+    const spacingX = rect.width / cols;
+    const spacingY = rect.height / rows;
+
+    let particleIndex = 0;
+    for (let row = 0; row < rows && particleIndex < antalKol14; row++) {
+        for (let col = 0; col < cols && particleIndex < antalKol14; col++) {
+            // Centrerad position med liten slumpmässig förskjutning
+            const x = (col + 0.5) * spacingX + (Math.random() - 0.5) * spacingX * 0.3;
+            const y = (row + 0.5) * spacingY + (Math.random() - 0.5) * spacingY * 0.3;
+
+            partiklar.push({
+                x: x,
+                y: y,
+                sönderfallit: false,
+                alpha: 1,
+                blinkTimer: Math.random() * Math.PI * 2,
+                pulseRadius: 0,
+                pulseSpeed: 0.5
+            });
+            particleIndex++;
+        }
+    }
+
+    antalKol12 = totalaPartiklar - antalKol14;
+    
+    levelsCrossed = {
+        '50%': { crossed: false, time: null },
+        '25%': { crossed: false, time: null },
+        '12.5%': { crossed: false, time: null },
+        '6.3%': { crossed: false, time: null },
+        '3.1%': { crossed: false, time: null },
+        '1.6%': { crossed: false, time: null },
+        '0.8%': { crossed: false, time: null },
+        '0.4%': { crossed: false, time: null },
+        '0.2%': { crossed: false, time: null },
+        '0.1%': { crossed: false, time: null }
+    };
+    
+    halfLifeResultsDiv.innerHTML = '';
+    simulatedHalfLifeDiv.textContent = 'Simulerad halveringstid: N/A';
+}
+
+function uppdateraPartiklar(deltaTid) {
+    const sönderfallsKonstant = Math.log(2) / halveringstidKol14;
+    partiklar.forEach(p => {
+        if (!p.sönderfallit) {
+            const sannolikhet = 1 - Math.exp(-sönderfallsKonstant * deltaTid);
+            if (Math.random() < sannolikhet) {
+                p.sönderfallit = true;
+                antalKol14--;
+                antalKol12++;
+                p.alpha = 1;
+            }
+        }
+        if (p.sönderfallit && p.alpha > 0) {
+            p.alpha -= 0.01 * deltaTid;
+            if (p.alpha < 0) p.alpha = 0;
+        }
+    });
+}
+
+function ritaPartiklar() {
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    
+    partiklar.forEach(p => {
+        if (p.sönderfallit) {
+            p.pulseRadius += p.pulseSpeed;
+            if (p.pulseRadius < 50) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.pulseRadius, 0, 2 * Math.PI);
+                ctx.strokeStyle = `rgba(255, 0, 0, ${1 - p.pulseRadius / 50})`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        if (p.alpha > 0) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 1.5, 0, 2 * Math.PI);
+            
+            if (p.sönderfallit) {
+                p.blinkTimer += 0.1;
+                ctx.fillStyle = Math.sin(p.blinkTimer) > 0 ? 'red' : 'rgba(255, 0, 0, 0)';
+            } else {
+                ctx.fillStyle = 'orange';
+            }
+            
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+    });
+}
+
+function ritaStapeldiagram() {
+    const rect = barCanvas.getBoundingClientRect();
+    const sönderfallnaKol14 = initialKol14 - antalKol14;
+    const stapelHöjd = (rect.height * sönderfallnaKol14) / initialKol14;
+
+    barCtx.clearRect(0, 0, rect.width, rect.height);
+    barCtx.fillStyle = 'orange';
+    barCtx.fillRect(0, rect.height - stapelHöjd, rect.width, stapelHöjd);
+    decayTotalDisplay.textContent = `Sönderfallna: ${sönderfallnaKol14}`;
+}
+function startSimulation() {
+    initieraPartiklar();
+    dataProcentKol14 = [];
+    
+    if (chart) {
+        chart.destroy();
+    }
+
+    let annotations = {};
+    Object.entries(levelsCrossed).forEach(([level], index) => {
+        const levelValue = parseFloat(level) / 100;
+        const hue = 240 * (index / (Object.keys(levelsCrossed).length - 1));
+        
+        annotations[`line${level}`] = {
+            type: 'line',
+            yMin: levelValue,
+            yMax: levelValue,
+            borderColor: `hsl(${hue}, 70%, 50%)`,
+            borderWidth: 1,
+            borderDash: [5, 5],
+            label: {
+                enabled: false
+            }
+        };
+    });
+
+    chart = new Chart(document.getElementById('chart'), {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Andel Kol-14',
+                data: dataProcentKol14,
+                borderColor: 'orange',
+                fill: false,
+                borderWidth: 2,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                annotation: {
+                    annotations: annotations
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: { display: true, text: 'Tid (år)' }
+                },
+                y: {
+                    title: { display: true, text: 'Andel Kol-14' },
+                    min: 0,
+                    max: 1,
+                    ticks: {
+                        callback: function(value) {
+                            return (value * 100).toFixed(0) + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    clearInterval(intervall);
+    intervall = setInterval(() => {
+        let speed = parseInt(speedControl.value);
+        speedValueDisplay.textContent = speed;
+
+        const deltaTid = speed;
+        tid += deltaTid;
+
+        uppdateraPartiklar(deltaTid);
+        ritaPartiklar();
+        ritaStapeldiagram();
+        uppdateraDiagram();
+
+        if (antalKol14 <= 0) {
+            stopSimulation();
+        }
+    }, 50);
+}
+
+function uppdateraDiagram() {
+    const proportionKol14 = antalKol14 / initialKol14;
+    dataProcentKol14.push({ x: tid, y: proportionKol14 });
+    checkLevels(proportionKol14, tid);
+    updateFinalResults();
+    beräknaHalveringstid();
+    if (chart) chart.update();
+}
+
+function checkLevels(proportion, time) {
+    Object.entries(levelsCrossed).forEach(([level, data]) => {
+        const levelValue = parseFloat(level) / 100;
+        if (!data.crossed && proportion <= levelValue) {
+            data.crossed = true;
+            data.time = time;
+
+            if (chart) {
+                chart.options.plugins.annotation.annotations[level] = {
+                    type: 'point',
+                    xValue: time,
+                    yValue: proportion,
+                    backgroundColor: 'red',
+                    radius: 5,
+                    label: {
+                        content: `${time.toFixed(0)} år`,
+                        enabled: true,
+                        position: 'top'
+                    }
+                };
+            }
+        }
+    });
+}
+
+function updateFinalResults() {
+    let resultsHTML = '<h3>Halveringsperioder:</h3>';
+    let previousTime = 0;
+    let periodNumber = 1;
+    
+    Object.entries(levelsCrossed)
+        .sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]))
+        .forEach(([level, data]) => {
+            if (data.crossed) {
+                const currentPeriodTime = data.time - previousTime;
+                const totalTime = data.time;
+                
+                resultsHTML += `
+                    <div class="half-life-period">
+                        <span class="period-number">${periodNumber}</span>
+                        <strong>Halveringsperiod ${periodNumber}:</strong> ${currentPeriodTime.toFixed(0)} år
+                        <br>
+                        <span class="total-time">Total tid: ${totalTime.toFixed(0)} år</span>
+                    </div>`;
+                
+                previousTime = data.time;
+                periodNumber++;
+            }
+        });
+
+    const currentProportion = (antalKol14 / initialKol14) * 100;
+    resultsHTML += `
+        <div class="stats">
+            Kvarvarande: ${currentProportion.toFixed(2)}%
+            <br>Total tid: ${tid.toFixed(0)} år
+        </div>`;
+
+    halfLifeResultsDiv.innerHTML = resultsHTML;
+}
+
+function beräknaHalveringstid() {
+    if (dataProcentKol14.length >= 2) {
+        const lnProcentKol14 = dataProcentKol14.map(point => ({
+            x: point.x,
+            y: Math.log(point.y)
+        }));
+
+        const n = lnProcentKol14.length;
+        const sumX = lnProcentKol14.reduce((acc, point) => acc + point.x, 0);
+        const sumY = lnProcentKol14.reduce((acc, point) => acc + point.y, 0);
+        const sumXY = lnProcentKol14.reduce((acc, point) => acc + point.x * point.y, 0);
+        const sumX2 = lnProcentKol14.reduce((acc, point) => acc + point.x * point.x, 0);
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const calculatedHalfLife = -Math.log(2) / slope;
+        lastCalculatedHalfLife = calculatedHalfLife;
+
+        simulatedHalfLifeDiv.textContent = `Simulerad halveringstid: ${calculatedHalfLife.toFixed(2)} år`;
+    }
+}
+
+function stopSimulation() {
+    clearInterval(intervall);
+    updateFinalResults();
+}
+
+speedControl.addEventListener('input', () => {
+    speedValueDisplay.textContent = speedControl.value;
+});
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        resizeCanvases();
+        ritaPartiklar();
+        ritaStapeldiagram();
+        if (chart) {
+            chart.resize();
+        }
+    }, 250);
+});
+
+// Initial storleksanpassning
+window.dispatchEvent(new Event('resize'));
+    </script>
+</body>
+</html>
