@@ -277,6 +277,7 @@
     </div>
 
     <script>
+// Canvas och kontextreferenser
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const barCanvas = document.getElementById('barCanvas');
@@ -284,6 +285,7 @@ const barCtx = barCanvas.getContext('2d');
 const decayTotalDisplay = document.getElementById('decayTotal');
 const halfLifeResultsDiv = document.getElementById('halfLifeResults');
 
+// Simuleringsvariabler
 let partiklar = [];
 let totalaPartiklar = 100000;
 let antalKol12 = 0;
@@ -291,7 +293,17 @@ let antalKol14 = 0;
 let initialKol14 = 0;
 let lastCalculatedHalfLife = 0;
 
+// Konstanter för simulering och animation
 const halveringstidKol14 = 5730;
+const ANIMATION_DURATION = 1000;     // Total animationstid (ms)
+const PULSE_DURATION = 500;         // Hur länge pulsen varar (ms)
+const PARTICLE_FADE_START = 250;    // När partikeln börjar tona ut (ms)
+const MAX_PULSE_RADIUS = 20;        // Maximal radie för pulsen (pixlar)
+const PARTICLE_SIZE = 1.5;          // Storlek på partiklarna (pixlar)
+const PULSE_ALPHA_FACTOR = 0.5;     // Faktor för pulsens transparens
+const LINE_WIDTH = 2;               // Tjocklek på pulsringen
+
+// Tidräknare och kontroller
 let tid = 0;
 let intervall;
 let chart;
@@ -301,16 +313,26 @@ const speedValueDisplay = document.getElementById('speedValue');
 const simulatedHalfLifeDiv = document.getElementById('simulatedHalfLife');
 const numParticlesInput = document.getElementById('numParticles');
 
+// Nivåövervakning
 let levelsCrossed = {};
 
+// Hjälpfunktion för DPI-skalning
+function getScaledSize(element) {
+    const rect = element.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    return {
+        width: rect.width * dpr,
+        height: rect.height * dpr,
+        dpr: dpr,
+        rect: rect
+    };
+}
 function resizeCanvases() {
     function setCanvasSize(canvasElement) {
-        const rect = canvasElement.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        canvasElement.width = rect.width * dpr;
-        canvasElement.height = rect.height * dpr;
-        const ctx = canvasElement.getContext('2d');
-        ctx.scale(dpr, dpr);
+        const size = getScaledSize(canvasElement);
+        canvasElement.width = size.width;
+        canvasElement.height = size.height;
+        return size;
     }
     setCanvasSize(canvas);
     setCanvasSize(barCanvas);
@@ -324,20 +346,22 @@ function initieraPartiklar() {
     tid = 0;
 
     totalaPartiklar = antalKol14 / 0.01;
-    resizeCanvases();
-
-    // Förbättrad partikelfördelning med hänsyn till canvas-proportioner
-    const rect = canvas.getBoundingClientRect();
-    const aspectRatio = rect.width / rect.height;
+    const size = getScaledSize(canvas);
+    
+    // Beräkna dimensioner i skärmkoordinater
+    const displayWidth = canvas.width / size.dpr;
+    const displayHeight = canvas.height / size.dpr;
+    
+    // Beräkna grid för jämn fördelning av partiklar
+    const aspectRatio = displayWidth / displayHeight;
     const cols = Math.floor(Math.sqrt(antalKol14 * aspectRatio));
     const rows = Math.ceil(antalKol14 / cols);
-    const spacingX = rect.width / cols;
-    const spacingY = rect.height / rows;
+    const spacingX = displayWidth / cols;
+    const spacingY = displayHeight / rows;
 
     let particleIndex = 0;
     for (let row = 0; row < rows && particleIndex < antalKol14; row++) {
         for (let col = 0; col < cols && particleIndex < antalKol14; col++) {
-            // Centrerad position med liten slumpmässig förskjutning
             const x = (col + 0.5) * spacingX + (Math.random() - 0.5) * spacingX * 0.3;
             const y = (row + 0.5) * spacingY + (Math.random() - 0.5) * spacingY * 0.3;
 
@@ -345,10 +369,11 @@ function initieraPartiklar() {
                 x: x,
                 y: y,
                 sönderfallit: false,
-                alpha: 1,
-                blinkTimer: Math.random() * Math.PI * 2,
                 pulseRadius: 0,
-                pulseSpeed: 0.5
+                pulseAlpha: 1,
+                particleAlpha: 1,
+                animationStartTime: 0,
+                animationProgress: 0
             });
             particleIndex++;
         }
@@ -371,6 +396,8 @@ function initieraPartiklar() {
     
     halfLifeResultsDiv.innerHTML = '';
     simulatedHalfLifeDiv.textContent = 'Simulerad halveringstid: N/A';
+    
+    resizeCanvases();
 }
 
 function uppdateraPartiklar(deltaTid) {
@@ -382,58 +409,86 @@ function uppdateraPartiklar(deltaTid) {
                 p.sönderfallit = true;
                 antalKol14--;
                 antalKol12++;
-                p.alpha = 1;
+                p.animationStartTime = tid;
+                p.pulseRadius = 0;
+                p.pulseAlpha = 1;
+                p.particleAlpha = 1;
             }
         }
-        if (p.sönderfallit && p.alpha > 0) {
-            p.alpha -= 0.01 * deltaTid;
-            if (p.alpha < 0) p.alpha = 0;
+        if (p.sönderfallit) {
+            // Uppdatera animationsstatus
+            const elapsedTime = tid - p.animationStartTime;
+            
+            // Hantera puls
+            if (elapsedTime <= PULSE_DURATION) {
+                const pulseProgress = elapsedTime / PULSE_DURATION;
+                p.pulseRadius = pulseProgress * MAX_PULSE_RADIUS;
+                p.pulseAlpha = 1 - pulseProgress;
+            } else {
+                p.pulseAlpha = 0;
+            }
+            
+            // Hantera partikelns försvinnande
+            if (elapsedTime >= PARTICLE_FADE_START) {
+                const fadeProgress = (elapsedTime - PARTICLE_FADE_START) / 
+                                  (ANIMATION_DURATION - PARTICLE_FADE_START);
+                p.particleAlpha = Math.max(0, 1 - fadeProgress);
+            }
         }
     });
 }
 
 function ritaPartiklar() {
-    const rect = canvas.getBoundingClientRect();
-    ctx.clearRect(0, 0, rect.width, rect.height);
+    const size = getScaledSize(canvas);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Spara hela kontexten och sätt upp skalning en gång
+    ctx.save();
+    ctx.scale(size.dpr, size.dpr);
     
     partiklar.forEach(p => {
-        if (p.sönderfallit) {
-            p.pulseRadius += p.pulseSpeed;
-            if (p.pulseRadius < 50) {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.pulseRadius, 0, 2 * Math.PI);
-                ctx.strokeStyle = `rgba(255, 0, 0, ${1 - p.pulseRadius / 50})`;
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
+        if (p.sönderfallit && p.pulseAlpha > 0) {
+            // Rita pulsring
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.pulseRadius, 0, 2 * Math.PI);
+            ctx.strokeStyle = `rgba(255, 0, 0, ${p.pulseAlpha * PULSE_ALPHA_FACTOR})`;
+            ctx.lineWidth = LINE_WIDTH / size.dpr;
+            ctx.stroke();
         }
 
-        if (p.alpha > 0) {
+        // Rita partikel
+        if (!p.sönderfallit || p.particleAlpha > 0) {
             ctx.beginPath();
-            ctx.arc(p.x, p.y, 1.5, 0, 2 * Math.PI);
+            ctx.arc(p.x, p.y, PARTICLE_SIZE, 0, 2 * Math.PI);
             
             if (p.sönderfallit) {
-                p.blinkTimer += 0.1;
-                ctx.fillStyle = Math.sin(p.blinkTimer) > 0 ? 'red' : 'rgba(255, 0, 0, 0)';
+                ctx.fillStyle = `rgba(255, 0, 0, ${p.particleAlpha})`;
             } else {
                 ctx.fillStyle = 'orange';
             }
             
-            ctx.globalAlpha = p.alpha;
             ctx.fill();
-            ctx.globalAlpha = 1;
         }
     });
+    
+    // Återställ kontexten en gång i slutet
+    ctx.restore();
 }
 
 function ritaStapeldiagram() {
-    const rect = barCanvas.getBoundingClientRect();
+    const size = getScaledSize(barCanvas);
     const sönderfallnaKol14 = initialKol14 - antalKol14;
-    const stapelHöjd = (rect.height * sönderfallnaKol14) / initialKol14;
+    const stapelHöjd = (size.rect.height * sönderfallnaKol14) / initialKol14;
 
-    barCtx.clearRect(0, 0, rect.width, rect.height);
+    barCtx.save();
+    barCtx.scale(size.dpr, size.dpr);
+    
+    barCtx.clearRect(0, 0, size.rect.width, size.rect.height);
     barCtx.fillStyle = 'orange';
-    barCtx.fillRect(0, rect.height - stapelHöjd, rect.width, stapelHöjd);
+    barCtx.fillRect(0, size.rect.height - stapelHöjd, size.rect.width, stapelHöjd);
+    
+    barCtx.restore();
+    
     decayTotalDisplay.textContent = `Sönderfallna: ${sönderfallnaKol14}`;
 }
 function startSimulation() {
