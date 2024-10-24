@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urans Sönderfallskedja</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .side-chain {
+            width: 280px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            scrollbar-width: thin;
+            scrollbar-color: #4caf50 #f0f0f0;
+        }
+        .side-chain::-webkit-scrollbar {
+            width: 8px;
+        }
+        .side-chain::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .side-chain::-webkit-scrollbar-thumb {
+            background-color: #4caf50;
+            border-radius: 4px;
+        }
+        .side-step {
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 10px 15px;
+            background-color: #ffffff;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .side-step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            flex-grow: 1;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: calc(100vw - 380px);
+        }
+        .main-display {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 25px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .isotope {
+            font-size: 3.5em;
+            color: #1a237e;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .formation {
+            font-size: 1.4em;
+            color: #333;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .extra-info {
+            font-size: 1.2em;
+            color: #666;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+        }
+        .history-info {
+            font-size: 1.1em;
+            color: #555;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.6;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 10px;
+            margin-top: -10px;
+            border: 1px solid #ffe0b2;
+        }
+        .next-decay {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-size: 1.8em;
+            font-weight: bold;
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            margin-top: auto;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            background: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            width: 60px;
+            font-size: 1em;
+        }
+        label {
+            font-size: 1em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="side-chain" id="side-chain"></div>
+    <div class="main-content">
+        <div class="main-display">
+            <div class="isotope" id="main-isotope"></div>
+            <div class="formation" id="formation"></div>
+            <div class="extra-info" id="extra-info"></div>
+            <div class="history-info" id="history-info"></div>
+            <div class="next-decay" id="decay-description"></div>
+        </div>
+        <div class="controls">
+            <button onclick="previousStep()">Föregående</button>
+            <button onclick="togglePause()" id="pause-button">Paus</button>
+            <button onclick="nextStep()">Nästa</button>
+            <label for="interval-time">Tidsintervall (sekunder):</label>
+            <input type="number" id="interval-time" value="5" min="1" onchange="updateInterval()">
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    const steps = [
+        { 
+            isotope: "Uran-238 (92, 238)", 
+            formation: "Utgångsämnet i sönderfallskedjan",
+            description: "Uran-238 är den vanligaste isotopen av uran. Detta ämne förekommer naturligt i jordskorpan och är utgångspunkten för en lång kedja av radioaktiva sönderfall.", 
+            history: "Uran-238 används även för att producera plutonium-239 genom neutronbestrålning, en process som har haft stor betydelse i kärnvapensammanhang.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Torium-234 (90, 234)", 
+            formation: "Detta ämne bildades när Uran-238 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Torium-234 är en radioaktiv isotop som snabbt omvandlas vidare. Det är en instabil mellanprodukt i sönderfallskedjan med kort halveringstid.", 
+            history: "Torium upptäcktes 1828 av Jöns Jacob Berzelius och namngavs efter den nordiska guden Tor.",
+            nextDecay: "NÄSTA STEG: Betasönderfall"
+        },
+        { 
+            isotope: "Protaktinium-234 (91, 234)", 
+            formation: "Detta ämne bildades när Torium-234 genomgick betasönderfall där en neutron omvandlades till en proton",
+            description: "Protaktinium-234 är en mycket kortlivad isotop som är radioaktiv och förekommer i små mängder.", 
+            history: "Protaktinium är ett av de sällsyntaste naturligt förekommande grundämnena och upptäcktes först 1913.",
+            nextDecay: "NÄSTA STEG: Betasönderfall"
+        },
+        { 
+            isotope: "Uran-234 (92, 234)", 
+            formation: "Detta ämne bildades när Protaktinium-234 genomgick betasönderfall där en neutron omvandlades till en proton",
+            description: "Uran-234 är en del av urans sönderfallskedja och utgör en mindre del av naturligt uran. Detta ämne bidrar till den totala radioaktiviteten hos naturligt uran.", 
+            history: "Uran-234 används ofta för datering av geologiska prover och för att studera havssediment.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Torium-230 (90, 230)", 
+            formation: "Detta ämne bildades när Uran-234 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Torium-230 är en mellanprodukt i sönderfallskedjan och har flera praktiska användningsområden.", 
+            history: "Ämnet används för datering av marina sediment och koraller, vilket har hjälpt forskare att förstå historiska klimatförändringar.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Radium-226 (88, 226)", 
+            formation: "Detta ämne bildades när Torium-230 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Radium-226 är känt för sin starka radioaktivitet. Det används idag i vissa medicinska behandlingar under strikt kontroll.", 
+            history: "Radium upptäcktes av Marie och Pierre Curie 1898. Det användes historiskt i självlysande färger på klockor och instrument fram till man förstod dess hälsorisker.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Radon-222 (86, 222)", 
+            formation: "Detta ämne bildades när Radium-226 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Radon-222 är en radioaktiv ädelgas som bildas naturligt.", 
+            history: "Radon är en stor hälsofara i dåligt ventilerade utrymmen och är en av de främsta orsakerna till lungcancer hos icke-rökare. Detta upptäcktes först när man började mäta strålning i bostäder.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Polonium-218 (84, 218)", 
+            formation: "Detta ämne bildades när Radon-222 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Polonium-218 är en kortlivad radioaktiv isotop som snabbt sönderfaller vidare.", 
+            history: "Polonium upptäcktes av Marie Curie och uppkallades efter hennes hemland Polen. Det var det första ämne hon upptäckte.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Bly-214 (82, 214)", 
+            formation: "Detta ämne bildades när Polonium-218 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Bly-214 är en radioaktiv isotop och en viktig mellanprodukt i sönderfallskedjan.", 
+            history: "Detta ämne bidrar till den totala strålningen från radon i inomhusmiljöer och har hjälpt forskare förstå hur radon sprids i byggnader.",
+            nextDecay: "NÄSTA STEG: Betasönderfall"
+        },
+        { 
+            isotope: "Vismut-214 (83, 214)", 
+            formation: "Detta ämne bildades när Bly-214 genomgick betasönderfall där en neutron omvandlades till en proton",
+            description: "Vismut-214 är en radioaktiv isotop med kort halveringstid.", 
+            history: "Vismut har använts i kosmetika sedan antiken, men dess radioaktiva isotoper upptäcktes först på 1900-talet.",
+            nextDecay: "NÄSTA STEG: Betasönderfall"
+        },
+        { 
+            isotope: "Polonium-214 (84, 214)", 
+            formation: "Detta ämne bildades när Vismut-214 genomgick betasönderfall där en neutron omvandlades till en proton",
+            description: "Polonium-214 är en mycket kortlivad och starkt radioaktiv isotop med extremt kort halveringstid.", 
+            history: "På grund av sin höga radioaktivitet har polonium historiskt använts i olika tekniska tillämpningar, bland annat som antistatiskt medel i industrin.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Bly-210 (82, 210)", 
+            formation: "Detta ämne bildades när Polonium-214 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Bly-210 har en halveringstid på cirka 22 år och används för datering av sediment och is.", 
+            history: "Ämnet är en viktig indikator vid miljöövervakning och har hjälpt forskare kartlägga historiska föroreningar.",
+            nextDecay: "NÄSTA STEG: Betasönderfall"
+        },
+        { 
+            isotope: "Vismut-210 (83, 210)", 
+            formation: "Detta ämne bildades när Bly-210 genomgick betasönderfall där en neutron omvandlades till en proton",
+            description: "Vismut-210 är en kortlivad radioaktiv isotop som är en del av den naturliga sönderfallskedjan.", 
+            history: "Studier av denna isotop har bidragit till vår förståelse av radioaktivt sönderfall och naturlig bakgrundsstrålning.",
+            nextDecay: "NÄSTA STEG: Betasönderfall"
+        },
+        { 
+            isotope: "Polonium-210 (84, 210)", 
+            formation: "Detta ämne bildades när Vismut-210 genomgick betasönderfall där en neutron omvandlades till en proton",
+            description: "Polonium-210 är ett av de mest radioaktiva naturligt förekommande ämnena.", 
+            history: "Detta ämne blev ökänt 2006 när det användes för att förgifta Alexander Litvinenko i London, vilket ledde till ökad medvetenhet om radioaktiva ämnens farlighet.",
+            nextDecay: "NÄSTA STEG: Alfasönderfall"
+        },
+        { 
+            isotope: "Bly-206 (82, 206) - Stabil", 
+            formation: "Detta ämne bildades när Polonium-210 genomgick alfasönderfall och tappade två protoner och två neutroner",
+            description: "Bly-206 är den stabila slutprodukten i urans sönderfallskedja. Detta ämne är inte radioaktivt.", 
+            history: "Bly har använts av människan i över 6000 år och den stabila isotopen Bly-206 har hjälpt forskare förstå jordens ålder och utveckling.",
+            nextDecay: "SLUTPRODUKT - Stabil isotop"
+        }
+    ];
+
+    let currentIndex = 0;
+    let interval = null;
+    let paused = false;
+    let intervalTime = 5000;
+
+    const sideChain = document.getElementById('side-chain');
+    const mainIsotope = document.getElementById('main-isotope');
+    const formation = document.getElementById('formation');
+    const extraInfo = document.getElementById('extra-info');
+    const historyInfo = document.getElementById('history-info');
+    const decayDescription = document.getElementById('decay-description');
+
+    function updateMainStep(index) {
+        const step = steps[index];
+        mainIsotope.textContent = step.isotope;
+        formation.textContent = step.formation;
+        extraInfo.textContent = step.description;
+        historyInfo.textContent = step.history;
+        decayDescription.textContent = step.nextDecay;
+        updateSideChain(index);
+    }
+
+    function updateSideChain(index) {
+        sideChain.innerHTML = '';
+        for (let i = 0; i <= index; i++) {
+            const sideStep = document.createElement('div');
+            sideStep.className = 'side-step';
+            sideStep.textContent = steps[i].isotope;
+            sideChain.appendChild(sideStep);
+        }
+    }
+
+    function nextStep() {
+        if (currentIndex < steps.length - 1) {
+            currentIndex++;
+            updateMainStep(currentIndex);
+        } else {
+            clearInterval(interval);
+        }
+    }
+
+    function previousStep() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateMainStep(currentIndex);
+        }
+    }
+
+    function togglePause() {
+        const pauseButton = document.getElementById('pause-button');
+        if (paused) {
+            interval = setInterval(nextStep, intervalTime);
+            pauseButton.textContent = 'Paus';
+        } else {
+            clearInterval(interval);
+            pauseButton.textContent = 'Fortsätt';
+        }
+        paused = !paused;
+    }
+
+    function updateInterval() {
+        const newTime = document.getElementById('interval-time').value;
+        intervalTime = newTime * 1000;
+        if (!paused) {
+            clearInterval(interval);
+            interval = setInterval(nextStep, intervalTime);
+        }
+    }
+
+    // Initialisera presentationen
+    updateMainStep(currentIndex);
+    interval = setInterval(nextStep, intervalTime);
+</script>
