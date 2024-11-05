@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Repetitionsquiz 1 | atom- och kärnfysik</title>
+    <style>
+        /* Grundläggande CSS för att göra quizet visuellt tilltalande */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        #quiz-container {
+            width: 60%;
+            margin: auto;
+            background-color: white;
+            padding: 2em;
+            margin-top: 2%;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        #question {
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        .btn {
+            background-color: #76c7c0;
+            border: none;
+            border-radius: 5px;
+            margin: 0.5em 0;
+            padding: 1em;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .btn:hover {
+            background-color: #68b3ac;
+        }
+
+        #next-btn {
+            margin-top: 1em;
+            padding: 0.5em 1em;
+            font-size: 1em;
+            display: none;
+        }
+
+        #explanation {
+            margin-top: 1em;
+            background-color: #e7f5f4;
+            padding: 1em;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .correct {
+            background-color: #76c7c0;
+        }
+
+        .incorrect {
+            background-color: #f66;
+        }
+
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 1em;
+            display: flex;
+        }
+
+        .progress-segment {
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        #result {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 1em;
+            background-color: #f0f8ff;
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+        #detailed-result {
+            margin-top: 2em;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Repetitionsquiz 1 | atom- och kärnfysik</h1>
+    <div id="progress-bar"></div>
+    <div id="question-container">
+        <div id="question"></div>
+        <div id="answer-buttons"></div>
+        <button id="next-btn">Nästa fråga</button>
+        <div id="explanation"></div>
+        <div id="result"></div>
+        <div id="detailed-result"></div>
+    </div>
+</div>
+
+<script>
+    // Array med alla frågor
+    const questions = [
+        {
+            question: "Vilket påstående beskriver bäst isotoper?",
+            answers: [
+                { text: "Atomer med samma antal protoner men olika antal neutroner", correct: true },
+                { text: "Atomer med olika antal protoner men samma antal neutroner", correct: false },
+                { text: "Atomer med samma antal protoner och neutroner", correct: false },
+                { text: "Atomer utan protoner eller neutroner i kärnan", correct: false }
+            ],
+            explanation: "Isotoper är varianter av ett grundämne med samma antal protoner men olika antal neutroner, vilket ger dem olika massor."
+        },
+        {
+            question: "Vad sker när en elektron exciteras?",
+            answers: [
+                { text: "Den hoppar upp och avger en foton när den återgår", correct: true },
+                { text: "Den förlorar laddning och stannar kvar i sitt skal", correct: false },
+                { text: "Den lämnar kärnan och blir en ny partikel", correct: false },
+                { text: "Den omvandlas till en neutron i kärnan", correct: false }
+            ],
+            explanation: "Elektronen hoppar till en högre energinivå och avger en foton när den återgår."
+        },
+        {
+            question: "Sant eller falskt: Stark kärnkraft håller ihop protonerna och neutronerna i kärnan.",
+            answers: [
+                { text: "Sant", correct: true },
+                { text: "Falskt", correct: false }
+            ],
+            explanation: "Den starka kärnkraften binder protonerna och neutronerna i kärnan och övervinner deras repulsion."
+        },
+        {
+            question: "Vad visade Rutherfords guldfolie-experiment?",
+            answers: [
+                { text: "Atomen har en tät, positiv kärna", correct: true },
+                { text: "Elektroner är inbäddade i en positiv massa", correct: false },
+                { text: "Kärnan är negativt laddad", correct: false },
+                { text: "Protoner och elektroner är jämnt fördelade", correct: false }
+            ],
+            explanation: "Experimentet visade att atomen har en liten, tät och positivt laddad kärna."
+        },
+        {
+            question: "Sant eller falskt: En obalans mellan protoner och neutroner gör isotopen instabil.",
+            answers: [
+                { text: "Sant", correct: true },
+                { text: "Falskt", correct: false }
+            ],
+            explanation: "En obalans mellan protoner och neutroner kan göra isotopen instabil, vilket leder till radioaktivt sönderfall."
+        },
+        {
+            question: "Vad avges vid alfastrålning?",
+            answers: [
+                { text: "En heliumkärna med två protoner och två neutroner", correct: true },
+                { text: "En elektron och en proton", correct: false },
+                { text: "En neutron och en elektron", correct: false },
+                { text: "En positivt laddad elektron", correct: false }
+            ],
+            explanation: "Vid alfastrålning avger en instabil kärna en alfapartikel, som är en heliumkärna med två protoner och två neutroner."
+        },
+        {
+            question: "Vad innebär halveringstid?",
+            answers: [
+                { text: "Tiden det tar för hälften av kärnorna att sönderfalla", correct: true },
+                { text: "Tiden det tar för alla kärnor att sönderfalla helt", correct: false },
+                { text: "Tiden det tar för kärnorna att fördubbla sin mängd", correct: false },
+                { text: "Tiden det tar för en neutron att omvandlas till en proton", correct: false }
+            ],
+            explanation: "Halveringstid är den tid det tar för hälften av de radioaktiva kärnorna i ett ämne att sönderfalla."
+        },
+        {
+            question: "Sant eller falskt: Kol-14 kan användas för att datera material som är flera miljoner år gamla.",
+            answers: [
+                { text: "Sant", correct: false },
+                { text: "Falskt", correct: true }
+            ],
+            explanation: "Kol-14-datering fungerar bäst för föremål som är upp till cirka 50 000 år gamla."
+        },
+        {
+            question: "Varför minskar kol-14 i en organism efter döden?",
+            answers: [
+                { text: "Upptaget av kol-14 upphör och det sönderfaller gradvis", correct: true },
+                { text: "Kol-14 omvandlas direkt till kol-12 vid döden", correct: false },
+                { text: "Kol-14 ökar eftersom det inte längre används", correct: false },
+                { text: "Kol-14 förblir konstant efter döden", correct: false }
+            ],
+            explanation: "Efter döden slutar organismen att ta upp kol-14, som sedan sönderfaller utan att ersättas."
+        },
+        {
+            question: "Vad är en sönderfallskedja i samband med radioaktivitet?",
+            answers: [
+                { text: "En serie sönderfall tills kärnan blir stabil", correct: true },
+                { text: "Processen där kärnan fördubblar sin massa", correct: false },
+                { text: "Kemiska reaktioner som förändrar kärnans sammansättning", correct: false },
+                { text: "Omvandling till en isotop av samma grundämne", correct: false }
+            ],
+            explanation: "En sönderfallskedja är en serie radioaktiva sönderfall där kärnan genomgår flera omvandlingar tills den blir stabil."
+        },
+        {
+            question: "Vad händer med atomnumret vid betasönderfall?",
+            answers: [
+                { text: "Det ökar med ett medan masstalet förblir oförändrat", correct: true },
+                { text: "Det minskar med ett och masstalet minskar med två", correct: false },
+                { text: "Både atomnummer och masstal ökar med två", correct: false },
+                { text: "Atomnummer och masstal förblir oförändrade", correct: false }
+            ],
+            explanation: "Vid betasönderfall omvandlas en neutron till en proton, vilket ökar atomnumret med ett."
+        },
+        {
+            question: "Sant eller falskt: Gammastrålning påverkar atomnumret och masstalet hos en atomkärna.",
+            answers: [
+                { text: "Sant", correct: false },
+                { text: "Falskt", correct: true }
+            ],
+            explanation: "Gammastrålning avges som överskottsenergi från kärnan men ändrar inte atomnumret eller masstalet."
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = [];  // Array för att lagra användarens svar och korrekthet
+
+    const questionElement = document.getElementById('question');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const explanationElement = document.getElementById('explanation');
+    const progressBar = document.getElementById('progress-bar');
+    const resultElement = document.getElementById('result');
+    const detailedResultElement = document.getElementById('detailed-result');
+
+    startQuiz();
+
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        userAnswers = [];
+        nextButton.innerText = 'Nästa fråga';
+        nextButton.style.display = 'none';
+        resultElement.style.display = 'none';
+        detailedResultElement.style.display = 'none';
+        detailedResultElement.innerHTML = '';  // Återställer detaljerad resultatvisning
+        progressBar.innerHTML = '';  // Återställer progressbaren
+        showQuestion();
+    }
+
+    function showQuestion() {
+        resetState();
+        const currentQuestion = questions[currentQuestionIndex];
+        questionElement.innerText = currentQuestion.question;
+
+        const shuffledAnswers = currentQuestion.answers.sort(() => Math.random() - 0.5);
+
+        shuffledAnswers.forEach(answer => {
+            const button = document.createElement('button');
+            button.innerText = answer.text;
+            button.classList.add('btn');
+            if (answer.correct) {
+                button.dataset.correct = answer.correct;
+            }
+            button.addEventListener('click', selectAnswer);
+            answerButtonsElement.appendChild(button);
+        });
+    }
+
+    function resetState() {
+        nextButton.style.display = 'none';
+        explanationElement.style.display = 'none';
+        while (answerButtonsElement.firstChild) {
+            answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+        }
+    }
+
+    function selectAnswer(e) {
+        const selectedButton = e.target;
+        const correct = selectedButton.dataset.correct === 'true';
+
+        if (correct) {
+            score++;
+        }
+
+        userAnswers.push({ question: questions[currentQuestionIndex].question, correct: correct });
+
+        Array.from(answerButtonsElement.children).forEach(button => {
+            setStatusClass(button, button.dataset.correct === 'true');
+            button.disabled = true;
+        });
+
+        explanationElement.innerText = correct ? "Rätt svar! " + questions[currentQuestionIndex].explanation : "Fel svar. " + questions[currentQuestionIndex].explanation;
+        explanationElement.style.display = 'block';
+
+        updateProgressBar(correct);
+
+        nextButton.style.display = questions.length > currentQuestionIndex + 1 ? 'block' : 'Visa resultat';
+    }
+
+    function setStatusClass(element, correct) {
+        element.classList.add(correct ? 'correct' : 'incorrect');
+    }
+
+    nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    });
+
+    function showResult() {
+        resetState();
+        const percentage = (score / questions.length) * 100;
+        let feedback = '';
+        if (percentage === 100) {
+            feedback = "Fantastiskt! Du fick alla rätt!";
+        } else if (percentage >= 70) {
+            feedback = `Bra jobbat! Du fick ${score} av ${questions.length} poäng!`;
+        } else if (percentage >= 50) {
+            feedback = `Helt okej, men det finns utrymme för förbättring. Du fick ${score} av ${questions.length} poäng.`;
+        } else {
+            feedback = `Fortsätt öva! Du fick ${score} av ${questions.length} poäng. Ge inte upp!`;
+        }
+
+        resultElement.innerText = feedback;
+        resultElement.style.display = 'block';
+
+        const table = document.createElement('table');
+        table.innerHTML = `<tr><th>Fråga</th><th>Resultat</th></tr>`;
+        userAnswers.forEach((answer, index) => {
+            const row = table.insertRow();
+            row.insertCell(0).innerText = `Fråga ${index + 1}: ${answer.question}`;
+            row.insertCell(1).innerText = answer.correct ? "Rätt" : "Fel";
+        });
+        detailedResultElement.appendChild(table);
+        detailedResultElement.style.display = 'block';
+
+        nextButton.innerText = 'Starta om';
+        nextButton.style.display = 'block';
+        nextButton.removeEventListener('click', startQuiz);
+        nextButton.addEventListener('click', startQuiz);
+    }
+
+    function updateProgressBar(correct) {
+        const segment = document.createElement('div');
+        segment.classList.add('progress-segment');
+        segment.style.width = `${100 / questions.length}%`;
+        segment.style.backgroundColor = correct ? '#76c7c0' : '#f66';
+        progressBar.appendChild(segment);
+    }
+
+    function resetProgressBar() {
+        progressBar.innerHTML = ''; // Rensar progressbaren vid omstart
+    }
+</script>
+</body>
+</html>
