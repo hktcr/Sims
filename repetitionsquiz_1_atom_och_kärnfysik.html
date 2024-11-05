@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <title>Repetitionsquiz 1 | atom- och kärnfysik</title>
+    <title>Repetitionsquiz 1 | Atom- och Kärnfysik</title>
     <style>
         /* Grundläggande CSS för att göra quizet visuellt tilltalande */
         body {
@@ -55,6 +55,7 @@
             padding: 1em;
             border-radius: 5px;
             display: none;
+            font-size: 1em;
         }
 
         .correct {
@@ -112,7 +113,7 @@
 <body>
 
 <div id="quiz-container">
-    <h1>Repetitionsquiz 1 | atom- och kärnfysik</h1>
+    <h1>Repetitionsquiz 1 | Atom- och Kärnfysik</h1>
     <div id="progress-bar"></div>
     <div id="question-container">
         <div id="question"></div>
@@ -125,7 +126,7 @@
 </div>
 
 <script>
-    // Array med alla frågor
+    // Array med alla frågor, med utförliga förklaringar
     const questions = [
         {
             question: "Vilket påstående beskriver bäst isotoper?",
@@ -135,7 +136,7 @@
                 { text: "Atomer med samma antal protoner och neutroner", correct: false },
                 { text: "Atomer utan protoner eller neutroner i kärnan", correct: false }
             ],
-            explanation: "Isotoper är varianter av ett grundämne med samma antal protoner men olika antal neutroner, vilket ger dem olika massor."
+            explanation: "Isotoper är olika versioner av samma grundämne där antalet neutroner varierar, medan antalet protoner (som avgör vilket grundämne det är) förblir detsamma. Till exempel har kol-12 och kol-14 båda 6 protoner men olika antal neutroner, vilket ger dem olika massa och egenskaper."
         },
         {
             question: "Vad sker när en elektron exciteras?",
@@ -145,7 +146,7 @@
                 { text: "Den lämnar kärnan och blir en ny partikel", correct: false },
                 { text: "Den omvandlas till en neutron i kärnan", correct: false }
             ],
-            explanation: "Elektronen hoppar till en högre energinivå och avger en foton när den återgår."
+            explanation: "När en elektron exciteras innebär det att den får energi och rör sig till ett högre energiskal längre bort från kärnan. När elektronen sedan återgår till sitt ursprungliga skal, avger den energin som den tog upp i form av en ljuspartikel, en foton."
         },
         {
             question: "Sant eller falskt: Stark kärnkraft håller ihop protonerna och neutronerna i kärnan.",
@@ -153,7 +154,7 @@
                 { text: "Sant", correct: true },
                 { text: "Falskt", correct: false }
             ],
-            explanation: "Den starka kärnkraften binder protonerna och neutronerna i kärnan och övervinner deras repulsion."
+            explanation: "Detta är sant. Stark kärnkraft är en fundamental kraft i naturen som håller samman protoner och neutroner trots deras naturliga repulsion (som orsakas av att protonerna är positivt laddade och normalt skulle repellera varandra)."
         },
         {
             question: "Vad visade Rutherfords guldfolie-experiment?",
@@ -163,7 +164,7 @@
                 { text: "Kärnan är negativt laddad", correct: false },
                 { text: "Protoner och elektroner är jämnt fördelade", correct: false }
             ],
-            explanation: "Experimentet visade att atomen har en liten, tät och positivt laddad kärna."
+            explanation: "Före Rutherfords experiment trodde forskare att atomen var som en 'pudding' med positiv laddning och negativa elektroner utspridda som små prickar. Men när Rutherford sköt små partiklar genom ett tunt lager guld, såg han att de flesta gick rakt igenom medan några studsade tillbaka.Att några partiklar studsade tillbaka visade att det fanns något litet men väldigt massivt och positivt i mitten av atomen som kunde stöta bort partiklarna. Därför drog han slutsatsen att atomen har en tät, positiv kärna i mitten, medan resten av atomen mest är tomrum. Detta förändrade helt vår bild av hur atomer är uppbyggda."
         },
         {
             question: "Sant eller falskt: En obalans mellan protoner och neutroner gör isotopen instabil.",
@@ -171,7 +172,7 @@
                 { text: "Sant", correct: true },
                 { text: "Falskt", correct: false }
             ],
-            explanation: "En obalans mellan protoner och neutroner kan göra isotopen instabil, vilket leder till radioaktivt sönderfall."
+            explanation: "Sant. Om det är för många eller för få neutroner i förhållande till protonerna, kan kärnan bli instabil och utsättas för radioaktivt sönderfall, vilket leder till att den avger strålning och omvandlas till en mer stabil isotop eller annat ämne."
         },
         {
             question: "Vad avges vid alfastrålning?",
@@ -181,7 +182,7 @@
                 { text: "En neutron och en elektron", correct: false },
                 { text: "En positivt laddad elektron", correct: false }
             ],
-            explanation: "Vid alfastrålning avger en instabil kärna en alfapartikel, som är en heliumkärna med två protoner och två neutroner."
+            explanation: "Vid alfastrålning avger en instabil kärna en alfapartikel, vilket är samma sak som en heliumkärna bestående av två protoner och två neutroner. Detta är en typ av joniserande strålning som kan stoppas av till exempel papper."
         },
         {
             question: "Vad innebär halveringstid?",
@@ -191,7 +192,7 @@
                 { text: "Tiden det tar för kärnorna att fördubbla sin mängd", correct: false },
                 { text: "Tiden det tar för en neutron att omvandlas till en proton", correct: false }
             ],
-            explanation: "Halveringstid är den tid det tar för hälften av de radioaktiva kärnorna i ett ämne att sönderfalla."
+            explanation: "Halveringstid är ett mått på den tid det tar för hälften av en viss mängd radioaktiva atomer att sönderfalla. Varje radioaktivt ämne har sin egen specifika halveringstid."
         },
         {
             question: "Sant eller falskt: Kol-14 kan användas för att datera material som är flera miljoner år gamla.",
@@ -199,7 +200,7 @@
                 { text: "Sant", correct: false },
                 { text: "Falskt", correct: true }
             ],
-            explanation: "Kol-14-datering fungerar bäst för föremål som är upp till cirka 50 000 år gamla."
+            explanation: "Falskt. Kol-14-datering används främst för att datera föremål upp till cirka 50 000 år. Efter det blir mängden kol-14 för liten för att kunna mätas på ett pålitligt sätt."
         },
         {
             question: "Varför minskar kol-14 i en organism efter döden?",
@@ -209,7 +210,7 @@
                 { text: "Kol-14 ökar eftersom det inte längre används", correct: false },
                 { text: "Kol-14 förblir konstant efter döden", correct: false }
             ],
-            explanation: "Efter döden slutar organismen att ta upp kol-14, som sedan sönderfaller utan att ersättas."
+            explanation: "Efter döden slutar en organism att ta upp kol-14 från atmosfären. Kol-14 som redan finns i kroppen börjar då sönderfalla, vilket gör att mängden minskar över tid."
         },
         {
             question: "Vad är en sönderfallskedja i samband med radioaktivitet?",
@@ -219,7 +220,7 @@
                 { text: "Kemiska reaktioner som förändrar kärnans sammansättning", correct: false },
                 { text: "Omvandling till en isotop av samma grundämne", correct: false }
             ],
-            explanation: "En sönderfallskedja är en serie radioaktiva sönderfall där kärnan genomgår flera omvandlingar tills den blir stabil."
+            explanation: "En sönderfallskedja är en sekvens av radioaktiva sönderfall där en instabil kärna omvandlas flera gånger tills den når ett stabilt tillstånd."
         },
         {
             question: "Vad händer med atomnumret vid betasönderfall?",
@@ -229,7 +230,7 @@
                 { text: "Både atomnummer och masstal ökar med två", correct: false },
                 { text: "Atomnummer och masstal förblir oförändrade", correct: false }
             ],
-            explanation: "Vid betasönderfall omvandlas en neutron till en proton, vilket ökar atomnumret med ett."
+            explanation: "Vid betasönderfall omvandlas en neutron till en proton. Detta ökar atomnumret med ett, medan masstalet förblir detsamma eftersom antalet partiklar i kärnan inte ändras."
         },
         {
             question: "Sant eller falskt: Gammastrålning påverkar atomnumret och masstalet hos en atomkärna.",
@@ -237,7 +238,7 @@
                 { text: "Sant", correct: false },
                 { text: "Falskt", correct: true }
             ],
-            explanation: "Gammastrålning avges som överskottsenergi från kärnan men ändrar inte atomnumret eller masstalet."
+            explanation: "Falskt. Gammastrålning är en form av elektromagnetisk strålning som avges för att göra kärnan mer stabil. Den påverkar dock inte atomnumret eller masstalet."
         }
     ];
 
