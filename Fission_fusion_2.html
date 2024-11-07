@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .simulation {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            background-color: #001830;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .legend {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 1s ease;
+        }
+        .uranium {
+            width: 60px;
+            height: 60px;
+            background-color: #ff4444;
+        }
+        .neutron {
+            width: 15px;
+            height: 15px;
+            background-color: #44ff44;
+        }
+        .krypton {
+            width: 30px;
+            height: 30px;
+            background-color: #ff8844;
+        }
+        .barium {
+            width: 30px;
+            height: 30px;
+            background-color: #ff7733;
+        }
+        .hydrogen {
+            width: 25px;
+            height: 25px;
+            background-color: #4488ff;
+        }
+        .helium {
+            width: 35px;
+            height: 35px;
+            background-color: #ff44ff;
+        }
+        .energy {
+            width: 8px;
+            height: 8px;
+            background-color: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .description {
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+        .step-description {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kärnreaktioner: fission och fusion</h1>
+        
+        <p class="description">
+            Kärnfission och kärnfusion är två olika typer av kärnreaktioner som frigör enorma mängder energi. 
+            Fission innebär att en tung atomkärna splittras i mindre delar, medan fusion är processen där 
+            lätta atomkärnor slås samman för att bilda en tyngre kärna.
+        </p>
+        
+        <div class="container">
+            <h2>Kärnfission</h2>
+            <p class="description">
+                Kärnfission är processen där en tung atomkärna, som uran-235, klyvs i två mindre kärnor när den träffas av en neutron. 
+                Den neutron som initierar processen absorberas av uran-235 och blir en del av en instabil uran-236-kärna som 
+                sedan klyvs nästan omedelbart. Detta frigör energi och 2-3 nya neutroner som kan starta en kedjereaktion. 
+                Exempel på klyvningsprodukter kan vara:
+                <ul>
+                    <li>Krypton (Kr) - en mindre ädelgaskärna</li>
+                    <li>Barium (Ba) - en tyngre alkalisk metallkärna</li>
+                </ul>
+                Samtidigt frigörs en stor mängd energi.
+            </p>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff4444;"></div>
+                    Uran-235
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #44ff44;"></div>
+                    Neutron
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff8844;"></div>
+                    Krypton
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff7733;"></div>
+                    Barium
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ffff00;"></div>
+                    Energi
+                </div>
+            </div>
+            <div id="fissionSim" class="simulation">
+                <div class="particle uranium" style="left: 45%; top: 40%;">U-235</div>
+            </div>
+            <div class="step-description" id="fissionStep">
+                Klicka på knappen för att starta fissionssimuleringen
+            </div>
+            <button onclick="startFission()">Starta Fission</button>
+        </div>
+
+        <div class="container">
+            <h2>Kärnfusion</h2>
+            <p class="description">
+                Kärnfusion är processen där lätta atomkärnor, såsom väte eller deuterium, smälter samman för att bilda 
+                en tyngre kärna, exempelvis helium. Detta är den process som driver solen och stjärnorna, och den 
+                frigör enorma mängder energi. Fusion kräver extrema temperaturer och tryck för att övervinna de 
+                repellerande krafterna mellan de positiva kärnorna.
+            </p>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #4488ff;"></div>
+                    Väte
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ff44ff;"></div>
+                    Helium
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ffff00;"></div>
+                    Energi
+                </div>
+            </div>
+            <div id="fusionSim" class="simulation">
+                <div class="particle hydrogen" style="left: 25%; top: 45%;">H</div>
+                <div class="particle hydrogen" style="left: 65%; top: 45%;">H</div>
+            </div>
+            <div class="step-description" id="fusionStep">
+                Klicka på knappen för att starta fusionssimuleringen
+            </div>
+            <button onclick="startFusion()">Starta Fusion</button>
+        </div>
+    </div>
+
+    <script>
+        function updateStepDescription(elementId, text) {
+            document.getElementById(elementId).textContent = text;
+        }
+
+        function startFission() {
+            const sim = document.getElementById('fissionSim');
+            const uranium = sim.querySelector('.uranium');
+            
+            // Rensa tidigare animationer
+            Array.from(sim.children).forEach(child => {
+                if (!child.classList.contains('uranium')) {
+                    sim.removeChild(child);
+                }
+            });
+            
+            updateStepDescription('fissionStep', 'Steg 1: En neutron närmar sig urankärnan');
+            
+            // Skapa och animera neutron
+            const neutron = document.createElement('div');
+            neutron.className = 'particle neutron';
+            neutron.style.left = '10%';
+            neutron.style.top = '45%';
+            sim.appendChild(neutron);
+
+            setTimeout(() => {
+                neutron.style.left = '43%';
+                updateStepDescription('fissionStep', 'Steg 2: Neutronen absorberas av uran-235 och bildar en instabil uran-236-kärna');
+            }, 1000);
+
+            // Fissionering
+            setTimeout(() => {
+                updateStepDescription('fissionStep', 'Steg 3: Urankärnan klyvs i Krypton och Barium, samtidigt frigörs nya neutroner och energi');
+                uranium.style.opacity = '0';
+                neutron.style.opacity = '0'; // Neutronen "absorberas"
+
+                // Skapa Krypton
+                const krypton = document.createElement('div');
+                krypton.className = 'particle krypton';
+                krypton.textContent = 'Kr';
+                krypton.style.left = '45%';
+                krypton.style.top = '40%';
+                sim.appendChild(krypton);
+                
+                // Skapa Barium
+                const barium = document.createElement('div');
+                barium.className = 'particle barium';
+                barium.textContent = 'Ba';
+                barium.style.left = '45%';
+                barium.style.top = '40%';
+                sim.appendChild(barium);
+                
+                setTimeout(() => {
+                    krypton.style.left = '20%';
+                    krypton.style.top = '30%';
+                    barium.style.left = '70%';
+                    barium.style.top = '50%';
+                }, 50);
+
+                // Skapa nya neutroner
+                for(let i = 0; i < 3; i++) {
+                    const newNeutron = document.createElement('div');
+                    newNeutron.className = 'particle neutron';
+                    newNeutron.style.left = '45%';
+                    newNeutron.style.top = '40%';
+                    sim.appendChild(newNeutron);
+                    
+                    setTimeout(() => {
+                        newNeutron.style.left = (20 + Math.random() * 60) + '%';
+                        newNeutron.style.top = (20 + Math.random() * 60) + '%';
+                    }, 50);
+                }
+
+                // Skapa energipartiklar
+                for(let i = 0; i < 6; i++) {
+                    const energy = document.createElement('div');
+                    energy.className = 'particle energy';
+                    energy.style.left = '45%';
+                    energy.style.top = '40%';
+                    sim.appendChild(energy);
+                    
+                    setTimeout(() => {
+                        energy.style.left = (20 + Math.random() * 60) + '%';
+                        energy.style.top = (20 + Math.random() * 60) + '%';
+                    }, 50);
+                }
+            }, 2000);
+
+            // Återställ efter animation
+            setTimeout(() => {
+                updateStepDescription('fissionStep', 'Klicka på knappen för att starta fissionssimuleringen igen');
+                while(sim.firstChild) {
+                    sim.removeChild(sim.firstChild);
+                }
+                uranium.style.opacity = '1';
+                sim.appendChild(uranium);
+            }, 5000);
+        }
+
+        function startFusion() {
+            const sim = document.getElementById('fusionSim');
+            const hydrogens = sim.querySelectorAll('.hydrogen');
+            
+            // Rensa tidigare animationer
+            Array.from(sim.children).forEach(child => {
+                if (!child.classList.contains('hydrogen')) {
+                    sim.removeChild(child);
+                }
+            });
+            
+            updateStepDescription('fusionStep', 'Steg 1: Vätekärnorna närmar sig varandra');
+
+            // Flytta vätekärnor mot mitten
+            setTimeout(() => {
+                hydrogens[0].style.left = '45%';
+                hydrogens[1].style.left = '45%';
+                updateStepDescription('fusionStep', 'Steg 2: Vätekärnorna slås samman');
+            }, 1000);
+
+            // Fusion
+            setTimeout(() => {
+                updateStepDescription('fusionStep', 'Steg 3: Heliumkärna bildas och energi frigörs');
+                hydrogens.forEach(h => h.style.opacity = '0');
+
+                // Skapa heliumkärna
+                const helium = document.createElement('div');
+                helium.className = 'particle helium';
+                helium.textContent = 'He';
+                helium.style.left = '45%';
+                helium.style.top = '45%';
+                sim.appendChild(helium);
+
+                // Skapa energipartiklar
+                for(let i = 0; i < 8; i++) {
+                    const energy = document.createElement('div');
+                    energy.className = 'particle energy';
+                    energy.style.left = '45%';
+                    energy.style.top = '45%';
+                    sim.appendChild(energy);
+                    
+                    setTimeout(() => {
+                        energy.style.left = (20 + Math.random() * 60) + '%';
+                        energy.style.top = (20 + Math.random() * 60) + '%';
+                    }, 50);
+                }
+            }, 2000);
+
+            // Återställ efter animation
+            setTimeout(() => {
+                updateStepDescription('fusionStep', 'Klicka på knappen för att starta fusionssimuleringen igen');
+                while(sim.firstChild) {
+                    sim.removeChild(sim.firstChild);
+                }
+                hydrogens.forEach(h => {
+                    h.style.opacity = '1';
+                    sim.appendChild(h);
+                });
+                hydrogens[0].style.left = '25%';
+                hydrogens[1].style.left = '65%';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
