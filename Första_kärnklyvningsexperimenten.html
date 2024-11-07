@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Rutherfords Kärnreaktion med Fluorisotop</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #222;
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            color: white;
+            height: 100vh;
+        }
+        .top-bar {
+            background-color: #444;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid #555;
+        }
+        .top-bar h2 {
+            margin: 0;
+            color: #fff;
+        }
+        .top-bar p {
+            margin: 5px 0 0 0;
+            color: #fff;
+        }
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 300px;
+            padding: 20px;
+            background-color: #333;
+            border-right: 2px solid #444;
+            overflow-y: auto;
+        }
+        .sidebar h2, .sidebar h3 {
+            color: #fff;
+            margin-top: 0;
+        }
+        .event-sidebar {
+            width: 300px;
+            padding: 20px;
+            background-color: #333;
+            border-left: 2px solid #444;
+            overflow-y: auto;
+        }
+        .event-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        .event-info.highlight {
+            border-color: #FFD700;
+            background-color: #4a4a00;
+        }
+        canvas {
+            background-color: #000;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #fff;
+            flex-grow: 1;
+        }
+        .particle-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .particle-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        .helium-structure {
+            display: flex;
+            flex-wrap: wrap;
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            gap: 2px;
+        }
+        .helium-particle {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top bar -->
+    <div class="top-bar">
+        <h2>Så upptäcktes den första kärnreaktionen</h2>
+        <p>Klicka i det gröna området nedan för att skjuta en alfapartikel!</p>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <!-- Vänster sidopanel -->
+        <div class="sidebar">
+            <h2>Om kärnreaktionen</h2>
+            <p>Målet är att kollidera med kvävekärnor (N) och bilda en instabil fluorisotop (F), som snabbt sönderfaller till syre (O) och en proton (p).</p>
+            
+            <!-- Partikelbeskrivningar -->
+            <h3>Partiklar i simuleringen:</h3>
+            <div class="particle-info">
+                <div class="helium-structure">
+                    <div class="helium-particle" style="background-color: red;"></div>
+                    <div class="helium-particle" style="background-color: red;"></div>
+                    <div class="helium-particle" style="background-color: gray;"></div>
+                    <div class="helium-particle" style="background-color: gray;"></div>
+                </div>
+                <span>He (alfapartikel: 2p, 2n)</span>
+            </div>
+            <div class="particle-info">
+                <div class="particle-color" style="background-color: blue;"></div>
+                <span>N (Kväve)</span>
+            </div>
+            <div class="particle-info">
+                <div class="particle-color" style="background-color: purple;"></div>
+                <span>F (Instabil Fluorisotop)</span>
+            </div>
+            <div class="particle-info">
+                <div class="particle-color" style="background-color: green;"></div>
+                <span>O (Syre)</span>
+            </div>
+            <div class="particle-info">
+                <div class="particle-color" style="background-color: yellow;"></div>
+                <span>p (Proton)</span>
+            </div>
+            <p><strong>Vad är en proton?</strong></p>
+            <p>Proton: en positivt laddad partikel, motsvarar en vätekärna.</p>
+
+            <div class="history-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #555;">
+                <h3>Historisk bakgrund</h3>
+                <div class="history-carousel" style="min-height: 200px; position: relative;">
+                    <div class="history-card">
+                        <h4>Upptäckten</h4>
+                        <p>Under åren kring 1919 genomförde Ernest Rutherford och hans forskningsteam vid Manchester University en serie banbrytande experiment. Genom att studera kollisioner mellan alfapartiklar och kväveatomer observerade de något oväntat - spår av vätekärnor (protoner).</p>
+                    </div>
+                    <div class="history-card">
+                        <h4>Experimentet</h4>
+                        <p>Efter noggranna kontroller och upprepade experiment kunde teamet visa att detta var den första observerade artificiella kärnreaktionen, där en atomkärna omvandlades till en annan genom mänsklig påverkan. Denna upptäckt byggde på åratal av tidigare experiment och krävde utveckling av särskilt känslig detektionsutrustning.</p>
+                    </div>
+                    <div class="history-card">
+                        <h4>Betydelsen</h4>
+                        <p>Experimentet gav viktiga ledtrådar om atomkärnans uppbyggnad och blev startskottet för ett nytt forskningsfält: kärnfysiken. Det visade att atomkärnan inte var odelbar utan kunde påverkas och studeras genom kärnreaktioner.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .history-card {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 15px;
+                background: #333;
+                border-radius: 8px;
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+                border: 2px solid;
+            }
+            .history-card.active {
+                opacity: 1;
+            }
+            .history-card h4 {
+                margin-top: 0;
+                margin-bottom: 10px;
+                color: #fff;
+            }
+        </style>
+
+        <script>
+            let currentCard = 0;
+            const cards = document.querySelectorAll('.history-card');
+            const borderColors = ['#4CAF50', '#2196F3', '#FF9800'];
+
+            function showNextCard() {
+                cards.forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                cards[currentCard].style.borderColor = borderColors[currentCard];
+                cards[currentCard].classList.add('active');
+                
+                currentCard = (currentCard + 1) % cards.length;
+            }
+
+            // Visa första kortet direkt
+            showNextCard();
+            
+            // Rotera korten var 8:e sekund
+            setInterval(showNextCard, 8000);
+        </script>
+
+        <!-- Canvas för simulering -->
+        <canvas id="simulationCanvas" width="800" height="600"></canvas>
+
+        <!-- Högersidans sidopanel -->
+        <div class="event-sidebar" id="eventSidebar">
+            <h3>Aktuella händelser:</h3>
+        </div>
+    </div>
+
+    <!-- JavaScript-kod (oförändrad) -->
+    <script>
+        // Rest of the JavaScript code remains exactly the same as in your original version
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+        const eventSidebar = document.getElementById('eventSidebar');
+
+        let alphaParticles = [];
+        let nitrogenNuclei = [];
+        let fluorIsotopes = [];
+        let oxygenNuclei = [];
+        let protons = [];
+        const launchArea = { x: 0, y: canvas.height - 100, width: canvas.width, height: 100 };
+
+        function init() {
+            addEventMessage("Simuleringen är redo. Klicka i startområdet för att skjuta en alfapartikel.");
+            
+            for (let i = 0; i < 5; i++) {
+                nitrogenNuclei.push({
+                    x: Math.random() * (canvas.width - 200) + 100,
+                    y: Math.random() * (canvas.height - 300) + 50,
+                    radius: 20,
+                    color: 'blue',
+                    label: 'N',
+                });
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        function addEventMessage(message) {
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event-info highlight';
+            eventElement.innerHTML = `<p>${message}</p>`;
+            eventSidebar.appendChild(eventElement);
+
+            // Ta bort highlight efter 3 sekunder
+            setTimeout(() => {
+                eventElement.classList.remove('highlight');
+            }, 3000);
+
+            // Ta bort meddelandet efter 10 sekunder
+            setTimeout(() => {
+                if (eventElement.parentNode) {
+                    eventElement.style.opacity = '0';
+                    eventElement.style.transition = 'opacity 0.5s';
+                    setTimeout(() => eventSidebar.removeChild(eventElement), 500);
+                }
+            }, 10000);
+        }
+
+        function drawParticle(particle) {
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+            ctx.fillStyle = particle.color;
+            ctx.fill();
+            ctx.closePath();
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(particle.label, particle.x, particle.y + 5);
+        }
+
+        function drawHeliumParticle(particle) {
+            const offset = particle.radius / 2;
+            ctx.beginPath();
+            ctx.arc(particle.x - offset, particle.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
+
+            ctx.beginPath();
+            ctx.arc(particle.x + offset, particle.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.closePath();
+
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y - offset, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'gray';
+            ctx.fill();
+            ctx.closePath();
+
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y + offset, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'gray';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawLaunchArea() {
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
+            ctx.fillRect(launchArea.x, launchArea.y, launchArea.width, launchArea.height);
+            ctx.strokeStyle = 'green';
+            ctx.strokeRect(launchArea.x, launchArea.y, launchArea.width, launchArea.height);
+
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText("Startområde för att skjuta He-kärnor", canvas.width / 2, canvas.height - 70);
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawLaunchArea();
+            nitrogenNuclei.forEach(drawParticle);
+
+            alphaParticles.forEach((alpha, alphaIndex) => {
+                alpha.y -= alpha.speed;
+                drawHeliumParticle(alpha);
+
+                nitrogenNuclei.forEach((nucleus, nucleusIndex) => {
+                    let dx = alpha.x - nucleus.x;
+                    let dy = alpha.y - nucleus.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < alpha.radius + nucleus.radius) {
+                        fluorIsotopes.push({
+                            x: nucleus.x,
+                            y: nucleus.y,
+                            radius: 20,
+                            color: 'purple',
+                            label: 'F',
+                            decayTimer: 100,
+                        });
+
+                        nitrogenNuclei.splice(nucleusIndex, 1);
+                        alphaParticles.splice(alphaIndex, 1);
+                        addEventMessage("En alfapartikel har kolliderat med en kvävekärna och bildat en instabil fluorisotop (F-18).");
+                        addEventMessage("Fluorisotopen kommer att sönderfalla till syre-17 (O) och en proton (p).");
+                    }
+                });
+            });
+
+            fluorIsotopes.forEach((fluor, index) => {
+                drawParticle(fluor);
+                fluor.decayTimer--;
+
+                if (fluor.decayTimer <= 0) {
+                    oxygenNuclei.push({
+                        x: fluor.x,
+                        y: fluor.y,
+                        radius: 20,
+                        color: 'green',
+                        label: 'O',
+                    });
+
+                    protons.push({
+                        x: fluor.x + 30,
+                        y: fluor.y,
+                        radius: 10,
+                        color: 'yellow',
+                        label: 'p',
+                        speedX: Math.random() * 4 - 2,
+                        speedY: Math.random() * 4 - 2,
+                        life: 100,
+                    });
+
+                    fluorIsotopes.splice(index, 1);
+                    addEventMessage("Fluorisotopen har sönderfallit till en syreisotop (O-17) och en proton (p).");
+                    addEventMessage("Masstalets bevarande: He(4) + N(14) = F(18) = O(17) + p(1). Alla neutroner och protoner finns kvar!");
+                }
+            });
+
+            protons.forEach((proton, index) => {
+                proton.x += proton.speedX;
+                proton.y += proton.speedY;
+                proton.life--;
+                drawParticle(proton);
+
+                if (proton.life <= 0) {
+                    protons.splice(index, 1);
+                }
+            });
+
+            oxygenNuclei.forEach(drawParticle);
+            requestAnimationFrame(update);
+        }
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            if (clickY > launchArea.y) {
+                alphaParticles.push({
+                    x: clickX,
+                    y: canvas.height - 30,
+                    radius: 20,
+                    color: 'red',
+                    label: 'He',
+                    speed: 2,
+                });
+
+                addEventMessage("En alfapartikel har skjutits uppåt från startområdet.");
+            }
+        });
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth - 600;
+            canvas.height = window.innerHeight - 80; // Adjusted for top bar
+            launchArea.width = canvas.width;
+            launchArea.y = canvas.height - 100;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        init();
+    </script>
+</body>
+</html>
