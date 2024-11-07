@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kärnklyvningssimulering med styrstavar och informationspanel</title>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #111;
+            color: #fff;
+            padding: 5px 10px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            flex-wrap: wrap;
+        }
+        #topbar label, #topbar button {
+            margin-right: 15px;
+            font-size: 14px;
+        }
+        #topbar button {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #666;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #topbar button:hover {
+            background-color: #444;
+        }
+        #slider, #scramSlider {
+            width: 150px;
+            margin-right: 15px;
+        }
+        #sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        #sidebar h3 {
+            margin-top: 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        #sidebar p {
+            margin: 8px 0;
+            line-height: 1.5;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .neutron, .atom, .pulse, .controlRod {
+            position: absolute;
+            border-radius: 50%;
+            will-change: transform;
+            transform: translateZ(0);
+            pointer-events: none;
+        }
+        .neutron {
+            width: 5px;
+            height: 5px;
+            background-color: yellow;
+            box-shadow: 0 0 5px yellow;
+        }
+        .atom {
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+        }
+        .pulse {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 0, 0.5);
+            animation: pulse 0.5s ease-out forwards;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.3);
+            pointer-events: none;
+            z-index: 900;
+        }
+        .controlRod {
+            width: 50px;
+            height: 50px;
+            background-color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            opacity: 0.8;
+        }
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            to {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+        .hidden {
+            display: none !important;
+        }
+        #commentText {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.3);
+            transition: color 0.3s ease;
+            margin-top: 15px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+        .info-group {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="topbar">
+    <label for="slider">Partikeltäthet: <span id="densityValue">100</span></label>
+    <input type="range" id="slider" min="10" max="1000" value="100">
+    <button id="resetBtn">Återställ</button>
+    <button id="stopBtn">Stopp</button>
+    <button id="addNeutronBtn">Placera Neutroner</button>
+    <button id="addRodBtn">Placera Styrstavar</button>
+    <button id="scramBtn">SCRAM</button>
+    <label for="scramSlider">SCRAM Täthet: <span id="scramDensityValue">5</span></label>
+    <input type="range" id="scramSlider" min="1" max="10" value="5">
+</div>
+
+<div id="sidebar">
+    <h3>Simuleringsinformation</h3>
+    <div class="info-group">
+        <p id="instructions">Din uppgift är att hålla reaktorn stabil genom att placera neutroner och styrstavar för att styra reaktionen.</p>
+    </div>
+    <div class="info-group">
+        <p><strong>Antal klyvningar:</strong> <span id="fissionCount">0</span></p>
+        <p><strong>Fria neutroner:</strong> <span id="neutronCount">0</span></p>
+        <p><strong>Neutroner absorberade av styrstavar:</strong> <span id="absorbedCount">0</span></p>
+    </div>
+    <p id="commentText">Systemet är redo. Väntar på neutronaktivitet.</p>
+</div>
+
+<script>
+// Objektpool för återanvändning av element
+class ObjectPool {
+    constructor(className, initialSize = 100) {
+        this.pool = new Set();
+        this.activeObjects = new Set();
+        this.className = className;
+
+        for (let i = 0; i < initialSize; i++) {
+            this.createObject();
+        }
+    }
+
+    createObject() {
+        const element = document.createElement('div');
+        element.classList.add(this.className);
+        element.classList.add('hidden');
+        document.body.appendChild(element);
+        this.pool.add(element);
+        return element;
+    }
+
+    acquire() {
+        let object = this.pool.values().next().value;
+        if (!object) {
+            object = this.createObject();
+        }
+        this.pool.delete(object);
+        this.activeObjects.add(object);
+        object.classList.remove('hidden');
+        return object;
+    }
+
+    release(object) {
+        if (!object) return;
+        this.activeObjects.delete(object);
+        object.classList.add('hidden');
+        this.pool.add(object);
+    }
+
+    clear() {
+        this.activeObjects.forEach(obj => this.release(obj));
+        this.activeObjects.clear();
+    }
+
+    getActiveCount() {
+        return this.activeObjects.size;
+    }
+}
+
+// Konstanter för simulationen
+const Constants = {
+    NEUTRON_RADIUS: 2.5,
+    ATOM_RADIUS: 7.5,
+    CONTROL_ROD_RADIUS: 25,
+    MARGIN: 30,
+    SIMULATION_AREA_MARGIN: 270,
+    BASE_SPEED: 2,
+    GRID_CELL_SIZE: 50,
+    WARNING_THRESHOLD: {
+        HIGH_NEUTRONS: 50,
+        CRITICAL_NEUTRONS: 100,
+        HIGH_FISSION_RATE: 5,
+        CRITICAL_FISSION_RATE: 8
+    },
+    REACTOR_STATE: {
+        LOW_FUEL: 0.2,
+        CRITICAL_FUEL: 0.1,
+        HIGH_ABSORPTION: 0.4,
+        GOOD_CONTROL: 0.5 // Justerat till 0.5 för att kräva högre absorptionskvot
+    },
+    MESSAGE_UPDATE_INTERVAL: 500,
+    REACTION_CALC_INTERVAL: 500
+};
+
+// Förbättrad State-hantering
+const State = {
+    atoms: new Set(),
+    neutronPool: new ObjectPool('neutron', 200),
+    pulsePool: new ObjectPool('pulse', 50),
+    controlRods: new Set(),
+    running: true,
+    placingNeutron: false,
+    placingRod: false,
+    fissionCount: 0,
+    absorbedCount: 0,
+    lastFrame: 0,
+    frameCount: 0,
+    lastFissionCount: 0,
+    lastUpdateTime: 0,
+    lastMessageUpdate: 0,
+    lastReactionRateCalc: 0,
+    currentReactionRate: 0,
+    initialAtomCount: 0,
+    simulationArea: {
+        width: 0,
+        height: 0
+    },
+
+    updateSimulationArea() {
+        const width = window.innerWidth - Constants.SIMULATION_AREA_MARGIN;
+        const height = window.innerHeight;
+        this.simulationArea = { width, height };
+        return { width, height };
+    },
+
+    getReactionRate() {
+        const now = performance.now();
+        if (now - this.lastReactionRateCalc >= Constants.REACTION_CALC_INTERVAL) {
+            const timeDiff = (now - this.lastUpdateTime) / 1000;
+            const fissionDiff = this.fissionCount - this.lastFissionCount;
+            this.currentReactionRate = timeDiff > 0 ? fissionDiff / timeDiff : 0;
+            this.lastFissionCount = this.fissionCount;
+            this.lastUpdateTime = now;
+            this.lastReactionRateCalc = now;
+        }
+        return this.currentReactionRate;
+    },
+
+    getFuelRatio() {
+        return this.atoms.size / Math.max(this.initialAtomCount, 1);
+    },
+
+    getAbsorptionRatio() {
+        return this.absorbedCount / Math.max(this.fissionCount, 1);
+    },
+
+    shouldUpdateMessage(now) {
+        return now - this.lastMessageUpdate >= Constants.MESSAGE_UPDATE_INTERVAL;
+    },
+
+    reset() {
+        this.fissionCount = 0;
+        this.absorbedCount = 0;
+        this.lastFrame = 0;
+        this.frameCount = 0;
+        this.lastFissionCount = 0;
+        this.lastUpdateTime = performance.now();
+        this.lastMessageUpdate = 0;
+        this.lastReactionRateCalc = 0;
+        this.currentReactionRate = 0;
+        this.running = true;
+        this.placingNeutron = false;
+        this.placingRod = false;
+        this.initialAtomCount = parseInt(DOM.densitySlider.value);
+    }
+};
+
+// Cache DOM references
+const DOM = {
+    densitySlider: document.getElementById('slider'),
+    densityValue: document.getElementById('densityValue'),
+    resetBtn: document.getElementById('resetBtn'),
+    stopBtn: document.getElementById('stopBtn'),
+    addNeutronBtn: document.getElementById('addNeutronBtn'),
+    addRodBtn: document.getElementById('addRodBtn'),
+    scramBtn: document.getElementById('scramBtn'),
+    scramSlider: document.getElementById('scramSlider'),
+    scramDensityValue: document.getElementById('scramDensityValue'),
+    fissionCounter: document.getElementById('fissionCount'),
+    neutronCounter: document.getElementById('neutronCount'),
+    absorbedCounter: document.getElementById('absorbedCount'),
+    commentText: document.getElementById('commentText'),
+    instructions: document.getElementById('instructions')
+};
+
+// Förbättrad Neutron-klass
+class Neutron {
+    constructor(element, x, y) {
+        this.element = element;
+        this.x = x;
+        this.y = y;
+        this.angle = Math.random() * 2 * Math.PI;
+        this.speed = Constants.BASE_SPEED * (0.8 + Math.random() * 0.4);
+        this.active = true;
+        this.lastValidPosition = { x, y };
+    }
+
+    update(deltaTime) {
+        if (!this.active) return false;
+
+        const newX = this.x + Math.cos(this.angle) * this.speed * deltaTime;
+        const newY = this.y + Math.sin(this.angle) * this.speed * deltaTime;
+        
+        const safeArea = {
+            left: Constants.MARGIN,
+            right: State.simulationArea.width - Constants.MARGIN,
+            top: Constants.MARGIN,
+            bottom: State.simulationArea.height - Constants.MARGIN
+        };
+
+        if (newX < safeArea.left || newX > safeArea.right || 
+            newY < safeArea.top || newY > safeArea.bottom) {
+            this.active = false;
+            return false;
+        }
+
+        this.x = newX;
+        this.y = newY;
+        this.lastValidPosition = { x: this.x, y: this.y };
+        this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
+        return true;
+    }
+
+    getPosition() {
+        return this.lastValidPosition;
+    }
+}
+
+// Optimerad skapelse av atomer med säkra marginaler
+function createAtoms() {
+    State.atoms.forEach(atom => atom.remove());
+    State.atoms.clear();
+    
+    const numAtoms = DOM.densitySlider.value;
+    State.initialAtomCount = numAtoms;
+    const fragment = document.createDocumentFragment();
+    
+    const safeWidth = State.simulationArea.width - 2 * Constants.MARGIN;
+    const safeHeight = State.simulationArea.height - 2 * Constants.MARGIN;
+    
+    for (let i = 0; i < numAtoms; i++) {
+        const atom = document.createElement('div');
+        atom.classList.add('atom');
+        const x = Constants.MARGIN + Math.random() * safeWidth;
+        const y = Constants.MARGIN + Math.random() * safeHeight;
+        atom.style.transform = `translate(${x}px, ${y}px)`;
+        fragment.appendChild(atom);
+        State.atoms.add(atom);
+    }
+    
+    document.body.appendChild(fragment);
+}
+
+// Initiera simulationsområdet
+State.updateSimulationArea();
+
+// Förbättrad spatial partitionering
+class SpatialGrid {
+    constructor(width, height, cellSize) {
+        this.cellSize = cellSize;
+        this.cols = Math.ceil(width / cellSize);
+        this.rows = Math.ceil(height / cellSize);
+        this.grid = new Array(this.cols * this.rows).fill().map(() => new Set());
+    }
+
+    clear() {
+        this.grid.forEach(cell => cell.clear());
+    }
+
+    getCell(x, y) {
+        const col = Math.floor(x / this.cellSize);
+        const row = Math.floor(y / this.cellSize);
+        if (col < 0 || col >= this.cols || row < 0 || row >= this.rows) return null;
+        return this.grid[row * this.cols + col];
+    }
+
+    getNearbyObjects(x, y) {
+        const cells = new Set();
+        const baseCol = Math.floor(x / this.cellSize);
+        const baseRow = Math.floor(y / this.cellSize);
+        
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                const cell = this.getCell(x + i * this.cellSize, y + j * this.cellSize);
+                if (cell) cell.forEach(obj => cells.add(obj));
+            }
+        }
+        return Array.from(cells);
+    }
+
+    insert(object, x, y) {
+        const cell = this.getCell(x, y);
+        if (cell) cell.add(object);
+    }
+}
+
+// Optimerad kollisionsdetektering med prioriterad styrstavskontroll
+function checkCollisions(neutron, spatialGrid) {
+    if (!neutron.active) return true;
+
+    const pos = neutron.getPosition();
+
+    for (const rod of State.controlRods) {
+        const rodRect = rod.getBoundingClientRect();
+        const rodX = rodRect.left + Constants.CONTROL_ROD_RADIUS;
+        const rodY = rodRect.top + Constants.CONTROL_ROD_RADIUS;
+        
+        const dx = pos.x - rodX;
+        const dy = pos.y - rodY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < Constants.CONTROL_ROD_RADIUS + Constants.NEUTRON_RADIUS) {
+            handleAbsorption(neutron);
+            return true;
+        }
+    }
+
+    const nearbyObjects = spatialGrid.getNearbyObjects(pos.x, pos.y);
+    for (const atom of nearbyObjects) {
+        if (!atom.classList.contains('atom')) continue;
+
+        const atomRect = atom.getBoundingClientRect();
+        const atomX = atomRect.left + Constants.ATOM_RADIUS;
+        const atomY = atomRect.top + Constants.ATOM_RADIUS;
+        
+        const dx = pos.x - atomX;
+        const dy = pos.y - atomY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < (Constants.NEUTRON_RADIUS + Constants.ATOM_RADIUS)) {
+            handleFission(neutron, atom);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function handleFission(neutron, atom) {
+    const atomRect = atom.getBoundingClientRect();
+    const fissionX = atomRect.left + Constants.ATOM_RADIUS;
+    const fissionY = atomRect.top + Constants.ATOM_RADIUS;
+
+    atom.remove();
+    State.atoms.delete(atom);
+    State.fissionCount++;
+    
+    showPulse(fissionX, fissionY);
+    
+    const numNewNeutrons = Math.random() < 0.3 ? 3 : 2;
+    for (let i = 0; i < numNewNeutrons; i++) {
+        const offset = {
+            x: (Math.random() - 0.5) * 5,
+            y: (Math.random() - 0.5) * 5
+        };
+        const newNeutron = launchNeutron(fissionX + offset.x, fissionY + offset.y);
+        if (newNeutron) neutrons.add(newNeutron);
+    }
+    
+    removeNeutron(neutron);
+    updateCounts();
+}
+
+function handleAbsorption(neutron) {
+    State.absorbedCount++;
+    removeNeutron(neutron);
+    updateCounts();
+}
+
+function removeNeutron(neutron) {
+    neutron.active = false;
+    State.neutronPool.release(neutron.element);
+    neutrons.delete(neutron);
+}
+
+function showPulse(x, y) {
+    if (x < Constants.MARGIN || 
+        x > State.simulationArea.width - Constants.MARGIN || 
+        y < Constants.MARGIN || 
+        y > State.simulationArea.height - Constants.MARGIN) {
+        return;
+    }
+    
+    const pulse = State.pulsePool.acquire();
+    if (pulse) {
+        pulse.style.transform = `translate(${x - 15}px, ${y - 15}px)`;
+        setTimeout(() => {
+            if (pulse) State.pulsePool.release(pulse);
+        }, 500);
+    }
+}
+
+function launchNeutron(x, y) {
+    if (!State.running) return null;
+    const element = State.neutronPool.acquire();
+    const neutron = new Neutron(element, x, y);
+    element.style.transform = `translate(${x}px, ${y}px)`;
+    updateCounts();
+    return neutron;
+}
+
+const neutrons = new Set();
+let spatialGrid = new SpatialGrid(State.simulationArea.width, State.simulationArea.height, Constants.GRID_CELL_SIZE);
+
+function gameLoop(timestamp) {
+    if (!State.lastFrame) {
+        State.lastFrame = timestamp;
+        State.lastUpdateTime = performance.now();
+    }
+    const deltaTime = Math.min((timestamp - State.lastFrame) / 16, 2);
+    State.lastFrame = timestamp;
+
+    if (State.running) {
+        State.frameCount++;
+        
+        if (State.frameCount % 10 === 0) {
+            spatialGrid.clear();
+            State.atoms.forEach(atom => {
+                const rect = atom.getBoundingClientRect();
+                spatialGrid.insert(atom, rect.left + Constants.ATOM_RADIUS, 
+                                       rect.top + Constants.ATOM_RADIUS);
+            });
+        }
+
+        if (State.shouldUpdateMessage(timestamp)) {
+            updateComments();
+            State.lastMessageUpdate = timestamp;
+        }
+
+        const currentNeutrons = new Set(neutrons);
+        for (const neutron of currentNeutrons) {
+            if (!neutron.update(deltaTime) || checkCollisions(neutron, spatialGrid)) {
+                removeNeutron(neutron);
+            }
+        }
+    }
+
+    requestAnimationFrame(gameLoop);
+}
+
+function updateComments() {
+    const reactionRate = State.getReactionRate();
+    const neutronCount = neutrons.size;
+    const fuelRatio = State.getFuelRatio();
+    const absorbedRatio = State.getAbsorptionRatio();
+    let message = '';
+    let color = '#ffffff';
+
+    if (neutronCount === 0 && State.fissionCount > 0) {
+        if (State.atoms.size === 0) {
+            message = "Reaktionen har avstannat: Allt bränsle är förbrukat.";
+            color = '#ffff00';
+        } else if (absorbedRatio > Constants.REACTOR_STATE.GOOD_CONTROL) {
+            message = "Styrstavarna har effektivt stoppat reaktionen.";
+            color = '#00ff00';
+        } else {
+            message = "Reaktionen har avstannat: Neutronerna har försvunnit.";
+            color = '#ffffff';
+        }
+    } else if (reactionRate > Constants.WARNING_THRESHOLD.CRITICAL_FISSION_RATE) {
+        message = "KRITISKT: Okontrollerad kedjereaktion! Reaktorn överhettas!";
+        color = '#ff0000';
+    } else if (fuelRatio < Constants.REACTOR_STATE.CRITICAL_FUEL && State.atoms.size === 0) {
+        message = "Reaktionen har avstannat: Allt bränsle är förbrukat.";
+        color = '#ffff00';
+    } else if (fuelRatio < Constants.REACTOR_STATE.LOW_FUEL && State.fissionCount > 50 && reactionRate > 2) {
+        message = "VARNING: Materialbrist – överväg att placera fler styrstavar.";
+        color = '#ff0000';
+    } else if (neutronCount > Constants.WARNING_THRESHOLD.CRITICAL_NEUTRONS) {
+        message = "KRITISKT: Extremt hög neutrontäthet! Placera fler styrstavar!";
+        color = '#ff0000';
+    } else if (reactionRate > Constants.WARNING_THRESHOLD.HIGH_FISSION_RATE) {
+        message = "VARNING: Hög reaktionshastighet. Kontrollera med fler styrstavar.";
+        color = '#ff9900';
+    } else if (absorbedRatio > Constants.REACTOR_STATE.GOOD_CONTROL) {
+        message = "Styrstavarna absorberar neutroner effektivt.";
+        color = '#00ff00';
+    } else if (reactionRate > 0 && reactionRate <= 2 && neutronCount > 0) {
+        message = "Normal drift: Stabil reaktionshastighet.";
+        color = '#00ff00';
+    } else if (fuelRatio < Constants.REACTOR_STATE.CRITICAL_FUEL) {
+        message = "Kritiskt låg bränslenivå. Försök optimera neutronfördelningen.";
+        color = '#ffff00';
+    } else {
+        message = "Systemet redo: Väntar på neutronaktivitet.";
+        color = '#ffffff';
+    }
+
+    DOM.commentText.textContent = message;
+    DOM.commentText.style.color = color;
+}
+
+DOM.addNeutronBtn.addEventListener('click', () => {
+    State.placingNeutron = true;
+    State.placingRod = false;
+    DOM.instructions.textContent = "Klicka på skärmen för att placera neutroner.";
+});
+
+DOM.addRodBtn.addEventListener('click', () => {
+    State.placingRod = true;
+    State.placingNeutron = false;
+    DOM.instructions.textContent = "Klicka på skärmen för att placera styrstavar.";
+});
+
+DOM.scramSlider.addEventListener('input', () => {
+    DOM.scramDensityValue.textContent = DOM.scramSlider.value;
+});
+
+DOM.scramBtn.addEventListener('click', () => {
+    performScram();
+});
+
+function performScram() {
+    const density = parseInt(DOM.scramSlider.value);
+    const { width, height } = State.simulationArea;
+    const effectiveWidth = width - 2 * Constants.MARGIN;
+    const effectiveHeight = height - 2 * Constants.MARGIN;
+    const spacingX = effectiveWidth / (density - 1);
+    const spacingY = effectiveHeight / (density - 1);
+
+    for (let i = 0; i < density; i++) {
+        const x = Constants.MARGIN + i * spacingX;
+        for (let j = 0; j < density; j++) {
+            const y = Constants.MARGIN + j * spacingY;
+            const rod = document.createElement('div');
+            rod.classList.add('controlRod');
+            rod.style.transform = `translate(${x - Constants.CONTROL_ROD_RADIUS}px, ${y - Constants.CONTROL_ROD_RADIUS}px)`;
+            document.body.appendChild(rod);
+            State.controlRods.add(rod);
+        }
+    }
+
+    DOM.commentText.textContent = "SCRAM utfört: Nödstopp aktiverat med kontrollstavsnät.";
+    DOM.commentText.style.color = '#ff0000';
+}
+
+window.addEventListener('click', (e) => {
+    if (e.target.closest('#topbar') || e.target.closest('#sidebar')) return;
+
+    const x = Math.min(Math.max(e.clientX, Constants.MARGIN), 
+                     State.simulationArea.width - Constants.MARGIN);
+    const y = Math.min(Math.max(e.clientY, Constants.MARGIN), 
+                     State.simulationArea.height - Constants.MARGIN);
+
+    if (State.placingNeutron) {
+        const neutron = launchNeutron(x, y);
+        if (neutron) neutrons.add(neutron);
+    } else if (State.placingRod) {
+        const rod = document.createElement('div');
+        rod.classList.add('controlRod');
+        rod.style.transform = `translate(${x - Constants.CONTROL_ROD_RADIUS}px, 
+                                       ${y - Constants.CONTROL_ROD_RADIUS}px)`;
+        document.body.appendChild(rod);
+        State.controlRods.add(rod);
+        DOM.commentText.textContent = "Ny styrstav installerad: Övervakar neutronabsorption.";
+        DOM.commentText.style.color = '#00ff00';
+    }
+});
+
+DOM.stopBtn.addEventListener('click', () => {
+    State.running = !State.running;
+    DOM.stopBtn.textContent = State.running ? 'Stopp' : 'Starta';
+});
+
+DOM.resetBtn.addEventListener('click', () => {
+    State.atoms.forEach(atom => atom.remove());
+    State.controlRods.forEach(rod => rod.remove());
+    State.neutronPool.clear();
+    State.pulsePool.clear();
+    
+    State.atoms.clear();
+    State.controlRods.clear();
+    neutrons.clear();
+    State.reset();
+    
+    DOM.stopBtn.textContent = 'Stopp';
+    DOM.instructions.textContent = "Använd partikeltäthetsreglaget och välj ett läge för att placera neutroner eller styrstavar.";
+    DOM.commentText.style.color = '#00ff00';
+    
+    createAtoms();
+    updateCounts();
+});
+
+DOM.densitySlider.addEventListener('input', () => {
+    DOM.densityValue.textContent = DOM.densitySlider.value;
+});
+
+DOM.densitySlider.addEventListener('change', createAtoms);
+
+window.addEventListener('resize', () => {
+    const { width, height } = State.updateSimulationArea();
+    spatialGrid = new SpatialGrid(width, height, Constants.GRID_CELL_SIZE);
+});
+
+function updateCounts() {
+    DOM.fissionCounter.textContent = State.fissionCount;
+    DOM.neutronCounter.textContent = neutrons.size;
+    DOM.absorbedCounter.textContent = State.absorbedCount;
+}
+
+createAtoms();
+requestAnimationFrame(gameLoop);
+</script>
+
+</body>
+</html>
