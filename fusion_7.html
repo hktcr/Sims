@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Fusion i Solen - Simulering</title>
+    <style>
+        body {
+    background-color: #333;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: space-between;
+    max-width: 100%;
+    height: 100vh;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+canvas {
+    border: 1px solid #000;
+    background-color: #000;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 80vh;
+    display: block;
+    margin: 0 auto;
+}
+
+#sidebar, #right-sidebar {
+    background-color: #222;
+    color: #fff;
+    padding: 15px;
+    flex-basis: 20%;
+    min-width: 250px;
+    margin: 0 20px;
+    overflow-y: auto;
+}
+
+#sidebar {
+    text-align: left;
+}
+
+#main-content {
+    flex-basis: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+}
+        h1, p {
+            text-align: center;
+            color: #fff;
+        }
+        
+
+/* Behåll text-align för sidebar */
+#sidebar {
+    text-align: left;
+}
+        .info-card {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 1s ease;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .info-card.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .info-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            color: #fff;
+        }
+        .info-card p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #fff;
+            text-align: left;
+        }
+        #infoBox {
+            max-height: 90vh;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        #sidebar h2 {
+            text-align: center;
+        }
+        #sidebar p, #sidebar ul {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        #sidebar #currentStep {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+        #particleCountDisplay {
+            margin-top: 15px;
+        }
+        #controls {
+            text-align: center;
+            margin-top: 10px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Förklaring av fusion</h2>
+        <p>
+            <strong>Partiklar:</strong>
+            <ul>
+                <li><span style="color: yellow;">●</span> Proton (p⁺): Vätekärna.</li>
+                <li><span style="color: lightgreen;">●</span> Deuterium (D): En proton och en neutron.</li>
+                <li><span style="color: orange;">●</span> Helium-3 (He-3): Två protoner och en neutron.</li>
+                <li><span style="color: red;">●</span> Helium-4 (He): Stabil heliumkärna.</li>
+                <li><span style="color: lightblue;">●</span> Neutrino: Bär bort energi och lämnar snabbt området.</li>
+                <li><span style="color: pink;">●</span> Positron: Frigörs vid bildandet av deuterium och lämnar snabbt området.</li>
+                <li><span style="color: lightyellow;">★</span> Gammastråle: Representerar energin som omvandlas till synligt ljus som når Jorden.</li>
+            </ul>
+        </p>
+        <p id="currentStep">Aktuellt steg: Ingen fusion ännu</p>
+        <p><strong>Notis:</strong> Gammastrålar som frigörs i fusionen omvandlas till synligt ljus och värme som når oss på Jorden.</p>
+        <div id="particleCountDisplay">
+            <h3>Antal aktiva partiklar</h3>
+            <ul>
+                <li>Protoner: <span id="protonCount">0</span></li>
+                <li>Deuterium: <span id="deuteriumCount">0</span></li>
+                <li>Helium-3: <span id="helium3Count">0</span></li>
+                <li>Helium-4: <span id="helium4Count">0</span></li>
+                <li>Neutriner: <span id="neutrinoCount">0</span></li>
+                <li>Positroner: <span id="positronCount">0</span></li>
+                <li>Gammastrålar: <span id="gammaRayCount">0</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <h1>Hur fungerar fusion i solen?</h1>
+        <p>Anpassa partikelantalet och hastigheten och klicka på "Start" för att se simuleringen.</p>
+        <canvas id="fusionCanvas"></canvas>
+        <div id="controls">
+            <label for="particleCount">Antal protoner: <span id="particleValue">30</span></label><br>
+            <input type="range" id="particleCount" min="10" max="100" value="30"><br><br>
+            <label for="speedControl">Simuleringshastighet:</label>
+            <input type="range" id="speedControl" min="0.5" max="3" step="0.1" value="1"><br><br>
+            <button id="startBtn">Start</button>
+        </div>
+    </div>
+
+    <div id="right-sidebar">
+        <h2>Fördjupad Information</h2>
+        <div id="infoBox"></div>
+    </div>
+<script>
+        window.onload = function() {
+            const canvas = document.getElementById('fusionCanvas');
+            const ctx = canvas.getContext('2d');
+// Sätt canvas storlek baserat på container
+function resizeCanvas() {
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientWidth * 0.6;
+}
+
+// Kör när sidan laddas och när fönstret ändrar storlek
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+            const startBtn = document.getElementById('startBtn');
+            const particleCountSlider = document.getElementById('particleCount');
+            const particleValueDisplay = document.getElementById('particleValue');
+            const currentStepDisplay = document.getElementById('currentStep');
+            const speedControl = document.getElementById('speedControl');
+            const infoBox = document.getElementById('infoBox');
+
+            // Element för partiklar
+            const protonCountDisplay = document.getElementById('protonCount');
+            const deuteriumCountDisplay = document.getElementById('deuteriumCount');
+            const helium3CountDisplay = document.getElementById('helium3Count');
+            const helium4CountDisplay = document.getElementById('helium4Count');
+            const neutrinoCountDisplay = document.getElementById('neutrinoCount');
+            const positronCountDisplay = document.getElementById('positronCount');
+            const gammaRayCountDisplay = document.getElementById('gammaRayCount');
+
+            let particles = [];
+            let neutrinos = [];
+            let positrons = [];
+            let gammaRays = [];
+            let animationId;
+            let speed = 1;
+
+            // Information för varje steg i fusionsprocessen
+            const fusionInfo = {
+    'simulation-intro': {
+    title: 'Om denna simulering',
+    content: 'I denna simulering kan du följa den stegvisa processen där vätekärnor (protoner) fusioneras till helium i solens kärna. Du kommer att se hur protoner kolliderar och bildar deuterium, hur detta i sin tur bildar helium-3 och slutligen helium-4. Längs vägen kommer du även att se hur neutriner, positroner och gammastrålar frigörs. Ju fler protoner du väljer att starta med, desto fler fusioner kommer du att kunna observera.',
+    color: '#34495E'
+},
+'intro': {
+    title: 'Solens fusionsprocess',
+    content: 'Fusion i solen är en komplex process som omvandlar väte till helium genom flera steg. Detta kallas proton-proton-kedjan och är källan till solens energi. Processen kräver extremt höga temperaturer och tryck som bara finns i solens kärna.',
+    color: '#2C3E50'
+},
+'conditions': {
+    title: 'Förhållanden i solens kärna',
+    content: 'I solens kärna är temperaturen cirka 15 miljoner grader Celsius och trycket motsvarar mer än 200 miljarder gånger jordens atmosfärstryck. Dessa extrema förhållanden är nödvändiga för att övervinna den elektromagnetiska repulsionen (kraft som stöter bort laddningar med samma tecken) mellan protoner.',
+    color: '#E74C3C'
+},
+'deuterium-deep': {
+    title: 'Deuteriumbildning i detalj',
+    content: 'För att bilda deuterium måste en av protonerna omvandlas till en neutron genom en sällsynt kvantmekanisk process (en process som följer kvantmekanikens lagar) via den svaga kärnkraften (en av de fyra fundamentala krafterna som styr vissa typer av partikelomvandlingar). Denna omvandling frigör en positron och en elektronneutrino (en subatomär partikel som knappt interagerar med materia). Positronen annihilerar (förstörs helt och omvandlas till energi) snabbt med en elektron och skapar gammastrålar (högenergetisk elektromagnetisk strålning), medan neutrinen lämnar området nästan omedelbart utan att växelverka med omgivningen.',
+    color: '#27AE60'
+},
+'neutrino': {
+    title: 'Neutrinons roll',
+    content: 'Vid bildandet av deuterium frigörs en neutrino (en subatomär partikel med mycket liten massa som knappt interagerar med materia). Dessa "spöklika" partiklar passerar nästan obehindrat genom solens massa och jorden utan hinder. Det är neutriner som ger oss direkt information om de processer som sker i solens kärna.',
+    color: '#3498DB'
+},
+'positron-detail': {
+    title: 'Vad händer med positronen?',
+    content: 'Positronen (antipartikel till elektron) som frigörs vid deuteriumbildningen annihilerar (förstörs helt och omvandlas till energi) snabbt med en elektron i solens plasma (ett tillstånd av materia som består av joner och fria elektroner). Vid annihilationen omvandlas positronens och elektronens massa till gammastrålning (högenergetisk elektromagnetisk strålning), vilket bidrar till energin som sprids i solens kärna.',
+    color: '#FF69B4'
+},
+'energy-journey': {
+    title: 'Energins långa resa',
+    content: 'Gammastrålar (högenergetisk elektromagnetisk strålning) som skapas vid annihilationen (omvandling av massa till energi) och fusion (sammanfogning av atomkärnor) tar en mycket lång väg ut ur solens kärna. De kolliderar och absorberas ständigt av andra partiklar, vilket gör att de kan ta upp till 100,000 år att nå solens yta. När de når ytan har gammastrålarna genom sin långa resa omvandlats till synligt ljus och värme, som sedan når jorden på bara 8 minuter.',
+    color: '#9B59B6'
+},
+'helium-future': {
+    title: 'Solens framtid',
+    content: 'När solen har omvandlat sitt väte till helium i kärnan kommer den att expandera till en röd jätte. Detta sker om cirka 5 miljarder år. Då börjar fusion (sammanfogning av atomkärnor) av helium till tyngre grundämnen, vilket är början på en ny fas i solens livscykel. Men det är en annan historia ...',
+    color: '#E67E22'
+}
+};
+
+            let currentInfoIndex = 0;
+            const infoKeys = Object.keys(fusionInfo);
+            const cardDisplayTime = 25000; // 12 sekunder per kort
+
+            function addInfoCard(forcedStep = null) {
+                let step = forcedStep || infoKeys[currentInfoIndex];
+                const info = fusionInfo[step];
+                if (!info) return;
+
+                const card = document.createElement('div');
+                card.className = 'info-card';
+                card.style.backgroundColor = info.color;
+                card.innerHTML = `
+                    <h3>${info.title}</h3>
+                    <p>${info.content}</p>
+                `;
+
+                // Lägg till kortet först i infoBox
+                infoBox.insertBefore(card, infoBox.firstChild);
+
+                // Aktivera kortet med en animation
+                setTimeout(() => {
+                    card.classList.add('active');
+                }, 50);
+
+                // Om det inte är ett forcerat steg, fortsätt till nästa efter en fördröjning
+                if (!forcedStep) {
+                    currentInfoIndex = (currentInfoIndex + 1) % infoKeys.length;
+                    setTimeout(() => addInfoCard(), cardDisplayTime);
+                }
+            }
+particleCountSlider.addEventListener('input', function() {
+                particleValueDisplay.textContent = particleCountSlider.value;
+            });
+
+            speedControl.addEventListener('input', function() {
+                speed = parseFloat(speedControl.value);
+            });
+
+            class Particle {
+                constructor(x, y, vx, vy, type) {
+                    this.x = x;
+                    this.y = y;
+                    this.vx = vx;
+                    this.vy = vy;
+                    this.type = type;
+                    this.radius = type === 'proton' ? 7 : 
+                                type === 'deuterium' ? 10 : 
+                                type === 'helium-3' ? 12 : 
+                                type === 'helium-4' ? 14 : 5;
+                    this.color = type === 'proton' ? 'yellow' :
+                                type === 'deuterium' ? 'lightgreen' :
+                                type === 'helium-3' ? 'orange' :
+                                type === 'helium-4' ? 'red' : 
+                                (type === 'neutrino' ? 'lightblue' : 
+                                (type === 'positron' ? 'pink' : 'lightyellow'));
+                }
+
+                draw() {
+                    if (this.type === 'gammaRay') {
+                        this.drawStar();
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                        ctx.fillStyle = 'black';
+                        ctx.font = '12px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        if (this.type === 'proton') {
+                            ctx.fillText('p⁺', this.x, this.y);
+                        } else if (this.type === 'deuterium') {
+                            ctx.fillText('D', this.x, this.y);
+                        } else if (this.type === 'helium-3') {
+                            ctx.fillText('He-3', this.x, this.y);
+                        } else if (this.type === 'helium-4') {
+                            ctx.fillText('He', this.x, this.y);
+                        }
+                    }
+                }
+
+                drawStar() {
+                    const spikes = 5;
+                    const outerRadius = this.radius * 2;
+                    const innerRadius = this.radius;
+                    let rotation = Math.PI / 2 * 3;
+                    let step = Math.PI / spikes;
+
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y - outerRadius);
+                    for (let i = 0; i < spikes; i++) {
+                        ctx.lineTo(this.x + Math.cos(rotation) * outerRadius, this.y + Math.sin(rotation) * outerRadius);
+                        rotation += step;
+                        ctx.lineTo(this.x + Math.cos(rotation) * innerRadius, this.y + Math.sin(rotation) * innerRadius);
+                        rotation += step;
+                    }
+                    ctx.lineTo(this.x, this.y - outerRadius);
+                    ctx.closePath();
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+
+                update() {
+                    this.x += this.vx * speed;
+                    this.y += this.vy * speed;
+                    if (this.type !== 'neutrino' && this.type !== 'positron' && this.type !== 'gammaRay') {
+                        if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) this.vx *= -1;
+                        if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) this.vy *= -1;
+                    }
+                }
+
+                isOutOfBounds() {
+                    return (this.x + this.radius < 0 || this.x - this.radius > canvas.width ||
+                            this.y + this.radius < 0 || this.y - this.radius > canvas.height);
+                }
+            }
+function initParticles() {
+                particles = [];
+                neutrinos = [];
+                positrons = [];
+                gammaRays = [];
+                let particleCount = parseInt(particleCountSlider.value);
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height,
+                        (Math.random() - 0.5) * 2,
+                        (Math.random() - 0.5) * 2,
+                        'proton'
+                    ));
+                }
+                currentStepDisplay.textContent = 'Aktuellt steg: Ingen fusion ännu';
+                updateParticleCount();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                neutrinos.forEach((neutrino, index) => {
+                    neutrino.update();
+                    neutrino.draw();
+                    if (neutrino.isOutOfBounds()) {
+                        neutrinos.splice(index, 1);
+                    }
+                });
+                positrons.forEach((positron, index) => {
+                    positron.update();
+                    positron.draw();
+                    if (positron.isOutOfBounds()) {
+                        positrons.splice(index, 1);
+                    }
+                });
+                gammaRays.forEach((gammaRay, index) => {
+                    gammaRay.update();
+                    gammaRay.draw();
+                    if (gammaRay.isOutOfBounds()) {
+                        gammaRays.splice(index, 1);
+                    }
+                });
+                checkCollisions();
+                updateParticleCount();
+                animationId = requestAnimationFrame(animate);
+            }
+
+            function checkCollisions() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        let p1 = particles[i];
+                        let p2 = particles[j];
+                        let dx = p1.x - p2.x;
+                        let dy = p1.y - p2.y;
+                        let distance = Math.hypot(dx, dy);
+
+                        if (distance < p1.radius + p2.radius) {
+                            if (p1.type === 'proton' && p2.type === 'proton') {
+                                let newParticle = new Particle(p1.x, p1.y, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 'deuterium');
+                                let positron = new Particle(p1.x + 15, p1.y + 15, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 'positron');
+                                let neutrino = new Particle(p1.x, p1.y, (Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4, 'neutrino');
+                                
+                                particles.splice(j, 1);
+                                particles.splice(i, 1);
+                                particles.push(newParticle);
+                                positrons.push(positron);
+                                neutrinos.push(neutrino);
+                                
+                                currentStepDisplay.textContent = 'Aktuellt steg: Protoner fusioneras till deuterium (positron och neutrino frigörs)';
+                                return;
+                            } else if ((p1.type === 'deuterium' && p2.type === 'proton') || (p1.type === 'proton' && p2.type === 'deuterium')) {
+                                let newParticle = new Particle(p1.x, p1.y, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 'helium-3');
+                                let gammaRay = new Particle(p1.x, p1.y, (Math.random() - 0.5) * 3, (Math.random() - 0.5) * 3, 'gammaRay');
+                                
+                                particles.splice(j, 1);
+                                particles.splice(i, 1);
+                                particles.push(newParticle);
+                                gammaRays.push(gammaRay);
+                                
+                                currentStepDisplay.textContent = 'Aktuellt steg: Deuterium fusioneras med proton och bildar helium-3 (gammastråle frigörs)';
+                                return;
+                            } else if (p1.type === 'helium-3' && p2.type === 'helium-3') {
+                                let newParticle = new Particle(p1.x, p1.y, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 'helium-4');
+                                let proton1 = new Particle(p1.x + 20, p1.y + 20, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 'proton');
+                                let proton2 = new Particle(p1.x - 20, p1.y - 20, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, 'proton');
+                                
+                                particles.splice(j, 1);
+                                particles.splice(i, 1);
+                                particles.push(newParticle);
+                                particles.push(proton1);
+                                particles.push(proton2);
+                                
+                                currentStepDisplay.textContent = 'Aktuellt steg: Helium-3 fusioneras och bildar helium-4 (två protoner frigörs)';
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            function updateParticleCount() {
+                const protonCount = particles.filter(p => p.type === 'proton').length;
+                const deuteriumCount = particles.filter(p => p.type === 'deuterium').length;
+                const helium3Count = particles.filter(p => p.type === 'helium-3').length;
+                const helium4Count = particles.filter(p => p.type === 'helium-4').length;
+                const neutrinoCount = neutrinos.length;
+                const positronCount = positrons.length;
+                const gammaRayCount = gammaRays.length;
+
+                protonCountDisplay.textContent = protonCount;
+                deuteriumCountDisplay.textContent = deuteriumCount;
+                helium3CountDisplay.textContent = helium3Count;
+                helium4CountDisplay.textContent = helium4Count;
+                neutrinoCountDisplay.textContent = neutrinoCount;
+                positronCountDisplay.textContent = positronCount;
+                gammaRayCountDisplay.textContent = gammaRayCount;
+            }
+
+            startBtn.addEventListener('click', () => {
+                initParticles();
+                if (animationId) cancelAnimationFrame(animationId);
+                animate();
+                // Rensa tidigare kort och starta om informationsflödet
+                infoBox.innerHTML = '';
+                currentInfoIndex = 0;
+                addInfoCard();
+            });
+        };
+    </script>
+</body>
+</html>
