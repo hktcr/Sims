@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Elevväljare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #container {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 0.25rem 0.5rem;
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            background-color: #444;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        #randomButton {
+            background-color: #2d6a4f;
+            color: white;
+            font-size: clamp(0.875rem, 2.5vw, 1.25rem);
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.2);
+            min-width: 120px;
+            flex-grow: 2;
+        }
+
+        #randomButton:hover {
+            background-color: #358f6c;
+            box-shadow: 0 6px 16px rgba(45, 106, 79, 0.3);
+        }
+
+        .class-selector {
+            display: none;
+            flex: none;
+            width: 100%;
+        }
+
+        #classSelect {
+            width: 100%;
+            padding: 0.5rem;
+            background: #333;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        #studentList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
+            padding-right: 0.5rem;
+        }
+
+        .student {
+            padding: 0.5rem;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0.5rem;
+            font-size: clamp(0.75rem, 2.5vw, 1rem);
+            background-color: #333;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .student.highlight {
+            animation: highlight 0.5s ease;
+        }
+
+        .student.spin {
+            animation: spin 0.3s ease-in-out;
+        }
+
+        .student:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #selectedStudent {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            margin: 1rem 0;
+            text-align: center;
+            background-color: #333;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            font-size: 1rem;
+            background-color: #333;
+            color: #e0e0e0;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: min(90%, 500px);
+            color: #e0e0e0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 1.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close:hover {
+            color: #fff;
+        }
+
+        #classList {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        #currentStudents {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        @media screen and (min-width: 1200px) {
+            #studentList {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media screen and (min-width: 1600px) {
+            #studentList {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @keyframes highlight {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotateX(0); }
+            100% { transform: rotateX(360deg); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        @media screen and (max-width: 500px) {
+            #container {
+                width: 100%;
+                padding: 0.25rem;
+                margin: 0;
+            }
+
+            .button-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .class-selector {
+                width: 100%;
+            }
+
+            #studentList {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="button-container">
+            <button id="randomButton">Slumpa Elev</button>
+            <div class="class-selector" style="display: none;">
+                <select id="classSelect">
+                    <option value="">Välj klass...</option>
+                </select>
+            </div>
+            <button id="settingsButton">⚙️ Inställningar</button>
+        </div>
+        <div id="selectedStudent"></div>
+        <div id="studentList"></div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <span id="closeSettings" class="close">&times;</span>
+                <h2>Inställningar</h2>
+                <div class="settings-buttons">
+                    <button id="importButton">Importera Elevnamn</button>
+                    <button id="toggleMode">Urval: Prioritera mindre valda</button>
+                    <button id="manageClasses">Hantera Klasser</button>
+                    <button id="resetStars">Nollställ Stjärnor</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Modal -->
+        <div id="importModal" class="modal">
+            <div class="modal-content">
+                <span id="closeImport" class="close">&times;</span>
+                <h2>Importera Elevnamn</h2>
+                <input type="text" id="className" placeholder="Klassnamn (t.ex. '9A' eller 'TE20')">
+                <textarea id="nameInput" placeholder="Ange elevnamn separerade med semikolon"></textarea>
+                <button id="saveNames">Spara som ny klass</button>
+            </div>
+        </div>
+
+        <!-- Class Management Modal -->
+        <div id="classModal" class="modal">
+            <div class="modal-content">
+                <span id="closeClassModal" class="close">&times;</span>
+                <h2>Hantera Klasser</h2>
+                <div id="classList"></div>
+            </div>
+        </div>
+
+        <!-- Edit Class Modal -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span id="closeEdit" class="close">&times;</span>
+                <h2>Redigera Klass</h2>
+                <div id="editClassContent">
+                    <div id="currentStudents"></div>
+                    <div style="margin-top: 1rem;">
+                        <input type="text" id="newStudent" placeholder="Lägg till ny elev">
+                        <button id="addStudent" style="background: #2d6a4f;">Lägg till</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    let students = [];
+    let classes = {};
+    let currentClass = '';
+    let selectionMode = 'fair';
+    let maxStars = 3;
+
+    const randomButton = document.getElementById('randomButton');
+    const settingsButton = document.getElementById('settingsButton');
+    const importButton = document.getElementById('importButton');
+    const toggleMode = document.getElementById('toggleMode');
+    const manageClasses = document.getElementById('manageClasses');
+    const resetStars = document.getElementById('resetStars');
+    const studentList = document.getElementById('studentList');
+    const selectedStudentDiv = document.getElementById('selectedStudent');
+    const classSelect = document.getElementById('classSelect');
+    const classSelector = document.querySelector('.class-selector');
+
+    const settingsModal = document.getElementById('settingsModal');
+    const importModal = document.getElementById('importModal');
+    const classModal = document.getElementById('classModal');
+    const editModal = document.getElementById('editModal');
+
+    const closeSettings = document.getElementById('closeSettings');
+    const closeImport = document.getElementById('closeImport');
+    const closeClassModal = document.getElementById('closeClassModal');
+    const closeEdit = document.getElementById('closeEdit');
+    const classNameInput = document.getElementById('className');
+    const nameInput = document.getElementById('nameInput');
+    const saveNames = document.getElementById('saveNames');
+    const newStudentInput = document.getElementById('newStudent');
+    const addStudentButton = document.getElementById('addStudent');
+    let currentEditingClass = '';
+
+        const setMaxStars = document.createElement('button');
+    setMaxStars.id = 'setMaxStars';
+    setMaxStars.textContent = `Max stjärnor: ${maxStars}`;
+    document.querySelector('.settings-buttons').insertBefore(setMaxStars, resetStars);
+
+    function loadSettings() {
+        const savedMode = localStorage.getItem('selectionMode');
+        const savedMaxStars = localStorage.getItem('maxStars');
+        if (savedMode) {
+            selectionMode = savedMode;
+            updateModeButton();
+        }
+        if (savedMaxStars) {
+            maxStars = parseInt(savedMaxStars);
+            updateMaxStarsButton();
+        }
+    }
+
+    function loadClasses() {
+        const savedClasses = localStorage.getItem('classes');
+        if (savedClasses) {
+            classes = JSON.parse(savedClasses);
+            updateClassSelector();
+            showClassSelector();
+        }
+    }
+
+    function saveClasses() {
+        localStorage.setItem('classes', JSON.stringify(classes));
+    }
+
+    function showClassSelector() {
+        classSelector.style.display = Object.keys(classes).length > 0 ? 'block' : 'none';
+    }
+
+    function updateClassSelector() {
+        classSelect.innerHTML = '<option value="">Välj klass...</option>';
+        Object.keys(classes).forEach(className => {
+            const option = document.createElement('option');
+            option.value = className;
+            option.textContent = className;
+            if (className === currentClass) option.selected = true;
+            classSelect.appendChild(option);
+        });
+    }
+
+    function updateModeButton() {
+        const modeTexts = {
+            'fair': 'Urval: Prioritera minst valda',
+            'weighted': 'Urval: Viktad slumpning',
+            'random': 'Urval: Helt slumpat'
+        };
+        toggleMode.textContent = modeTexts[selectionMode];
+    }
+
+    function updateMaxStarsButton() {
+        setMaxStars.textContent = `Max stjärnor: ${maxStars}`;
+    }
+
+    function distributeColors(totalStudents) {
+        const colors = [];
+        const baseHues = [0, 30, 60, 120, 180, 240, 280, 320];
+        for (let i = 0; i < totalStudents; i++) {
+            const baseHue = baseHues[i % baseHues.length];
+            const hueVariation = (Math.random() - 0.5) * 20;
+            const hue = (baseHue + hueVariation + 360) % 360;
+            const saturation = 45 + Math.random() * 15;
+            const lightness = 35 + Math.random() * 10;
+            colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+        }
+        for (let i = colors.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [colors[i], colors[j]] = [colors[j], colors[i]];
+        }
+        return colors;
+    }
+
+    function assignColorsToStudents() {
+        const colors = distributeColors(students.length);
+        students.forEach((student, index) => {
+            student.color = colors[index];
+        });
+    }
+
+    function animateSelection(duration) {
+        return new Promise(resolve => {
+            const totalSteps = 20;
+            let step = 0;
+            const interval = duration / totalSteps;
+            let lastIndex = -1;
+
+            const animate = () => {
+                if (step < totalSteps) {
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * students.length);
+                    } while (randomIndex === lastIndex);
+                    lastIndex = randomIndex;
+
+                    const tempStudent = students[randomIndex];
+                    selectedStudentDiv.innerHTML = tempStudent.name;
+                    selectedStudentDiv.style.background = 'none';
+                    selectedStudentDiv.style.backgroundColor = tempStudent.stars >= maxStars ? 'linear-gradient(45deg, #FFD700, #FFA500)' : tempStudent.color;
+                    selectedStudentDiv.style.color = tempStudent.stars >= maxStars ? '#000' : '#fff';
+
+                    document.querySelectorAll('.student').forEach(el => {
+                        el.classList.add('spin');
+                        setTimeout(() => el.classList.remove('spin'), interval);
+                    });
+
+                    step++;
+                    setTimeout(animate, interval);
+                } else {
+                    resolve();
+                }
+            };
+            animate();
+        });
+    }
+
+    function selectStudent() {
+        const availableStudents = students.filter(s => s.stars < maxStars);
+        if (availableStudents.length === 0) {
+            alert('Alla elever har nått maximalt antal stjärnor!');
+            return null;
+        }
+
+        switch(selectionMode) {
+            case 'fair':
+                const minStars = Math.min(...availableStudents.map(s => s.stars));
+                const eligibleStudents = availableStudents.filter(s => s.stars === minStars);
+                return eligibleStudents[Math.floor(Math.random() * eligibleStudents.length)];
+            case 'weighted':
+                const totalStars = Math.max(...availableStudents.map(s => s.stars));
+                const weights = availableStudents.map(s => totalStars - s.stars + 1);
+                const totalWeight = weights.reduce((a, b) => a + b, 0);
+                let random = Math.random() * totalWeight;
+                let cumulativeWeight = 0;
+                for (let i = 0; i < availableStudents.length; i++) {
+                    cumulativeWeight += weights[i];
+                    if (random <= cumulativeWeight) {
+                        return availableStudents[i];
+                    }
+                }
+                return availableStudents[0];
+            case 'random':
+                return availableStudents[Math.floor(Math.random() * availableStudents.length)];
+        }
+    }
+
+    function renderStudentList() {
+        studentList.innerHTML = '';
+        const sortedStudents = [...students].sort((a, b) => b.stars - a.stars);
+        sortedStudents.forEach((student) => {
+            const studentDiv = document.createElement('div');
+            studentDiv.classList.add('student');
+            studentDiv.style.backgroundColor = student.stars >= maxStars ? 'linear-gradient(45deg, #FFD700, #FFA500)' : student.color;
+            studentDiv.style.color = student.stars >= maxStars ? '#000' : '#fff';
+            studentDiv.innerHTML = `<span>${student.name}</span><span>${'★'.repeat(student.stars)}</span>`;
+            studentList.appendChild(studentDiv);
+        });
+    }
+
+    function renderClassList() {
+        const classList = document.getElementById('classList');
+        classList.innerHTML = '';
+        Object.entries(classes).forEach(([className, students]) => {
+            const classDiv = document.createElement('div');
+            classDiv.style.margin = '0.5rem 0';
+            classDiv.style.padding = '1rem';
+            classDiv.style.background = '#333';
+            classDiv.style.borderRadius = '0.5rem';
+            classDiv.style.display = 'flex';
+            classDiv.style.justifyContent = 'space-between';
+            classDiv.style.alignItems = 'center';
+            classDiv.innerHTML = `<span>${className} (${students.length} elever)</span>
+                                  <div style="display: flex; gap: 0.5rem;">
+                                      <button onclick="editClass('${className}')" style="background: #2d6a4f; padding: 0.5rem; border: none; color: #fff; border-radius: 0.5rem; cursor: pointer;">Redigera</button>
+                                      <button onclick="deleteClass('${className}')" style="background: #663333; padding: 0.5rem; border: none; color: #fff; border-radius: 0.5rem; cursor: pointer;">Ta bort</button>
+                                  </div>`;
+            classList.appendChild(classDiv);
+        });
+    }
+
+    function renderEditClassContent(className) {
+        const currentStudents = document.getElementById('currentStudents');
+        currentStudents.innerHTML = '';
+
+        classes[className].forEach((student, index) => {
+            const studentDiv = document.createElement('div');
+            studentDiv.style.display = 'flex';
+            studentDiv.style.justifyContent = 'space-between';
+            studentDiv.style.alignItems = 'center';
+            studentDiv.style.padding = '0.5rem';
+            studentDiv.style.marginBottom = '0.5rem';
+            studentDiv.style.backgroundColor = student.color;
+            studentDiv.style.borderRadius = '0.5rem';
+
+            if (student.stars >= maxStars) {
+                studentDiv.style.background = 'linear-gradient(45deg, #FFD700, #FFA500)';
+                studentDiv.style.color = '#000';
+            }
+
+            studentDiv.innerHTML = `
+                <span>${student.name} ${'★'.repeat(student.stars)}</span>
+                <button onclick="removeStudent(${index})" 
+                        style="background: #663333; padding: 0.5rem; border: none; color: #fff; border-radius: 0.5rem; cursor: pointer;">
+                    Ta bort
+                </button>
+            `;
+            currentStudents.appendChild(studentDiv);
+        });
+    }
+
+    // Event Handlers och Modal Hantering
+    settingsButton.onclick = () => settingsModal.style.display = 'block';
+    closeSettings.onclick = () => settingsModal.style.display = 'none';
+    importButton.onclick = () => {
+        importModal.style.display = 'block';
+        classNameInput.focus();
+    };
+    closeImport.onclick = () => importModal.style.display = 'none';
+    closeEdit.onclick = () => editModal.style.display = 'none';
+    manageClasses.onclick = () => {
+        renderClassList();
+        classModal.style.display = 'block';
+    };
+    closeClassModal.onclick = () => classModal.style.display = 'none';
+
+    window.onclick = (event) => {
+        if (event.target === settingsModal) settingsModal.style.display = 'none';
+                if (event.target === importModal) importModal.style.display = 'none';
+        if (event.target === classModal) classModal.style.display = 'none';
+        if (event.target === editModal) editModal.style.display = 'none';
+    };
+
+    toggleMode.onclick = () => {
+        const modes = ['fair', 'weighted', 'random'];
+        const currentIndex = modes.indexOf(selectionMode);
+        selectionMode = modes[(currentIndex + 1) % modes.length];
+        localStorage.setItem('selectionMode', selectionMode);
+        updateModeButton();
+    };
+
+    setMaxStars.onclick = () => {
+        const newValue = prompt('Ange maximalt antal stjärnor per elev:', maxStars);
+        const parsed = parseInt(newValue);
+        if (!isNaN(parsed) && parsed > 0) {
+            maxStars = parsed;
+            localStorage.setItem('maxStars', maxStars);
+            updateMaxStarsButton();
+            renderStudentList();
+        }
+    };
+
+    randomButton.onclick = async () => {
+        if (students.length === 0) {
+            alert('Importera först några elevnamn!');
+            return;
+        }
+
+        randomButton.disabled = true;
+        await animateSelection(1000);
+
+        const selectedStudent = selectStudent();
+        if (!selectedStudent) {
+            randomButton.disabled = false;
+            return;
+        }
+
+        selectedStudent.stars += 1;
+        selectedStudentDiv.innerHTML = `${selectedStudent.name} ${'★'.repeat(selectedStudent.stars)}`;
+
+        if (selectedStudent.stars >= maxStars) {
+            selectedStudentDiv.style.background = 'linear-gradient(45deg, #FFD700, #FFA500)';
+            selectedStudentDiv.style.color = '#000';
+        } else {
+            selectedStudentDiv.style.backgroundColor = selectedStudent.color;
+            selectedStudentDiv.style.color = '#fff';
+        }
+
+        const studentElements = document.querySelectorAll('.student');
+        studentElements.forEach(el => {
+            if (el.querySelector('span').textContent === selectedStudent.name) {
+                el.classList.add('highlight');
+                setTimeout(() => el.classList.remove('highlight'), 500);
+            }
+        });
+
+        if (currentClass && classes[currentClass]) {
+            classes[currentClass] = JSON.parse(JSON.stringify(students));
+            saveClasses();
+        }
+        renderStudentList();
+        randomButton.disabled = false;
+    };
+
+    classSelect.onchange = () => {
+        currentClass = classSelect.value;
+        selectedStudentDiv.innerHTML = '';
+        selectedStudentDiv.style.backgroundColor = '';
+
+        if (currentClass && classes[currentClass]) {
+            students = JSON.parse(JSON.stringify(classes[currentClass]));
+            assignColorsToStudents();
+            renderStudentList();
+        } else {
+            students = [];
+            renderStudentList();
+        }
+    };
+
+    resetStars.onclick = () => {
+        if (!currentClass) {
+            alert('Välj först en klass att nollställa');
+            return;
+        }
+
+        if (confirm(`Är du säker på att du vill nollställa alla stjärnor för ${currentClass}?\nDetta går inte att ångra!`)) {
+            students.forEach(student => student.stars = 0);
+            selectedStudentDiv.innerHTML = '';
+            selectedStudentDiv.style.backgroundColor = '';
+            classes[currentClass] = JSON.parse(JSON.stringify(students));
+            saveClasses();
+            renderStudentList();
+        }
+    };
+
+    // Klasshantering
+    window.editClass = (className) => {
+        currentEditingClass = className;
+        renderEditClassContent(className);
+        editModal.style.display = 'block';
+    };
+
+    window.removeStudent = (index) => {
+        const className = currentEditingClass;
+        if (!className) return;
+
+        classes[className] = classes[className].filter((_, i) => i !== index);
+        if (className === currentClass) {
+            students = JSON.parse(JSON.stringify(classes[className]));
+            assignColorsToStudents();
+            renderStudentList();
+        }
+        saveClasses();
+        renderEditClassContent(className);
+        updateClassSelector();
+    };
+
+    window.deleteClass = (className) => {
+        if (confirm(`Är du säker på att du vill ta bort klassen ${className}?`)) {
+            delete classes[className];
+            saveClasses();
+            renderClassList();
+            updateClassSelector();
+            if (currentClass === className) {
+                students = [];
+                renderStudentList();
+                currentClass = '';
+            }
+            showClassSelector();
+        }
+    };
+
+    saveNames.onclick = () => {
+        const className = classNameInput.value.trim();
+        if (!className) {
+            alert('Ange ett klassnamn');
+            return;
+        }
+
+        const names = nameInput.value.split(';')
+            .map(name => name.trim())
+            .filter(name => name !== '');
+
+        if (names.length === 0) {
+            alert('Ange minst ett elevnamn');
+            return;
+        }
+
+        if (classes[className] && !confirm(`Klassen ${className} finns redan. Vill du skriva över den?`)) {
+            return;
+        }
+
+        students = names.map(name => ({ name: name, stars: 0 }));
+        assignColorsToStudents();
+
+        classes[className] = JSON.parse(JSON.stringify(students));
+        currentClass = className;
+
+        renderStudentList();
+        saveClasses();
+        updateClassSelector();
+        showClassSelector();
+
+        importModal.style.display = 'none';
+        nameInput.value = '';
+        classNameInput.value = '';
+    };
+
+    newStudentInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addStudentButton.click();
+        }
+    });
+
+    addStudentButton.onclick = () => {
+        const newName = newStudentInput.value.trim();
+        if (!newName || !currentEditingClass) return;
+
+        const newStudent = { name: newName, stars: 0 };
+        if (!classes[currentEditingClass]) {
+            classes[currentEditingClass] = [];
+        }
+        classes[currentEditingClass].push(newStudent);
+
+        if (currentEditingClass === currentClass) {
+            students = JSON.parse(JSON.stringify(classes[currentEditingClass]));
+            assignColorsToStudents();
+            renderStudentList();
+        }
+
+        saveClasses();
+        renderEditClassContent(currentEditingClass);
+        updateClassSelector();
+        newStudentInput.value = '';
+    };
+
+    // Starta applikationen
+    loadSettings();
+    loadClasses();
+</script>
+</body>
+</html>
+
+
