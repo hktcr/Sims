@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Repetitionsquiz 2 | Atom- och Kärnfysik</title>
+    <style>
+        /* Uppdaterat färgtema med blå och orange */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4ff;
+        }
+
+        #quiz-container {
+            width: 60%;
+            margin: auto;
+            background-color: white;
+            padding: 2em;
+            margin-top: 2%;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        #question {
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        .btn {
+            background-color: #007bff; /* Blå */
+            border: none;
+            border-radius: 5px;
+            margin: 0.5em 0;
+            padding: 1em;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .btn:hover {
+            background-color: #0056b3; /* Mörkare blå */
+        }
+
+        #next-btn, #retry-btn {
+            margin-top: 1em;
+            padding: 0.5em 1em;
+            font-size: 1em;
+            display: none;
+            background-color: #ff6600; /* Orange */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #explanation {
+            margin-top: 1em;
+            background-color: #dbe9ff; /* Ljusblå */
+            padding: 1em;
+            border-radius: 5px;
+            display: none;
+            font-size: 1em;
+        }
+
+        .correct {
+            background-color: #007bff; /* Blå */
+        }
+
+        .incorrect {
+            background-color: #ff6600; /* Orange */
+        }
+
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 1em;
+            display: flex;
+        }
+
+        .progress-segment {
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        #result {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 1em;
+            background-color: #e0f7ff;
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+        #detailed-result {
+            margin-top: 2em;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Repetitionsquiz 2 | Atom- och Kärnfysik</h1>
+    <div id="progress-bar"></div>
+    <div id="question-container">
+        <div id="question"></div>
+        <div id="answer-buttons"></div>
+        <button id="next-btn">Nästa fråga</button>
+        <button id="retry-btn">Nu repeterar vi de frågor som besvarades fel</button>
+        <div id="explanation"></div>
+        <div id="result"></div>
+        <div id="detailed-result"></div>
+    </div>
+</div>
+
+<script>
+    // Array med alla frågor, med utförliga förklaringar
+    const originalQuestions = [
+        {
+            question: "Vilket påstående beskriver bäst isotoper?",
+            answers: [
+                { text: "Atomer med samma antal protoner men olika antal neutroner", correct: true },
+                { text: "Atomer med olika antal protoner men samma antal neutroner", correct: false },
+                { text: "Atomer med samma antal protoner och neutroner", correct: false },
+                { text: "Atomer utan protoner eller neutroner i kärnan", correct: false }
+            ],
+            explanation: "Isotoper är olika versioner av samma grundämne där antalet neutroner varierar, medan antalet protoner förblir detsamma. Till exempel har kol-12 och kol-14 båda 6 protoner men olika antal neutroner."
+        },
+        {
+            question: "Vad sker när en elektron exciteras?",
+            answers: [
+                { text: "Den hoppar upp och avger en foton när den återgår", correct: true },
+                { text: "Den förlorar laddning och stannar kvar i sitt skal", correct: false },
+                { text: "Den lämnar kärnan och blir en ny partikel", correct: false },
+                { text: "Den omvandlas till en neutron i kärnan", correct: false }
+            ],
+            explanation: "När en elektron exciteras får den energi och rör sig till ett högre energiskal. Vid återgång avger den energi i form av en foton."
+        },
+         {
+            question: "Sant eller falskt: Stark kärnkraft håller ihop protonerna och neutronerna i kärnan.",
+            answers: [
+                { text: "Sant", correct: true },
+                { text: "Falskt", correct: false }
+            ],
+            explanation: "Stark kärnkraft är en fundamental kraft som håller samman protoner och neutroner trots deras naturliga repulsion."
+        },
+        {
+            question: "Vad visade Rutherfords guldfolie-experiment?",
+            answers: [
+                { text: "Atomen har en tät, positiv kärna", correct: true },
+                { text: "Elektroner är inbäddade i en positiv massa", correct: false },
+                { text: "Kärnan är negativt laddad", correct: false },
+                { text: "Protoner och elektroner är jämnt fördelade", correct: false }
+            ],
+            explanation: "Rutherfords experiment visade att atomer har en tät, positiv kärna som kan stöta bort partiklar."
+        },
+        {
+            question: "Sant eller falskt: En obalans mellan protoner och neutroner gör isotopen instabil.",
+            answers: [
+                { text: "Sant", correct: true },
+                { text: "Falskt", correct: false }
+            ],
+            explanation: "Om det är för många eller för få neutroner i förhållande till protonerna blir kärnan instabil och kan sönderfalla."
+        },
+        {
+            question: "Vad avges vid alfastrålning?",
+            answers: [
+                { text: "En heliumkärna med två protoner och två neutroner", correct: true },
+                { text: "En elektron och en proton", correct: false },
+                { text: "En neutron och en elektron", correct: false },
+                { text: "En positivt laddad elektron", correct: false }
+            ],
+            explanation: "Vid alfastrålning avges en heliumkärna, vilket är en partikel med två protoner och två neutroner."
+        },
+        {
+            question: "Vad innebär halveringstid?",
+            answers: [
+                { text: "Tiden det tar för hälften av kärnorna att sönderfalla", correct: true },
+                { text: "Tiden det tar för alla kärnor att sönderfalla helt", correct: false },
+                { text: "Tiden det tar för kärnorna att fördubbla sin mängd", correct: false },
+                { text: "Tiden det tar för en neutron att omvandlas till en proton", correct: false }
+            ],
+            explanation: "Halveringstid är den tid det tar för hälften av ett radioaktivt ämne att sönderfalla."
+        },
+        {
+            question: "Sant eller falskt: Kol-14 kan användas för att datera material som är flera miljoner år gamla.",
+            answers: [
+                { text: "Sant", correct: false },
+                { text: "Falskt", correct: true }
+            ],
+            explanation: "Kol-14 används för datering upp till cirka 50 000 år, inte flera miljoner år."
+        },
+        {
+            question: "Varför minskar kol-14 i en organism efter döden?",
+            answers: [
+                { text: "Upptaget av kol-14 upphör och det sönderfaller gradvis", correct: true },
+                { text: "Kol-14 omvandlas direkt till kol-12 vid döden", correct: false },
+                { text: "Kol-14 ökar eftersom det inte längre används", correct: false },
+                { text: "Kol-14 förblir konstant efter döden", correct: false }
+            ],
+            explanation: "Efter döden slutar upptaget av kol-14 och det sönderfaller gradvis, vilket minskar dess mängd."
+        },
+        {
+            question: "Vad är en sönderfallskedja i samband med radioaktivitet?",
+            answers: [
+                { text: "En serie sönderfall tills kärnan blir stabil", correct: true },
+                { text: "Processen där kärnan fördubblar sin massa", correct: false },
+                { text: "Kemiska reaktioner som förändrar kärnans sammansättning", correct: false },
+                { text: "Omvandling till en isotop av samma grundämne", correct: false }
+            ],
+            explanation: "En sönderfallskedja är en sekvens av radioaktiva sönderfall som fortsätter tills en stabil kärna bildas."
+        },
+        {
+            question: "Vad händer med atomnumret vid betasönderfall?",
+            answers: [
+                { text: "Det ökar med ett medan masstalet förblir oförändrat", correct: true },
+                { text: "Det minskar med ett och masstalet minskar med två", correct: false },
+                { text: "Både atomnummer och masstal ökar med två", correct: false },
+                { text: "Atomnummer och masstal förblir oförändrade", correct: false }
+            ],
+            explanation: "Vid betasönderfall omvandlas en neutron till en proton, vilket ökar atomnumret med ett utan att ändra masstalet."
+        },
+        {
+            question: "Sant eller falskt: Gammastrålning påverkar atomnumret och masstalet hos en atomkärna.",
+            answers: [
+                { text: "Sant", correct: false },
+                { text: "Falskt", correct: true }
+            ],
+            explanation: "Gammastrålning är en energistrålning som inte påverkar atomnumret eller masstalet, men hjälper kärnan att bli mer stabil."
+        },
+        {
+            question: "Vad är betastrålning?",
+            answers: [
+                { text: "En ström av elektroner eller positroner", correct: true },
+                { text: "En ström av protoner", correct: false },
+                { text: "En ström av neutroner", correct: false },
+                { text: "En typ av elektromagnetisk strålning", correct: false }
+            ],
+            explanation: "Betastrålning är en typ av strålning som består av elektroner eller positroner som avges från en instabil kärna."
+        },
+        {
+            question: "Vilken typ av strålning kan tränga igenom bly bäst?",
+            answers: [
+                { text: "Alfastrålning", correct: false },
+                { text: "Betastrålning", correct: false },
+                { text: "Gammastrålning", correct: true },
+                { text: "Neutronstrålning", correct: false }
+            ],
+            explanation: "Gammastrålning har hög genomträngningsförmåga och kan blockeras effektivt endast med täta material som bly."
+        },
+        {
+            question: "Vad är den huvudsakliga skillnaden mellan fission och fusion?",
+            answers: [
+                { text: "Fission är uppdelningen av en kärna medan fusion är sammansmältning av kärnor", correct: true },
+                { text: "Fission skapar tyngre element, fusion skapar lättare element", correct: false },
+                { text: "Fission förekommer naturligt på solen, fusion i kärnkraftverk", correct: false },
+                { text: "Fusion är en process som sker vid rumstemperatur", correct: false }
+            ],
+            explanation: "Fission innebär att en tung kärna splittras i mindre delar medan fusion innebär att lätta kärnor smälter samman för att bilda en tyngre kärna."
+        },
+        {
+            question: "Vilken av följande strålningstyper är minst farlig för människan utifrån ett externt perspektiv?",
+            answers: [
+                { text: "Alfastrålning", correct: true },
+                { text: "Betastrålning", correct: false },
+                { text: "Gammastrålning", correct: false },
+                { text: "Neutronstrålning", correct: false }
+            ],
+            explanation: "Alfastrålning har låg genomträngningsförmåga och stoppas av huden eller ett papper, men kan vara farlig om den inandas eller sväljs."
+        },
+        {
+            question: "Hur påverkar halveringstiden strålningsrisken från ett radioaktivt ämne?",
+            answers: [
+                { text: "Kort halveringstid innebär högre aktivitet och strålningsrisk", correct: true },
+                { text: "Lång halveringstid innebär alltid högre strålningsrisk", correct: false },
+                { text: "Halveringstiden påverkar inte strålningsrisken", correct: false },
+                { text: "Ju längre halveringstid, desto snabbare sönderfaller ämnet", correct: false }
+            ],
+            explanation: "Kort halveringstid betyder att ämnet sönderfaller snabbt och avger mer strålning på kort tid, vilket ökar strålningsrisken."
+        },
+        {
+            question: "Vad är ett vanligt användningsområde för kol-14-datering?",
+            answers: [
+                { text: "Datering av organiskt material upp till cirka 50 000 år gammalt", correct: true },
+                { text: "Datering av fossiler som är miljoner år gamla", correct: false },
+                { text: "Datering av mineraler och metaller", correct: false },
+                { text: "Bestämning av syrehalter i vatten", correct: false }
+            ],
+            explanation: "Kol-14-datering används för att datera organiskt material som trä och ben, upp till cirka 50 000 år gammalt."
+        },
+        {
+            question: "Vilken av följande processer sker i solen?",
+            answers: [
+                { text: "Kärnfusion", correct: true },
+                { text: "Kärnfission", correct: false },
+                { text: "Radioaktivt sönderfall", correct: false },
+                { text: "Betasönderfall", correct: false }
+            ],
+            explanation: "I solen sker kärnfusion, där vätekärnor smälter samman och bildar helium, vilket frigör stora mängder energi."
+        },
+        {
+            question: "Vad händer med masstalet vid ett alfapartikel-sönderfall?",
+            answers: [
+                { text: "Det minskar med fyra", correct: true },
+                { text: "Det ökar med två", correct: false },
+                { text: "Det minskar med två", correct: false },
+                { text: "Det förblir oförändrat", correct: false }
+            ],
+            explanation: "Vid alfapartikelsönderfall avges en heliumkärna, vilket minskar masstalet med fyra enheter."
+        },
+        {
+            question: "Vad är gammastrålning?",
+            answers: [
+                { text: "En form av elektromagnetisk strålning med hög energi", correct: true },
+                { text: "En strålning av protoner", correct: false },
+                { text: "En typ av partikelstrålning", correct: false },
+                { text: "En ström av elektroner", correct: false }
+            ],
+            explanation: "Gammastrålning är elektromagnetisk strålning med mycket hög energi och kort våglängd, som ofta avges efter alfa- eller betasönderfall."
+        },
+        {
+            question: "Vilket av följande påståenden stämmer för neutroner i en atomkärna?",
+            answers: [
+                { text: "De har ingen laddning", correct: true },
+                { text: "De är alltid fler än protonerna", correct: false },
+                { text: "De är positivt laddade", correct: false },
+                { text: "De omvandlas till protoner vid gammastrålning", correct: false }
+            ],
+            explanation: "Neutroner är neutrala partiklar utan elektrisk laddning som finns i atomkärnan tillsammans med protoner."
+        }
+    ];
+
+    let questions = [];  // Aktuella frågor i omgången
+    let currentQuestionIndex = 0;
+    let userAnswers = [];  // Lagrar alla användarens svar över alla omgångar
+    let incorrectQuestions = [];  // Lagrar felaktigt besvarade frågor
+
+    const questionElement = document.getElementById('question');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const retryButton = document.getElementById('retry-btn');
+    const explanationElement = document.getElementById('explanation');
+    const progressBar = document.getElementById('progress-bar');
+    const resultElement = document.getElementById('result');
+    const detailedResultElement = document.getElementById('detailed-result');
+
+    startQuiz();
+
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        incorrectQuestions = [];
+        progressBar.innerHTML = '';  // Återställ progressbaren
+        nextButton.innerText = 'Nästa fråga';
+        nextButton.style.display = 'none';
+        retryButton.style.display = 'none';
+        resultElement.style.display = 'none';
+        detailedResultElement.style.display = 'none';
+        detailedResultElement.innerHTML = '';
+        questions = shuffleArray([...originalQuestions]);  // Slumpmässigt ordnar frågorna
+        showQuestion();
+    }
+
+    function showQuestion() {
+        resetState();
+        const currentQuestion = questions[currentQuestionIndex];
+        questionElement.innerText = currentQuestion.question;
+
+        const shuffledAnswers = currentQuestion.answers.sort(() => Math.random() - 0.5);
+
+        shuffledAnswers.forEach(answer => {
+            const button = document.createElement('button');
+            button.innerText = answer.text;
+            button.classList.add('btn');
+            if (answer.correct) {
+                button.dataset.correct = answer.correct;
+            }
+            button.addEventListener('click', selectAnswer);
+            answerButtonsElement.appendChild(button);
+        });
+    }
+
+    function resetState() {
+        nextButton.style.display = 'none';
+        retryButton.style.display = 'none';
+        explanationElement.style.display = 'none';
+        while (answerButtonsElement.firstChild) {
+            answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+        }
+    }
+
+    function selectAnswer(e) {
+        const selectedButton = e.target;
+        const correct = selectedButton.dataset.correct === 'true';
+
+        const currentQuestion = questions[currentQuestionIndex];
+
+        // Uppdatera användarens svar eller lägg till nytt
+        const existingAnswerIndex = userAnswers.findIndex(ans => ans.question === currentQuestion.question);
+        if (existingAnswerIndex !== -1) {
+            userAnswers[existingAnswerIndex].correct = correct;
+        } else {
+            userAnswers.push({ question: currentQuestion.question, correct: correct });
+        }
+
+        // Uppdatera incorrectQuestions
+        if (correct) {
+            // Ta bort frågan från incorrectQuestions om den finns där
+            incorrectQuestions = incorrectQuestions.filter(q => q.question !== currentQuestion.question);
+        } else {
+            // Lägg till frågan till incorrectQuestions om den inte redan finns där
+            if (!incorrectQuestions.some(q => q.question === currentQuestion.question)) {
+                incorrectQuestions.push(currentQuestion);
+            }
+        }
+
+        Array.from(answerButtonsElement.children).forEach(button => {
+            setStatusClass(button, button.dataset.correct === 'true');
+            button.disabled = true;
+        });
+
+        explanationElement.innerText = correct ? "Rätt svar! " + currentQuestion.explanation : "Fel svar. " + currentQuestion.explanation;
+        explanationElement.style.display = 'block';
+
+        updateProgressBar();
+
+        // Kontrollera om detta är sista frågan
+        if (currentQuestionIndex === questions.length - 1) {
+            showRetryButtonOrResult();
+        } else {
+            nextButton.style.display = 'block';
+        }
+    }
+
+    function setStatusClass(element, correct) {
+        element.classList.add(correct ? 'correct' : 'incorrect');
+    }
+
+    nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            showQuestion();
+        } else {
+            showRetryButtonOrResult();
+        }
+    });
+
+    function showRetryButtonOrResult() {
+        if (incorrectQuestions.length > 0) {
+            retryButton.style.display = 'block';
+            retryButton.style.visibility = 'visible';
+            retryButton.onclick = () => {
+                questions = [...incorrectQuestions];
+                currentQuestionIndex = 0;
+                retryButton.style.display = 'none';
+                showQuestion();
+            };
+        }
+        showResult();
+    }
+
+    function showResult() {
+        resetState();
+
+        const totalQuestions = originalQuestions.length;
+        const correctAnswers = userAnswers.filter(ans => ans.correct).length;
+
+        const percentage = (correctAnswers / totalQuestions) * 100;
+        let feedback = '';
+        if (percentage === 100) {
+            feedback = "Fantastiskt! Alla frågor har nu besvarats korrekt!";
+        } else if (percentage >= 70) {
+            feedback = `Bra jobbat! Du har hittills svarat rätt på ${correctAnswers} av ${totalQuestions} frågor!`;
+        } else if (percentage >= 50) {
+            feedback = `Helt okej, men det finns utrymme för förbättring. Du har hittills svarat rätt på ${correctAnswers} av ${totalQuestions} frågor.`;
+        } else {
+            feedback = `Fortsätt öva! Du har hittills svarat rätt på ${correctAnswers} av ${totalQuestions} frågor. Ge inte upp!`;
+        }
+
+        resultElement.innerText = feedback;
+        resultElement.style.display = 'block';
+
+        // Generera och visa detaljerad statistik
+        const table = document.createElement('table');
+        table.innerHTML = `<tr><th>Fråga</th><th>Resultat</th></tr>`;
+        originalQuestions.forEach((question, index) => {
+            const userAnswer = userAnswers.find(ans => ans.question === question.question);
+            const row = table.insertRow();
+            row.insertCell(0).innerText = `Fråga ${index + 1}: ${question.question}`;
+            row.insertCell(1).innerText = userAnswer ? (userAnswer.correct ? "Rätt" : "Fel") : "Ej besvarad";
+        });
+        detailedResultElement.appendChild(table);
+        detailedResultElement.style.display = 'block';
+
+        if (incorrectQuestions.length === 0) {
+            nextButton.innerText = 'Starta om';
+            nextButton.style.display = 'block';
+            nextButton.onclick = startQuiz;
+        } else {
+            nextButton.innerText = 'Gå igenom de frågor du missade';
+            nextButton.style.display = 'block';
+            nextButton.onclick = () => {
+                questions = [...incorrectQuestions];
+                currentQuestionIndex = 0;
+                nextButton.style.display = 'none';
+                showQuestion();
+            };
+        }
+    }
+
+    function updateProgressBar() {
+        progressBar.innerHTML = '';  // Återställ progressbaren
+        const totalQuestions = originalQuestions.length;
+        originalQuestions.forEach(question => {
+            const userAnswer = userAnswers.find(ans => ans.question === question.question);
+            const segment = document.createElement('div');
+            segment.classList.add('progress-segment');
+            segment.style.width = `${100 / totalQuestions}%`;
+            if (userAnswer) {
+                segment.style.backgroundColor = userAnswer.correct ? '#007bff' : '#ff6600';
+            } else {
+                segment.style.backgroundColor = '#ddd';
+            }
+            progressBar.appendChild(segment);
+        });
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+</script>
+</body>
+</html>
