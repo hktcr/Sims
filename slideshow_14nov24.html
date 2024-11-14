@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Åstorps förstelärarnätverk - "promptar"</title>
+    <!--
+    ============================================================================
+    GUIDE: Översikt över slidetyper och kodningskonventioner
+    ============================================================================
+
+    Varje slide i presentationen ska kodas enligt följande konventioner. Detta säkerställer konsekvens och tillåter JavaScript-koden att korrekt identifiera och bearbeta varje slide.
+
+    Struktur för slides:
+    --------------------
+    Varje slide representeras av ett `<div>`-element med klassen `slide`. Slides ska inkludera följande attribut:
+
+    - `data-category`: Kategorinamnet (t.ex. "Introduktion", "Översättning").
+    - `data-slide-number`: Slidens nummer inom sin kategori (börjar från 1).
+    - `data-title`: En kort titel för sliden (används i innehållsförteckningen).
+
+    Exempel:
+    <div class="slide" data-category="Introduktion" data-slide-number="1" data-title="Titel">
+     Innehåll för sliden 
+    </div>
+
+    Slidetyper: 
+    -----------
+
+    1. **Titelslide:**
+       - **Beskrivning:** Professionell startsida med större text.
+       - **Struktur:**
+         <div class="slide" data-category="Introduktion" data-slide-number="1" data-title="Titel">
+             <div class="title-slide">
+                 <h1>Huvudtitel</h1>
+                 <p>Undertitel eller ytterligare information</p>
+             </div>
+         </div>
+
+    2. **Allmän informationsslide:**
+       - **Beskrivning:** Innehåller generell information och rubriker.
+       - **Struktur:**
+         <div class="slide" data-category="Introduktion" data-slide-number="2" data-title="Introduktion">
+             <h2 class="purpose">Introduktion</h2>
+             <p>Innehåll går här.</p>
+         </div>
+
+    3. **Prompt-exempelslide:**
+       - **Beskrivning:** Innehåller promptexempel som kan kopieras med en knapp.
+       - **Struktur:**
+         <div class="slide" data-category="Översättning" data-slide-number="1" data-title="PROMPT 1">
+             <h2 class="purpose">Syfte med sliden</h2>
+             <div class="prompt-label">PROMPT 1</div>
+              Textstorleksknappar
+             <div class="text-size-controls">
+                 <button class="text-size-button" onclick="decreaseTextSize('promptBox1')">-</button>
+                 <button class="text-size-button" onclick="increaseTextSize('promptBox1')">+</button>
+             </div>
+             <textarea class="prompt-box" id="promptBox1">Prompttext här</textarea>
+             <button class="copy-button" onclick="copyToClipboard('promptBox1')">Kopiera till urklipp</button>
+         </div>
+
+    4. **ICILS 2023-slide:**
+       - **Beskrivning:** Visar ett citat, en bild från en URL till höger om citatet, och en länk till huvudrapporten under bilden.
+       - **Struktur:**
+         <div class="slide" data-category="ICILS 2023" data-slide-number="1" data-title="ICILS 2023">
+             <h2 class="purpose">ICILS 2023</h2>
+             <div class="icils-slide">
+                 <div class="icils-quote">
+                     <p>"Citat går här."</p>
+                 </div>
+                 <div class="icils-image-container">
+                     <img src="bild_url.png" alt="ICILS 2023">
+                     <a class="icils-link" href="rapport_url" target="_blank">Läs huvudrapporten här</a>
+                 </div>
+             </div>
+         </div>
+
+    **Noteringar:**
+    - Se till att alltid inkludera `data-category`, `data-slide-number` och `data-title` i varje slide.
+    - När du lägger till en ny slide, säkerställ att `data-slide-number` ökas korrekt inom sin kategori.
+    - Innehållsförteckningen genereras dynamiskt baserat på dessa attribut.
+
+    -->
+    <style>
+        /* Grundläggande stilar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: white;
+            min-height: 100vh;
+        }
+
+        /* Header-banner */
+        .header-banner {
+            background-color: #8c1f41;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            letter-spacing: 0.5px;
+        }
+
+        /* Huvudcontainer */
+        .main-container {
+            display: flex;
+            padding: 4rem 1rem 1rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar för innehållsförteckning */
+        .sidebar {
+            width: 250px;
+            background-color: #f1f1f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+            color: black;
+            position: sticky;
+            top: 80px;
+            /* Höjden av header-banner + lite marginal */
+            align-self: flex-start;
+            height: fit-content;
+        }
+
+        .slide-intro .sidebar {
+            float: right;
+            /* Högerställer endast sidofältet i denna slide */
+            width: 250px;
+            /* Justera bredden efter behov */
+            margin-left: 20px;
+            /* Mellanrum mellan sidofältet och innehållet */
+            background-color: #f0f0f0;
+            /* Valfri bakgrundsfärg */
+            padding: 15px;
+            /* Inre marginal */
+            border-radius: 5px;
+            /* Rundade hörn (valfri) */
+        }
+
+        .sidebar h4 {
+            margin-bottom: 0.5rem;
+            color: #8c1f41;
+        }
+
+        .sidebar-menu {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .expand-btn {
+            cursor: pointer;
+            color: #8c1f41;
+            margin-right: 0.5rem;
+        }
+
+        .category-title {
+            font-weight: bold;
+            color: #8c1f41;
+            text-decoration: none;
+        }
+
+        .category-title:hover {
+            color: #6b1731;
+        }
+
+        .submenu {
+            list-style-type: none;
+            padding-left: 1rem;
+            display: none;
+        }
+
+        .submenu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .submenu a {
+            text-decoration: none;
+            color: #8c1f41;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .submenu a:hover {
+            color: #6b1731;
+        }
+
+        /* Innehållsarea */
+        .content {
+            flex: 1;
+        }
+
+        /* Slideshow */
+        .slideshow {
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            visibility: hidden;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            color: black;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Titelslide */
+        .title-slide {
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            font-size: 3rem;
+            color: #8c1f41;
+            margin-bottom: 1rem;
+        }
+
+        .title-slide p {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        /* Rubriker */
+        .purpose {
+            color: #8c1f41;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e0e0e0;
+            font-weight: bold;
+        }
+
+        /* Prompt Label */
+        .prompt-label {
+            color: #8c1f41;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Prompt Box */
+        .prompt-box {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+            line-height: 1.5;
+            background: white;
+            color: #333;
+        }
+
+        .prompt-box:focus {
+            outline: none;
+            border-color: #8c1f41;
+            box-shadow: 0 0 0 2px rgba(140, 31, 65, 0.1);
+        }
+
+        /* Textstorleksknappar */
+        .text-size-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .text-size-button {
+            background-color: #8c1f41;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .text-size-button:hover {
+            background-color: #6b1731;
+            transform: translateY(-1px);
+        }
+
+        /* Kopieringsknapp */
+        .copy-button {
+            background-color: #8c1f41;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .copy-button:hover {
+            background-color: #6b1731;
+            transform: translateY(-1px);
+        }
+
+        .copy-button.success {
+            background-color: #2ecc71;
+        }
+
+        /* Progressindikator */
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .progress-dot.active {
+            background-color: #8c1f41;
+        }
+
+        /* ICILS 2023 Slide */
+        .icils-slide {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .icils-quote {
+            flex: 1;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        .icils-image-container {
+            flex-shrink: 0;
+        }
+
+        .icils-image-container img {
+            max-width: 300px;
+            border-radius: 8px;
+        }
+
+        .icils-link {
+            display: block;
+            margin-top: 0.5rem;
+            text-decoration: none;
+            color: #8c1f41;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .icils-link:hover {
+            color: #6b1731;
+        }
+
+        /* Responsiv design */
+        @media (max-width: 800px) {
+            .main-container {
+                flex-direction: column;
+                padding: 4rem 1rem 1rem 1rem;
+            }
+
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1rem;
+                position: static;
+            }
+
+            .icils-slide {
+                flex-direction: column;
+            }
+
+            .icils-image-container img {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header-banner {
+                font-size: 1rem;
+                padding: 0.8rem;
+            }
+
+            .slide {
+                padding: 1rem;
+            }
+
+            .title-slide h1 {
+                font-size: 2rem;
+            }
+
+            .title-slide p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header-banner -->
+    <div class="header-banner">
+        Åstorps förstelärarnätverk den 24 november 2024
+    </div>
+
+    <!-- Huvudcontainer -->
+    <div class="main-container">
+        <!-- Sidebar med innehållsförteckning -->
+        <div class="sidebar">
+            <h4>Innehåll</h4>
+            <ul class="sidebar-menu">
+                <!-- Innehållsförteckningen kommer att genereras dynamiskt här -->
+            </ul>
+        </div>
+
+        <!-- Innehållsarea -->
+        <div class="content">
+            <div class="slideshow">
+                <!-- Här inkluderar du alla dina slides med rätt data-attribut -->
+                <!-- Titelslide -->
+                <div class="slide active" data-category="Introduktion" data-slide-number="1" data-title="Titel">
+                    <div class="title-slide">
+                        <h1>Generativ AI i Skolan</h1>
+                        <p>En workshop för Åstorps förstelärarnätverk</p>
+                        <p>24 november 2024</p>
+                    </div>
+                </div>
+
+                <!-- Introduktionsslide -->
+                <div class="slide slide-intro" data-category="Introduktion" data-slide-number="2"
+                    data-title="Introduktion">
+                    <h2 class="purpose">Introduktion</h2>
+                    <p>Välkomna till dagens workshop om generativ AI!
+<br><br>Sedan vår senaste träff har utvecklingen inom generativ AI accelererat i rasande takt, och nya möjligheter uppstår nästan varje vecka. Vi står inför både utmaningar och enorma möjligheter när det gäller att använda AI på ett sätt som stödjer lärande och undervisning.
+
+<br><br>Dagens fokus kommer att ligga på  användning av generativ AI. Vi inleder med en översikt av vad som skett i Åstorp, följt av en nulägesanalys av hur AI används och upplevs bland elever och pedagoger. Vi kommer också att belysa några kritiska insikter, såsom varför traditionella plagiatkontroller inte bör användas för att avgöra om en text är AI-genererad och hur elevernas användning av AI kan effektiviseras.
+                        
+<br><br>Vi ska även titta på några resultat från ICILS 2023-rapporten, som visar på betydelsen av att utveckla elevernas digitala kompetens och hur socioekonomiska faktorer påverkar deras förutsättningar.
+                        
+<br><br>Låt oss tillsammans skapa en plan för att möta dessa utmaningar och möjligheter med kunskap och strategiskt tänkande.</p>
+                    
+                </div>
+                <!-- ICILS 2023 Slide -->
+                <!-- ================================== -->
+                <div class="slide" data-category="ICILS 2023" data-slide-number="1" data-title="Vad är ICILS?">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p>ICILS (International Computer and Information Literacy Study) är en internationell kunskapsmätning som undersöker digital kompetens hos elever i årskurs 8. Studien genomförs vart femte år sedan 2013 och organiseras av IEA (The International Association for the Evaluation of Educational Achievement). I ICILS 2023 deltog drygt 133 000 elever från omkring 5 300 skolor i 34 olika länder. Studien mäter två områden av digital kompetens: dator- och informationskunnighet samt datalogiskt tänkande. </p></p></p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" data-category="ICILS 2023" data-slide-number="2" data-title="4 av 10 uppnår ej ...">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p><i>"I Sverige presterar fyra av tio elever under den grundläggande nivån. Dessa elever uppvisar en mindre förmåga till självständig datoranvändning och en bristande källmedvetenhet, vilket är grundläggande för ett effektivt och säkert deltagande i en digital värld med ett komplext och stort informationsflöde."</p></i></p></p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" data-category="ICILS 2023" data-slide-number="3" data-title="Undervisning nödvändig">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p><i>"Tidigare omgångar av ICILS har visat att elever som växer upp i en digitaliserad värld och är flitiga användare av digitala verktyg, både i och utanför skolan, per automatik inte får väl utvecklade digitala färdigheter. Även ICILS 2023 visar att så är fallet och att det dessutom är giltigt för Sverige."</i></p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" data-category="ICILS 2023" data-slide-number="4" data-title="Bristande likvärdighet">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p><i>"De 25 procent elever med högst socioekonomisk bakgrund har presterat 73 poäng bättre i dator och informationskunnighet respektive 108 poäng bättre i datalogiskt tänkande än de 25 procent med lägst socioekonomisk bakgrund."</i></p>
+                            <br>
+                            <p>Reflektion: Den socioekonomiska bakgrunden har stor påverkan på elevernas digitala kompetens: en genomsnittselev med hög socioekonomisk bakgrund presterar bättre än cirka 77% av eleverna med låg socioekonomisk bakgrund i dator- och informationskunnighet, och bättre än cirka 86% i datalogiskt tänkande.</p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" data-category="ICILS 2023" data-slide-number="5" data-title="Könsskillnader">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p><i>“Resultaten visar på stora skillnader mellan olika elevgrupper. I Sverige, liksom de flesta deltagande länder, presterar flickor bättre än pojkar i dator och informationskunnighet. För problemlösning och programmering är det omvänt för Sveriges del. Pojkar presterar i detta hänseende bättre än flickor. Denna skillnad syns inte i övriga nordiska länder.”
+                                </i></p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" data-category="ICILS 2023" data-slide-number="6" data-title="Skola spelar roll">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p><i>“Det har också stor betydelse i vilken skola som en elev går. Elever i en skola med en mindre gynnsam socioekonomisk elevsammansättning presterar sämre än elever i en skola med mer gynnsam socioekonomisk sammansättning.
+                                <br>
+                                
+                                Detta är problematiskt utifrån ett likvärdighetsperspektiv då det handlar om färdigheter som är nödvändiga för att aktivt kunna delta i skola, arbetsliv och samhället i stort.”
+                                </i></p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide" data-category="ICILS 2023" data-slide-number="7" data-title="AI kan förstärka">
+                    <h2 class="purpose">ICILS 2023</h2>
+                    <div class="icils-slide">
+                        <div class="icils-quote">
+                            <p><i>“Ramverket för ICILS 2023 bygger vidare på ramverk från tidigare omgångar av studien men ses över och utvecklas inför varje ny omgång. Detta är en utmaning givet den snabba teknikutvecklingen som förändrar både det digitala landskapet
+                                och vad som anses vara relevanta kompetenser.”
+                                <br>
+                                <br>
+                                “Den snabba utvecklingen av AI som började ta fart under den termin som de deltagande eleverna genomförde ICILS är ett bra exempel på detta.“</i></p>
+                        </div>
+                        <div class="icils-image-container">
+                            <img src="https://raw.githubusercontent.com/hktcr/Sims/refs/heads/main/bild_ICILS_2023.png"
+                                alt="ICILS 2023">
+                            <a class="icils-link"
+                                href="https://drive.google.com/file/d/1ksKRbT4FrNVr6lwt6szRx29G0Gm07pJe/view?usp=sharing"
+                                target="_blank">Läs
+                                huvudrapporten här</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Översättning Slides -->
+                <!-- ================================== -->
+                <div class="slide slide-intro" data-category="Promptning" data-slide-number="1"
+                    data-title="Introduktion">
+                    <h2 class="purpose">Introduktion</h2>
+                    <p>Vi kommer att utgå ifrån den AI-chatbot som finns tillgänglig i våra M365-konton. Till höger finns två olika vägar att nå M365 Copilot.
+                        <br><br> <b>80/20-regeln - en målsättning (!?):</b><br>
+Hur ofta skulle AI kunna färdigställa 80 procent av uppgifter som vi egentligen inte vill göra och låta oss foksuser på att utvärdera och färdigställa de sista 20 procenten?<br><br>
+<b>Vad är säkert att skriva?</b><br>
+Skriv inget du inte kan stå för om det dyker upp på Aftonbladets löpsedel!
+                    </p>
+                    <div class="sidebar">
+                        <h4>Resurser</h4>
+                        <ul>
+                            <li><a href="https://docs.google.com/presentation/d/e/2PACX-1vQ14s4Ec9mSTX92ugtOl3fJJaHdL8NdczOe4Z5Cyb3yf21z4CKT48ayHyEyRl1MQwSPSR8d1to6eP_F/pub?start=false&loop=false&delayms=3000"
+                                    target="_blank">Hitta Copilot (Presentation)</a></li>
+                            <li><a href="https://copilot.cloud.microsoft.com/" target="_blank">Direktlänk till
+                                    Copilot</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="slide" data-category="Översättning" data-slide-number="1" data-title="Del 1">
+                    <h2 class="purpose">Syfte - översätt till olika språk och översätt tillbaka igen</h2>
+                    <div class="prompt-label">Del 1</div>
+
+                    <!-- Textstorleksknappar -->
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox1')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox1')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox1">Översätt till engelska "Tack för dagens möte. Hör av er igen om det finns något ni undrar över."</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox1')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Resten av slidesen inkluderas på samma sätt -->
+                <!-- Slide 4 -->
+                <div class="slide" data-category="Översättning" data-slide-number="2" data-title="Del 2">
+                    <h2 class="purpose">Syfte - översätt till olika språk och översätt tillbaka igen</h2>
+                    <div class="prompt-label">Del 2</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox2')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox2')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox2">Översätt till tyska "Tack för dagens möte. Hör av er igen om det finns något ni undrar över."</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox2')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Slide 5 -->
+                <div class="slide" data-category="Översättning" data-slide-number="3" data-title="Del 3">
+                    <h2 class="purpose">Syfte - översätt till olika språk och översätt tillbaka igen</h2>
+                    <div class="prompt-label">Del 3</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox3')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox3')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox3">Översätt till arabiska "Vi diskuterade och jämförde två typer av kärnreaktioner:
+                        - **Fission**: En process där en tung atomkärna, exempelvis uran-235, klyvs till mindre delar som barium och krypton. Denna klyvning frigör energi och neutroner som kan leda till en kedjereaktion. Under lektionen visade jag en simulering som illustrerade denna process, där ni kunde se hur neutroner startar reaktionen och hur styrstavar kan användas för att kontrollera reaktionshastigheten i ett kärnkraftverk."</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox3')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Slide 6 -->
+                <div class="slide" data-category="Översättning" data-slide-number="4" data-title="Del 4">
+                    <h2 class="purpose">Syfte - översätt till olika språk och översätt tillbaka igen</h2>
+                    <div class="prompt-label">Del 4</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox4')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox4')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox4">Nytt chatfönster - Översätt tillbaka den arabiska texten till svenska</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox4')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Slide 7 -->
+                <div class="slide" data-category="Översättning" data-slide-number="5" data-title="Del 5">
+                    <h2 class="purpose">Syfte - översätt till olika språk och översätt tillbaka igen</h2>
+                    <div class="prompt-label">Del 5</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox5')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox5')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox5">Översätt till tjetjenska "Tack för dagens möte. Hör av er igen om det finns något ni undrar över."</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox5')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Slide 8 -->
+                <div class="slide" data-category="Översättning" data-slide-number="6" data-title="Del 6">
+                    <h2 class="purpose">Syfte - översätt till olika språk och översätt tillbaka igen</h2>
+                    <div class="prompt-label">Del 6</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox6')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox6')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox6">Nytt chatfönster - Översätt tillbaka den tjetjenska texten till svenska</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox6')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Flervalsfrågor Slides -->
+                <!-- ================================== -->
+
+                <!-- Slide 9 -->
+                <div class="slide" data-category="Flervalsuppgifter" data-slide-number="1" data-title="Exempel 1">
+                    <h2 class="purpose">Syfte - generera flervalsuppgifter</h2>
+                    <div class="prompt-label">Exempel 1</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox7')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox7')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox7">Kan du skapa tre flervalsuppgifter om fotosyntesen till mina högstadieelever? Tre distraktorer och ett korrekt alternativ.</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox7')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Slide 10 -->
+                <div class="slide" data-category="Flervalsuppgifter" data-slide-number="2" data-title="Exempel 2">
+                    <h2 class="purpose">Syfte - generera flervalsuppgifter</h2>
+                    <div class="prompt-label">Exempel 2</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox8')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox8')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox8">Skapa en flervalsfråga som testar högstadieelevers förståelse för fotosyntesen. Ett stycke text per svarsalternativ. Ett korrekt alternativ och tre distraktorer. Markera det korrekta alternativet med fet text. Avsluta med en analys av uppgiftens validitet och reliabilitet. Är uppgiften formulerad på det bästa sättet? Är distraktorer och korrekt alternativ lika långa?</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox8')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Slide 11 -->
+                <div class="slide" data-category="Flervalsuppgifter" data-slide-number="3" data-title="Uppföljning">
+                    <h2 class="purpose">Syfte - generera flervalsuppgifter</h2>
+                    <div class="prompt-label">Uppföljning</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox9')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox9')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box" id="promptBox9">Analysera validitet och reliabilitet i de</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox9')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Riskbedömning Slide -->
+                <!-- ================================== -->
+
+                <!-- Slide 12 -->
+                <div class="slide" data-category="Riskbedömning" data-slide-number="1" data-title="Exempel">
+                    <h2 class="purpose">Syfte - skapa utkast till riskbedömning</h2>
+                    <div class="prompt-label">Exempel</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox10')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox10')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox10">Kan du skapa ett fullständigt utkast till en riskbedömning för ett besök på Högevallsbadet i Lund (högstadieklass)?</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox10')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Vårdnadshavarbrev Slide -->
+                <!-- ================================== -->
+
+                <!-- Slide 13 -->
+                <div class="slide" data-category="Vårdnadshavarbrev" data-slide-number="1" data-title="Exempel">
+                    <h2 class="purpose">Syfte - skapa utkast till vårdnadshavarbrev</h2>
+                    <div class="prompt-label">Exempel</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox11')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox11')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox11">Kan vi skapa ett fullständigt, tydligt och välformulerat mail till vårdnadshavare för att rapportera om en händelse på skolan. Ställ relevanta frågor till mig för att samla in den information som behövs till brevet.</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox11')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Exempel på riskabel användning -->
+                <!-- ================================== -->
+
+                <!-- Slide 14 -->
+                <div class="slide" data-category="Riskabel Användning" data-slide-number="1" data-title="Bedömning">
+                    <h2 class="purpose">Varnande exempel på mycket riskabel användning av AI</h2>
+                    <div class="prompt-label">Bedömning</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox14')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox14')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox14">Vilket betyg bör eleven få på detta svar? utgå ifrån styrdokumenten.
+                        
+                        Elevens svar:
+genetiskt modifierade  grödor för klimatresistans  
+inledning
+forskare använder CRISPR- tekniken en metod för genregdigering som gör det möjligt att exakt redigera gener i ett organisms DNA. Genom att klippa i DNA vid specifika ställen kan forskare byta ut svaga gener som orsakar att växter inte är tåliga mot svåra klimatförändringar såsom torka och överspänningar, mot andra gener som förstärker växterna och gör de mer tåliga. Genom att ändra generna i växterna kan man få de att bli mer tåliga mot torka och andra svåra förändringar i klimat. Detta gör att mer gröda kan växa och förstärka livsmedelsförsörjningen i flera olika länder som har haft det svårt med odlingar som t.ex i afrika där det nästan inte finns något vatten som gör att grödor och andra växter inte kan växa. 
+                        
+CRISPR- tekniken använder ett enzym som kallas Cas9 och som fungerar som en gensax för att göra precisa klipp i DNA strängar. Genom att applicera CRISPR på växternas celler kan man säkerställa att växter kan tåla svåra klimatförändringar och inte behövas påverkas negativt av de. Å andra sidan finns det även risker för hur dessa genetisk modifierade organismerna kan påverka ekosystemet och miljön. Finns det risker att dessa modifierade organismerna kan ta ut de naturligt genetiska växterna vilket kan påverka den biologiska mångfalden och det naturliga ekosystemet. Detta öppnar dörrar till etiska frågor såsom hur detta kommer att påverka framtidens genetik. Kommer det vara en anledning till att mutationer uppstår mer ofta?
+                        
+Påverkan på samhället 
+denna tillgången på genredegering genom CRISPR- tekniken kan få betydande konsekvenser för samhället. Jämlikhet är en av de frågorna som tas upp. Denna metod är extremt kostsam och är endast tillgänglig i ett få tal länder med avancerad teknologi. Detta innebär att jordbrukare som bor i fattigare länder inte kan ta nytta av denna gentekniks användningen och riskeras att inte få möjlighet till sådana växter som skulle behövts i det samhället de bor på eftersom det kan orsaks svält om det inte går växa dessa fröna. Detta ökar mängden ojämlikhet där det endast är de rika som har tillgång till moderna teknologiska reseur kan få nytta. Därför måste alla få tillgång till dessa resurser för att få en mer rättvis och jämlik framtid. 
+                        
+Dessutom om man lyckas göra så att växter som inte växer i ett viss klimat som till exempel om det är för kallt och bananer inte kan växa på det landet men de lyckas genom genetisk modifering så kan man få de länderna som kan växa upp dessa växter att förlora eftersom man inte handlar ifrån de längre utan man har ju lyckats få de att växa i det landet man bor på. 
+                        
+påverkan på miljön
+Om man börjar förändra gener i en stor skala kan det finnas risker att den naturliga genetiska variationen minskar vilket leder till konsekvenser för den framtida ekologin. En minskad mångfald kan göra individer mer känsliga för milöpåverkan vilket slutändan kan påverka en art negaivt. 
+                        
+eget 
+personligen anser jag att det denna genetiska modifering på växter har en stor förmåga att få växter att växa och bli tekniken är en teknik som öppnar dörrar som måste få vara tillgänglig för alla oavsett ekonomisk bagkrund för att säkerställa rättvisa. 
+                        </textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox14')">Kopiera till urklipp</button>
+                </div>
+
+                
+
+                <!-- Granskande Analys Slide -->
+                <!-- ================================== -->
+
+                <!-- Slide 18 -->
+                <div class="slide" data-category="Granskande Analys" data-slide-number="1" data-title="Exempel">
+                    <h2 class="purpose">Syfte - granskande analys av elevarbete</h2>
+                    <div class="prompt-label">Exempel</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox18')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox18')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox18">Kan du dela upp elevens text i olika delar (utan att ändra innehållet) och presentera en granskande analys av innehållet (begreppsanvändning och vetenskaplighet) efter varje del?
+
+Inledning
+I denna uppsats kommer jag sammanfatta filmen "Människan och Generna. Del 1(a) Det skräddarsydda barnet". Jag kommer berätta om embryo gallring, forskning och hur detta kan komma att utvecklas och vara till användning i framtiden. Även kommer jag berätta om användningsområdena till embryo gallring och genmodifiering.
+
+Sammanfattning
+Filmen "Människan och Generna. Del 1(a) Det skräddarsydda barnet" handlar om vårt DNA´s stora betydelse. De tar med oss till år 2050 och visar oss en möjlig framtid och hur det kan komma sig hur vi använder oss utav embryo gallring och genmodifiering i framtiden, även andra möjligheter såsom barn som växer i livmödrar utanför kroppen. De visar hur tekniken i framtiden kan ha utvecklats så pass mycket att vi kan bestämma vilken hårfärg, ögonfärg eller egenskaper vårt barn kommer kunna ha. De visar även upp hur det används i nutid och att det redan existerar genmodifiering och embryo gallring nuförtiden för att b.la. förhindra att ett barn ärver en farlig sjukdom som kan göra att det dör i tidig ålder. I filmen finns även inslag utav personer som beskriver vad de tycker och tänker angående det hela och hur dem tror det kommer se ut i framtiden.
+
+Embryo gallring
+Användningsområdet utav embryo gallring finns det både för och nackdelar med. Denna teknik finns redan idag men i framtiden kommer den troligen utvecklas mycket och ge oss många nya sätt att använda den på vilket kan komma att ändra mycket kring processen när ett barn ska komma till.
+I nutid så är inte användningen av embryo gallring så stor och används inte så ofta. Den enda gången man använder den i dagens samhälle är när mamman eller pappan har en sjukdom som kan föras över till barnen vilket kan leda till att det dör i tidig ålder. Så då gallrar man ut de som har sjukdomen och sätter inte in dem i mamman. I framtiden kan det dock bli en väldigt stor skillnad. Det kan bli så att istället för att man låter slumpen avgöra kön, hårfärg, ögonfärg och även vissa specifika egenskaper såsom musikalitet och glatt temperament ska det kunna gå att välja själv. (youtube.com, ki.se)
+
+Varför man skulle göra detta och man tycker det är etiskt rätt är upp till var och en att avgöra. Det kommer va en helt annan verklighet som kommer byggas upp ifall man kommer kunna välja saker på sitt barn, många tänker säkert att man borde låta slumpen avgöra och att man ska vara glad oavsett hur ens barn ser ut. Men många tycker nog embryo gallring är en jättebra och kul grej att själv kunna designa sitt barn efter ens önskemål. (youtube.com). I dagens sverige och många andra länder så är det inte tillåtet att på embryon göra genetiska ändringar som kommer gå i arv till kommande generationer utan det finns regler runt detta och det är bara tillåtet att gå in och ändra något när det gäller en sjukdom men man får inte påverka kön eller något liknande i processen om det inte har någon betydande påverkan med sjukdomen. (ki.se)
+
+Tekniken
+Hur embryo gallringen går till är att man plockar ut ägg från mamman och befruktas i ett provrör, provrörsbefruktning. Sedan så skannar embryonas DNA efter sjukdomar och gallrar sedan ut det bästa för att sätta in i mamman. (youtube.com, 1177.se)
+
+Fördelar och nackdelar
+Fördelarna med embryo gallring är b.la. att man kan rädda många barns liv, att vi har möjligheten att kunna gå in och se till så att barnet som föds kommer få ett värdigt liv och inte få med sig någon väldigt dödlig ärftlig sjukdom är en stor möjlighet. Det är det som är mest rätt mot både barnen och föräldrarna, så länge föräldrarna accepterar gallringen och är väl informerade av vad som händer är detta en bra chans för alla deras liv.
+
+En till fördel som tillfaller ifall man har möjlighet att gallra bort embryon med sjukdom är just att det är en trygghet för föräldrarna. Annars behöver de förmodligen leva hela sina liv om att de visste att det hade en farlig sjukdom men chansade och skaffade barn ändå vilket resulterade i att barnet dog, det kan ge dem ärr och skuldkänsla för resten av livet.
+
+Om vår teknik utvecklas och vi i framtiden kommer kunna ha möjlighet att ändra kön, hårfärg, ögonfärg osv kommer det förmodligen ses som en väldig fördel av många. Att kunna bestämma hur ens barn ska se ut hade varit en ypperlig chans.
+
+Nackdelar finns också, trots många påståenden om att detta ska vara en säker teknik så finns det alltid faror. Det finns chans att det inte funkar, det är inte gjort den naturliga vägen så man kan inte förutspå vad som händer, det är förmodligen väldigt annorlunda hur de funkar beroende på individen. Det finns inga garantier och det är inte säkert att det funkar precis som man önskat, och ifall något går fel så kanske det redan har gått så långt att man inte kan ändra sig så det är försent.</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox18')">Kopiera till urklipp</button>
+                </div>
+
+                <!-- Lektionsplanering Slide -->
+                <!-- ================================== -->
+
+                <!-- Slide 19 -->
+                <div class="slide" data-category="Lektionsplanering" data-slide-number="1" data-title="Exempel">
+                    <h2 class="purpose">Syfte - skapa förslag till fullständig lektionsplanering</h2>
+                    <div class="prompt-label">Exempel</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox19')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox19')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox19">Skapa ett förslag till fullständig lektionsplanering. Analysera utifrån:
+* Möjlighet till extra anpassningar
+* Utmaningar för enskilda elever
+* ...
+
+Börja med att ställa frågor fem frågor till mig (en i taget, skriv "1/5" osv) för att ringa in området ... ställ uppföljande frågor vid behov efter 5/5 innan du presenterar planeringen och analysen.</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox19')">Kopiera till urklipp</button>
+                </div>
+
+                
+                <div class="slide" data-category="Promptmall" data-slide-number="1" data-title="Exempel">
+                    <h2 class="purpose">Syfte - granskande analys av elevarbete</h2>
+                    <div class="prompt-label">Exempel</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox20')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox20')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox20">Du är en [...] (t.ex. gymnasielärare, specialpedagog, matematiklärare) som är expert på [...] (t.ex. pedagogiska metoder, inkludering i klassrummet, algebra).
+                        
+Din uppgift är att [...] (t.ex. utveckla en lektionsplan, ge råd om klassrumshantering, förklara ett matematiskt koncept).
+                        
+Svara på ett sätt som är [...] (t.ex. pedagogiskt, detaljerat, kortfattat).
+
+Inkludera [...] om det behövs (t.ex. exempel, illustrationer, definitioner).
+
+Maxlängden för svaret är [...] (t.ex. 200 ord, 3 stycken, 10 meningar).
+
+Svaret ska innehålla exempel på [...] (t.ex. undervisningsstrategier, klassrumsscenarier, matematiska problem).
+
+Använd ett språk som är [...] (t.ex. enkelt, tekniskt, formellt, ungdomligt).
+
+Fokusera på att förklara/diskutera/analysera [...] (t.ex. de underliggande orsakerna, för- och nackdelar, den pedagogiska implementeringen).
+
+Svaret ska vara strukturerat som en [...] (t.ex. punktlista, sammanhängande text, steg-för-steg-guide).
+
+Använd följande format för svaret: [...] (t.ex. rubriker, fetstil för viktiga punkter, numrerade listor).
+
+Undvik att inkludera [...] i svaret (t.ex. spekulativa påståenden, teknisk jargong, irrelevanta detaljer).
+
+Om du inte har tillräcklig information för att ge ett fullständigt svar, ange detta tydligt (t.ex. “Baserat på tillgänglig information…”).
+                        </textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox20')">Kopiera till urklipp</button>
+                </div>
+                <div class="slide" data-category="Studybuddy" data-slide-number="1" data-title="Exempel">
+                    <h2 class="purpose">Syfte - skapa förslag till fullständig lektionsplanering</h2>
+                    <div class="prompt-label">Exempel</div>
+
+                    <div class="text-size-controls">
+                        <button class="text-size-button" onclick="decreaseTextSize('promptBox21')">-</button>
+                        <button class="text-size-button" onclick="increaseTextSize('promptBox21')">+</button>
+                    </div>
+
+                    <textarea class="prompt-box"
+                        id="promptBox21">Du antar nu rollen som studiecoach, en expert på Sokratisk dialog.
+
+Inledning: När vi påbörjar en session frågar du ALLTID om det finns material som användaren fått från lärare eller liknande som ni ska vikta tyngre än din bakgrundsinformation. Du börjar alltså med att kontrollera om användaren har något specifikt material att använda.
+                        
+Förståelse av förkunskaper: Därefter ställer du alltid lämpliga frågor för att förstå användarens förkunskaper. Användaren kan vara allt från ett litet barn till en vuxen person eller till och med expert, och du måste anpassa din undervisning efter användarens förmodade förkunskaper. Du frågar om användaren går i skolan och i så fall i vilken klass. Om du saknar tillräcklig information om användaren utgår du alltid ifrån det mest grundläggande och använder ett mycket enkelt språk.
+                        
+Din roll: Din roll är att vara användarens digitala studiekompis och lärare, stegvis byggande på användarens kunskaper från grundläggande till avancerade nivåer inom ämnet.
+                        
+Formatering: Om du skriver kemi, matematik eller liknande är du noga med att formatera texten på rätt sätt, exempelvis med hjälp av subscript och superscript.
+                        
+Instruktioner:
+                        
+Du utgår alltid ifrån tydligt formulerade frågor till användaren. Dessa frågor följer du sedan upp genom att anpassa fortsättningen utifrån användarens svar. Du ger aldrig information utan att sedan ställa en ny fråga. Frågor formateras alltid i fet stil och presenteras på en egen rad. Användaren ska aldrig behöva ställa egna frågor, du väljer alltid ut en lämplig väg genom ämnet/frågeställningen. Frågor ställs en i taget, med en inledande kontrollfråga för att anpassa lärandet. Du testar användarens förståelse genom att regelbundet repetera.
+Du nivåanpassar språket efter användarens nivå. Om du använder nivåmässigt svåra ord förklarar du alltid dessa på ett nivå- och ämnesrelevant vis.
+Effektivitet och kommunikation: Du undviker onödiga avsteg för effektivitet. Du kommunicerar i en vänlig, klar ton och presenterar information och feedback i korta stycken, med vetenskaplig noggrannhet och korrekt formatering för tekniska ämnen. Du siktar alltid på att förmedla information i ett relativt kort stycke, eventuellt två men inte mer, då många elever inte orkar läsa längre texter.
+                        
+Avslutning: När ni avslutar er session kommer du att sammanfatta för användaren vad ni hunnit gå igenom och de viktigaste punkterna i det ni behandlat. Du ger också användaren en positiv formativ kommentar och något tips om vad som kan vara bra att fortsätta med under nästa session.</textarea>
+                    <button class="copy-button" onclick="copyToClipboard('promptBox21')">Kopiera till urklipp</button>
+                </div>
+                <!-- Fler slides fortsätter här -->
+
+            </div>
+
+            <!-- Progressindikator -->
+            <div class="progress-indicator"></div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript för slideshow-funktionalitet och dynamisk innehållsförteckning
+
+        let currentSlide = 0;
+        const slides = document.getElementsByClassName('slide');
+        const totalSlides = slides.length;
+
+        // Dynamisk generering av innehållsförteckningen
+        const sidebarMenu = document.querySelector('.sidebar-menu');
+        const categories = {};
+
+        for (let i = 0; i < slides.length; i++) {
+            const slide = slides[i];
+            const category = slide.getAttribute('data-category');
+            const slideNumber = slide.getAttribute('data-slide-number');
+            const title = slide.getAttribute('data-title');
+
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+
+            categories[category].push({
+                index: i,
+                slideNumber: slideNumber,
+                title: title
+            });
+        }
+
+        // Skapa innehållsförteckningen
+        for (const category in categories) {
+            const categoryItem = document.createElement('li');
+
+            const expandBtn = document.createElement('span');
+            expandBtn.className = 'expand-btn';
+            expandBtn.textContent = '[+]';
+            expandBtn.onclick = function () {
+                toggleMenu(this);
+            };
+
+            const categoryTitle = document.createElement('a');
+            categoryTitle.className = 'category-title';
+            categoryTitle.textContent = category;
+            categoryTitle.href = '#';
+            categoryTitle.onclick = function () {
+                const firstSlideIndex = categories[category][0].index;
+                goToSlide(firstSlideIndex);
+            };
+
+            const submenu = document.createElement('ul');
+            submenu.className = 'submenu';
+
+            categories[category].forEach(item => {
+                const submenuItem = document.createElement('li');
+                const submenuLink = document.createElement('a');
+                submenuLink.textContent = item.title;
+                submenuLink.href = '#';
+                submenuLink.onclick = function () {
+                    goToSlide(item.index);
+                };
+                submenuItem.appendChild(submenuLink);
+                submenu.appendChild(submenuItem);
+            });
+
+            categoryItem.appendChild(expandBtn);
+            categoryItem.appendChild(categoryTitle);
+            categoryItem.appendChild(submenu);
+            sidebarMenu.appendChild(categoryItem);
+        }
+
+        function showSlide(index) {
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+            slides[index].classList.add('active');
+
+            // Uppdatera progressindikator
+            const dots = document.getElementsByClassName('progress-dot');
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove('active');
+            }
+            dots[index].classList.add('active');
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+        }
+
+        function copyToClipboard(id) {
+            const copyText = document.getElementById(id);
+            const copyButton = copyText.nextElementSibling;
+
+            navigator.clipboard.writeText(copyText.value)
+                .then(() => {
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = "Kopierat!";
+                    copyButton.classList.add('success');
+
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                        copyButton.classList.remove('success');
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Misslyckades med att kopiera:', err);
+                    alert("Kunde inte kopiera texten. Var god försök igen.");
+                });
+        }
+
+        // Funktioner för att justera textstorleken
+        function increaseTextSize(id) {
+            const textArea = document.getElementById(id);
+            let currentSize = parseFloat(window.getComputedStyle(textArea, null).getPropertyValue('font-size'));
+            textArea.style.fontSize = (currentSize + 1) + 'px';
+        }
+
+        function decreaseTextSize(id) {
+            const textArea = document.getElementById(id);
+            let currentSize = parseFloat(window.getComputedStyle(textArea, null).getPropertyValue('font-size'));
+            if (currentSize > 10) {
+                textArea.style.fontSize = (currentSize - 1) + 'px';
+            }
+        }
+
+        // Navigering med piltangenter
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                showSlide(currentSlide);
+            } else if (e.key === 'ArrowLeft') {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Funktion för att toggla menyn i sidebar
+        function toggleMenu(element) {
+            const submenu = element.nextElementSibling.nextElementSibling;
+            if (submenu.style.display === "block") {
+                submenu.style.display = "none";
+                element.textContent = "[+]";
+            } else {
+                submenu.style.display = "block";
+                element.textContent = "[-]";
+            }
+        }
+
+        // Skapa progressindikatorn
+        const progressIndicator = document.querySelector('.progress-indicator');
+        for (let i = 0; i < slides.length; i++) {
+            const dot = document.createElement('div');
+            dot.className = `progress-dot ${i === 0 ? 'active' : ''}`;
+            dot.onclick = () => {
+                goToSlide(i);
+            };
+            progressIndicator.appendChild(dot);
+        }
+
+    </script>
+</body>
+
+</html>
