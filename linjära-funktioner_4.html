@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Räta Linjens Ekvation - Interaktiva Övningar</title>
+    <style>
+        /* Grundläggande styling */
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            height: 8px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            background-color: #3b82f6;
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+
+        /* Diagram och kontroller */
+        .graph-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #graf {
+            border: 1px solid #e5e7eb;
+            background-color: white;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .zoom-pan-controls {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+        .zoom-pan-controls button {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-pan-controls button:hover {
+            background-color: #2563eb;
+        }
+
+        /* Inputfält och knappar */
+        .input-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            background-color: #ffffff;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+
+        .secondary-button:hover {
+            background-color: #f0f9ff;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .feedback.success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+            display: block;
+        }
+
+        .feedback.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .hint {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .theory {
+            background-color: #fff7e6;
+            border: 1px solid #ffe4b3;
+            color: #663300;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #problem {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        /* Kalkylatorn */
+        #calculator {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #000;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 250px;
+        }
+
+        #calculator .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        #calculator .close-btn:hover {
+            color: #3b82f6;
+        }
+
+        #calc-display {
+            width: 100%;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-align: right;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .calc-button {
+            padding: 10px;
+            font-size: 1.2rem;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calc-button:hover {
+            background-color: #555;
+        }
+
+        .calc-button:active {
+            background-color: #777;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .graph-container {
+                flex-direction: column;
+            }
+
+            .zoom-pan-controls {
+                flex-direction: row;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .zoom-pan-controls button {
+                margin-bottom: 0;
+                margin-right: 5px;
+            }
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Räta Linjens Ekvation - Interaktiva Övningar</h1>
+            <div style="text-align: right; width: 200px;">
+                <span id="current-exercise">Övning 1</span>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="problem"></div>
+
+        <!-- Diagram och zoom/pan kontroller -->
+        <div class="graph-container">
+            <canvas id="graf" width="600" height="600"></canvas>
+            <div class="zoom-pan-controls">
+                <button id="zoom-in-x-button" title="Zooma in x-axeln">X+</button>
+                <button id="zoom-out-x-button" title="Zooma ut x-axeln">X−</button>
+                <button id="zoom-in-y-button" title="Zooma in y-axeln">Y+</button>
+                <button id="zoom-out-y-button" title="Zooma ut y-axeln">Y−</button>
+                <button id="pan-up-button" title="Panorera upp">↑</button>
+                <button id="pan-down-button" title="Panorera ner">↓</button>
+                <button id="pan-left-button" title="Panorera vänster">←</button>
+                <button id="pan-right-button" title="Panorera höger">→</button>
+                <button id="reset-chart-button" title="Återställ diagrammet">⟳</button>
+            </div>
+        </div>
+
+        <!-- Input Fields för Linjära Ekvationer -->
+        <div class="input-container" id="input-container">
+            <div class="input-group">
+                <label for="kInput">Ange lutningen (k) för linjen:</label>
+                <input type="number" id="kInput" step="0.1" placeholder="Ex. 2.5">
+            </div>
+            <div class="input-group">
+                <label for="mInput">Ange m-värdet för linjen:</label>
+                <input type="number" id="mInput" step="0.1" placeholder="Ex. -3">
+            </div>
+        </div>
+
+        <div id="user-equation" style="font-size: 1.2rem; margin-bottom: 20px;"></div>
+
+        <div class="button-container">
+            <button id="check-button">Kontrollera svar</button>
+            <button id="change-values-button" class="secondary-button">Samma uppgift men byt värden</button>
+            <button id="skip-button" class="secondary-button">Hoppa över och gå till nästa uppgift</button>
+            <button id="help-button" class="secondary-button">Jag behöver hjälp</button>
+            <button id="hint-button" class="secondary-button" style="display: none;">Visa tips</button>
+            <button id="calculator-button" class="secondary-button">Visa miniräknare</button>
+            <button id="next-button" class="secondary-button" style="display: none;">Nästa övning</button>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+        <div id="hint" class="hint"></div>
+        <div id="theory" class="theory"></div>
+    </div>
+
+    <!-- Miniräknare -->
+    <div id="calculator">
+        <button class="close-btn">&times;</button>
+        <h3 style="color: #fff;">Miniräknare</h3>
+        <input type="text" id="calc-display" readonly>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+            <button class="calc-button">7</button>
+            <button class="calc-button">8</button>
+            <button class="calc-button">9</button>
+            <button class="calc-button">/</button>
+
+            <button class="calc-button">4</button>
+            <button class="calc-button">5</button>
+            <button class="calc-button">6</button>
+            <button class="calc-button">*</button>
+
+            <button class="calc-button">1</button>
+            <button class="calc-button">2</button>
+            <button class="calc-button">3</button>
+            <button class="calc-button">-</button>
+
+            <button class="calc-button">0</button>
+            <button class="calc-button">.</button>
+            <button class="calc-button">=</button>
+            <button class="calc-button">+</button>
+
+            <button class="calc-button" style="grid-column: span 4; background-color: #ff4d4d;">C</button>
+        </div>
+    </div>
+
+    <!-- Modal för Hjälp -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Hjälp</h2>
+            <p id="theory-content"></p>
+        </div>
+    </div>
+
+    <script>
+        // Hjälpfunktion för att generera slumpmässiga heltal inom ett intervall
+        function randomInteger(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Funktion för att formatera ekvationer korrekt
+        function formatEquation(k, m) {
+            let equation = 'y = ';
+
+            // Hantera k
+            if (k === 0) {
+                // Om k = 0, ignorerar vi kx-termen
+            } else if (k === 1) {
+                equation += 'x';
+            } else if (k === -1) {
+                equation += '-x';
+            } else {
+                equation += k + 'x';
+            }
+
+            // Hantera m
+            if (m > 0) {
+                equation += (k !== 0 ? ' + ' : '') + m;
+            } else if (m < 0) {
+                equation += ' - ' + Math.abs(m);
+            } else {
+                // Om m = 0 och k = 0, då är y = 0
+                if (k === 0) {
+                    equation += '0';
+                }
+                // Om m = 0 och k ≠ 0, ingen m-term behövs
+            }
+
+            // Om k = 0 och m ≠ 0, visa bara y = m
+            if (k === 0 && m !== 0) {
+                equation = 'y = ' + m;
+            }
+
+            // Om k = 0 och m = 0, visa y = 0
+            if (k === 0 && m === 0) {
+                equation = 'y = 0';
+            }
+
+            return equation;
+        }
+
+        // Definiera en lista av övningar med progression från lätt till svår
+        const exercises = [
+            // Uppgiftstyper för att pricka in koordinatpar (10 st)
+            ...Array.from({ length: 10 }, (_, i) => ({
+                type: 'plot_point',
+                generate: function() {
+                    this.x = randomInteger(-8, 8); // Använd heltal inom synligt område
+                    this.y = randomInteger(-8, 8);
+                    this.problem = `Övning ${i + 1}. Pricka in punkten (${this.x}, ${this.y}) i koordinatsystemet.`;
+                    this.hints = [
+                        'Observera koordinatens x- och y-värden noggrant.',
+                        'Använd rutnätet för att hitta rätt position.'
+                    ];
+                    this.theory = 'För att pricka in en punkt i ett koordinatsystem, använd x-koordinaten för horisontell position och y-koordinaten för vertikal position.';
+                }
+            })),
+            // Övning 11: Mycket enkel läsövning (k = 1 eller -1)
+            {
+                type: 'read_simple',
+                generate: function() {
+                    this.k = Math.random() < 0.5 ? 1 : -1;
+                    this.m = randomInteger(-5, 5);
+                    this.problem = 'Övning 11. Läs av lutningen k och m-värdet från den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Lutningen k = 1 innebär att y ökar med 1 när x ökar med 1.',
+                        'M-värdet är där linjen korsar y-axeln.'
+                    ];
+                    this.theory = 'Lutningen (k) beskriver hur brant en linje är. M-värdet (m) är den punkt där linjen korsar y-axeln.';
+                    this.drawLine = true;
+                }
+            },
+            // Övning 12: Enkel läsövning (k = 2 eller -2)
+            {
+                type: 'read_simple',
+                generate: function() {
+                    this.k = Math.random() < 0.5 ? 2 : -2;
+                    this.m = randomInteger(-5, 5);
+                    this.problem = 'Övning 12. Läs av lutningen k och m-värdet från den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Lutningen k = 2 innebär att y ökar med 2 när x ökar med 1.',
+                        'Observera var linjen skär y-axeln för att hitta m-värdet.'
+                    ];
+                    this.theory = 'Lutningen (k) beskriver hur brant en linje är. M-värdet (m) är den punkt där linjen korsar y-axeln.';
+                    this.drawLine = true;
+                }
+            },
+            // Övning 13: Rita linje från ekvation (enkel)
+            {
+                type: 'draw_line',
+                generate: function() {
+                    this.k = Math.random() < 0.5 ? 1 : -1;
+                    this.m = randomInteger(-5, 5);
+                    this.equation = formatEquation(this.k, this.m);
+                    this.problem = `Övning 13. Rita linjen som motsvarar ekvationen ${this.equation} genom att ange lutningen k och m-värdet.`;
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Identifiera k och m i ekvationen.',
+                        'Använd dessa värden för att rita linjen.'
+                    ];
+                    this.theory = 'En linjär ekvation har formen y = kx + m. Här är k lutningen och m m-värdet. Rita linjen genom att markera m-värdet på y-axeln och använda lutningen för att hitta en annan punkt.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 14: Medelsvår läsövning (k ≠ 1, -1)
+            {
+                type: 'read_medium',
+                generate: function() {
+                    do {
+                        this.k = randomInteger(-3, 3);
+                    } while (this.k === 0 || Math.abs(this.k) === 1);
+                    this.m = randomInteger(-5, 5);
+                    this.problem = 'Övning 14. Bestäm lutningen k och m-värdet för den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Välj två punkter på linjen och beräkna k = Δy / Δx.',
+                        'Notera var linjen skär y-axeln för att hitta m-värdet.'
+                    ];
+                    this.theory = 'För att bestämma lutningen (k) av en linje, välj två punkter på linjen och använd formeln k = (y₂ - y₁) / (x₂ - x₁). M-värdet (m) är den punkt där linjen korsar y-axeln.';
+                    this.drawLine = true;
+                }
+            },
+            // Övning 15: Rita linje från ekvation (medel)
+            {
+                type: 'draw_line',
+                generate: function() {
+                    do {
+                        this.k = randomInteger(-3, 3);
+                    } while (this.k === 0 || Math.abs(this.k) === 1);
+                    this.m = randomInteger(-5, 5);
+                    this.equation = formatEquation(this.k, this.m);
+                    this.problem = `Övning 15. Rita linjen som motsvarar ekvationen ${this.equation} genom att ange lutningen k och m-värdet.`;
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Använd ekvationen för att hitta k och m.',
+                        'Rita m-värdet på y-axeln och använd lutningen för att hitta en annan punkt.'
+                    ];
+                    this.theory = 'En linjär ekvation har formen y = kx + m. För att rita linjen, markera m-värdet (m) på y-axeln och använd lutningen (k) för att hitta en annan punkt på linjen. Anslut sedan dessa punkter.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 16: Avancerad läsövning (k = bråk)
+            {
+                type: 'read_advanced',
+                generate: function() {
+                    const numeratorOptions = [-3, -2, -1, 1, 2, 3];
+                    const denominatorOptions = [2, 3, 4];
+                    const numerator = numeratorOptions[randomInteger(0, numeratorOptions.length - 1)];
+                    const denominator = denominatorOptions[randomInteger(0, denominatorOptions.length - 1)];
+                    this.k = parseFloat((numerator / denominator).toFixed(2));
+                    this.m = randomInteger(-5, 5);
+                    this.problem = 'Övning 16. Bestäm lutningen k och m-värdet för den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Välj två punkter och beräkna k = Δy / Δx.',
+                        'Var noga med decimalerna.'
+                    ];
+                    this.theory = 'Lutningen (k) av en linje beskriver hur brant linjen är. För linjer med bråkformiga lutningar, använd två punkter på linjen och beräkna k med hjälp av formeln k = (y₂ - y₁) / (x₂ - x₁). M-värdet (m) är där linjen skär y-axeln.';
+                    this.drawLine = true;
+                }
+            },
+            // Övning 17: Rita linje från punkter (medel)
+            {
+                type: 'draw_from_points',
+                generate: function() {
+                    let valid = false;
+                    while (!valid) {
+                        const x1 = randomInteger(-5, -1);
+                        const x2 = randomInteger(1, 5);
+                        this.k = randomInteger(-3, 3);
+                        while (this.k === 0) {
+                            this.k = randomInteger(-3, 3);
+                        }
+                        this.m = randomInteger(-5, 5);
+                        const y1 = this.k * x1 + this.m;
+                        const y2 = this.k * x2 + this.m;
+                        if (Math.abs(y1) <= 10 && Math.abs(y2) <= 10) {
+                            this.points = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+                            valid = true;
+                        }
+                    }
+                    this.problem = `Övning 17. Rita linjen som går genom punkterna (${this.points[0].x}, ${this.points[0].y}) och (${this.points[1].x}, ${this.points[1].y}). Ange linjens lutning k och m-värdet.`;
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Beräkna lutningen k = (y₂ - y₁) / (x₂ - x₁).',
+                        'Använd en av punkterna för att lösa ut m-värdet.'
+                    ];
+                    this.theory = 'För att rita en linje från två punkter, beräkna lutningen (k) med hjälp av formeln k = (y₂ - y₁) / (x₂ - x₁). Använd sedan en av punkterna för att lösa ut m-värdet (m) med ekvationen y = kx + m.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 18: Avancerad läsövning (k = decimal)
+            {
+                type: 'read_advanced',
+                generate: function() {
+                    do {
+                        this.k = parseFloat((randomInteger(-5, 5) + Math.random()).toFixed(2));
+                    } while (this.k === 0 || Math.abs(this.k) === 1 || Math.abs(this.k) === 2);
+                    this.m = randomInteger(-5, 5);
+                    this.problem = 'Övning 18. Bestäm lutningen k och m-värdet för den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Använd två punkter och beräkna k = Δy / Δx.',
+                        'Var noga med att använda decimaler.'
+                    ];
+                    this.theory = 'Lutningen (k) av en linje beskriver hur brant linjen är. För linjer med decimal-lutningar, använd två punkter på linjen och beräkna k med hjälp av formeln k = (y₂ - y₁) / (x₂ - x₁). M-värdet (m) är där linjen skär y-axeln.';
+                    this.drawLine = true;
+                }
+            },
+            // Övning 19: Rita linje från ekvation (avancerad)
+            {
+                type: 'draw_line',
+                generate: function() {
+                    const numeratorOptions = [-3, -2, -1, 1, 2, 3];
+                    const denominatorOptions = [2, 3, 4];
+                    const numerator = numeratorOptions[randomInteger(0, numeratorOptions.length - 1)];
+                    const denominator = denominatorOptions[randomInteger(0, denominatorOptions.length - 1)];
+                    this.k = parseFloat((numerator / denominator).toFixed(2));
+                    this.m = randomInteger(-5, 5);
+                    this.equation = formatEquation(this.k, this.m);
+                    this.problem = `Övning 19. Rita linjen som motsvarar ekvationen ${this.equation} genom att ange lutningen k och m-värdet.`;
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Markera m-värdet på y-axeln och använd lutningen för att hitta en annan punkt.',
+                        'Kom ihåg att lutningen är förändringen i y delat med förändringen i x.'
+                    ];
+                    this.theory = 'För att rita en linje från en ekvation, markera m-värdet (m) på y-axeln och använd lutningen (k) för att hitta en annan punkt på linjen. Anslut sedan dessa punkter för att rita linjen.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 20: Rita linje från punkter (avancerad)
+            {
+                type: 'draw_from_points',
+                generate: function() {
+                    let valid = false;
+                    while (!valid) {
+                        const x1 = randomInteger(-5, -1);
+                        const x2 = randomInteger(1, 5);
+                        const numeratorOptions = [-3, -2, -1, 1, 2, 3];
+                        const denominatorOptions = [2, 3, 4];
+                        const numerator = numeratorOptions[randomInteger(0, numeratorOptions.length - 1)];
+                        const denominator = denominatorOptions[randomInteger(0, denominatorOptions.length - 1)];
+                        this.k = parseFloat((numerator / denominator).toFixed(2));
+                        this.m = randomInteger(-5, 5);
+                        const y1 = this.k * x1 + this.m;
+                        const y2 = this.k * x2 + this.m;
+                        if (Math.abs(y1) <= 10 && Math.abs(y2) <= 10) {
+                            this.points = [{ x: x1, y: parseFloat(y1.toFixed(2)) }, { x: x2, y: parseFloat(y2.toFixed(2)) }];
+                            valid = true;
+                        }
+                    }
+                    this.problem = `Övning 20. Rita linjen som går genom punkterna (${this.points[0].x}, ${this.points[0].y}) och (${this.points[1].x}, ${this.points[1].y}). Ange linjens lutning k och m-värdet.`;
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Beräkna k = (y₂ - y₁) / (x₂ - x₁).',
+                        'Använd en av punkterna för att lösa ut m-värdet.'
+                    ];
+                    this.theory = 'För att rita en linje från två punkter, beräkna lutningen (k) med hjälp av formeln k = (y₂ - y₁) / (x₂ - x₁). Använd sedan en av punkterna för att lösa ut m-värdet (m) med ekvationen y = kx + m.';
+                    this.drawLine = false;
+                }
+            },
+          
+            // Övning 22: Medelsvår läsuppgift - Taxiresa
+            {
+                type: 'word_problem',
+                generate: function() {
+                    const baseFare = randomInteger(30, 50); // Grundavgift
+                    const farePerKm = randomInteger(10, 15); // Pris per km
+                    this.problem = `Övning 22. En taxiresa kostar ${baseFare} kr i grundavgift plus ${farePerKm} kr per kilometer. Skriv en linjär funktion som beskriver totalkostnaden y beroende på antalet kilometer x. Ange lutningen k och m-värdet.`;
+                    this.correctK = farePerKm;
+                    this.correctM = baseFare;
+                    this.hints = [
+                        'Lutningen k är kostnaden per kilometer.',
+                        'M-värdet är grundavgiften.'
+                    ];
+                    this.theory = 'Totalkostnaden y för en taxiresa består av en fast grundavgift (m) och en rörlig kostnad per kilometer (k). Ekvationen är y = kx + m.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 23: Medelsvår läsuppgift - Mobilabonnemang
+            {
+                type: 'word_problem',
+                generate: function() {
+                    const monthlyFee = randomInteger(100, 200); // Månadskostnad
+                    const costPerGB = randomInteger(20, 50); // Kostnad per GB data
+                    this.problem = `Övning 23. Ett mobilabonnemang kostar ${monthlyFee} kr per månad plus ${costPerGB} kr per använd GB data. Skriv en linjär funktion som beskriver månadskostnaden y beroende på datamängden x i GB. Ange lutningen k och m-värdet.`;
+                    this.correctK = costPerGB;
+                    this.correctM = monthlyFee;
+                    this.hints = [
+                        'Lutningen k är kostnaden per GB data.',
+                        'M-värdet är den fasta månadskostnaden.'
+                    ];
+                    this.theory = 'Månadskostnaden y för ett mobilabonnemang består av en fast månadskostnad (m) och en rörlig kostnad per GB data (k). Ekvationen är y = kx + m.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 24: Avancerad läsuppgift - Snickarjobb
+            {
+                type: 'word_problem',
+                generate: function() {
+                    const hourlyRate = randomInteger(200, 400); // Timarvode
+                    const materialCost = randomInteger(500, 1000); // Materialkostnad
+                    this.problem = `Övning 24. En snickare tar ${hourlyRate} kr per timme för arbete och har en materialkostnad på ${materialCost} kr för ett projekt. Skriv en linjär funktion som beskriver totalkostnaden y beroende på arbetstiden x i timmar. Ange lutningen k och m-värdet.`;
+                    this.correctK = hourlyRate;
+                    this.correctM = materialCost;
+                    this.hints = [
+                        'Lutningen k är timarvodet.',
+                        'M-värdet är materialkostnaden.'
+                    ];
+                    this.theory = 'Totalkostnaden y för ett snickarprojekt består av en fast materialkostnad (m) och en rörlig kostnad per timme (k). Ekvationen är y = kx + m.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 25: Avancerad läsuppgift - Bilens värdeminskning
+            {
+                type: 'word_problem',
+                generate: function() {
+                    const initialValue = randomInteger(100000, 200000); // Initialt värde
+                    const depreciationRate = randomInteger(10000, 20000); // Värdeminskning per år
+                    this.problem = `Övning 25. En ny bil kostar ${initialValue} kr och minskar i värde med ${depreciationRate} kr per år. Skriv en linjär funktion som beskriver bilens värde y beroende på antalet år x. Ange lutningen k och m-värdet.`;
+                    this.correctK = -depreciationRate;
+                    this.correctM = initialValue;
+                    this.hints = [
+                        'Lutningen k är negativ eftersom värdet minskar.',
+                        'M-värdet är bilens inköpspris.'
+                    ];
+                    this.theory = 'Bilens värde y beror linjärt på tiden x. Lutningen k är negativ eftersom värdet minskar över tid, och m-värdet (m) är det initiala värdet.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 26: Läs av kurva med olika skalor (enkel)
+            {
+                type: 'read_different_scales',
+                generate: function() {
+                    this.k = 2; // Lutning
+                    this.m = 20; // M-värde
+                    this.problem = 'Övning 26. Bestäm lutningen k och m-värdet för den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Var noga med att se hur mycket varje ruta motsvarar på x- och y-axlarna.',
+                        'Använd två punkter och beräkna k = Δy / Δx med hänsyn till skalorna.'
+                    ];
+                    this.theory = 'När x- och y-axlarna har olika skalor är det viktigt att ta hänsyn till detta när man beräknar lutningen. Kontrollera hur mycket varje enhet motsvarar på respektive axel.';
+                    this.drawLine = true;
+                    this.differentScales = true;
+this.targetTicks = 20;   // Lägg till denna rad
+this.xUnitsPerTick = 2;   // Varje ruta på x-axeln representerar 2 enheter
+this.yUnitsPerTick = 20;  // Varje ruta på y-axeln representerar 20 enheter
+                }
+            },
+            // Övning 27: Läs av kurva med olika skalor (avancerad)
+            {
+                type: 'read_different_scales',
+                generate: function() {
+                    this.k = -1.5; // Lutning
+                    this.m = 50; // M-värde
+                    this.problem = 'Övning 27. Bestäm lutningen k och m-värdet för den ritade linjen.';
+                    this.correctK = this.k;
+                    this.correctM = this.m;
+                    this.hints = [
+                        'Observera noggrant vad varje ruta motsvarar på respektive axel.',
+                        'Beräkna k = Δy / Δx med hänsyn till att skalorna är olika.'
+                    ];
+                    this.theory = 'När skalorna på x- och y-axlarna är olika påverkar det hur brant linjen ser ut. För att beräkna lutningen korrekt måste du använda de faktiska värdena, inte bara räkna rutor.';
+                    this.drawLine = true;
+                    this.differentScales = true;
+this.targetTicks = 20;   // Lägg till denna rad
+this.xUnitsPerTick = 2;   // Varje ruta på x-axeln representerar 2 enheter
+this.yUnitsPerTick = 20;  // Varje ruta på y-axeln representerar 20 enheter
+                }
+            },
+            // Övning 28: Utmanande tillämpningsuppgift - Vattentank
+            {
+                type: 'word_problem_advanced',
+                generate: function() {
+                    const capacity = randomInteger(500, 1000); // Tankens kapacitet i liter
+                    const fillRate = randomInteger(20, 50); // Fyllnadshastighet i liter per minut
+                    this.problem = `Övning 28. En vattentank med en kapacitet på ${capacity} liter fylls på med en hastighet av ${fillRate} liter per minut. Den är tom när man börjar fylla den. Skriv en linjär ekvation som beskriver mängden vatten y i tanken efter x minuter. Ange lutningen k och m-värdet.`;
+                    this.correctK = fillRate;
+                    this.correctM = 0;
+                    this.hints = [
+                        'Lutningen k är fyllnadshastigheten.',
+                        'M-värdet är initiala mängden vatten, vilket är 0 om tanken är tom från början.'
+                    ];
+                    this.theory = 'När du fyller en tank linjärt över tid, kan mängden vatten y beskrivas som y = kx + m, där k är fyllnadshastigheten och m är initialvärdet.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 29: Utmanande tillämpningsuppgift - Sparande
+            {
+                type: 'word_problem_advanced',
+                generate: function() {
+                    const initialSavings = randomInteger(1000, 5000); // Initialt sparande
+                    const monthlyDeposit = randomInteger(500, 1500); // Månadssparande
+                    this.problem = `Övning 29. Du har ${initialSavings} kr på ditt sparkonto och planerar att spara ${monthlyDeposit} kr varje månad. Skriv en linjär funktion som beskriver ditt totala sparande y efter x månader. Ange lutningen k och m-värdet.`;
+                    this.correctK = monthlyDeposit;
+                    this.correctM = initialSavings;
+                    this.hints = [
+                        'Lutningen k är mängden du sparar varje månad.',
+                        'M-värdet är ditt initiala sparande.'
+                    ];
+                    this.theory = 'Ditt totala sparande y kan beskrivas som y = kx + m, där k är månadssparandet och m är initialt sparande.';
+                    this.drawLine = false;
+                }
+            },
+            // Övning 30: Utmanande tillämpningsuppgift - Temperaturförändring
+            {
+                type: 'word_problem_advanced',
+                generate: function() {
+                    const initialTemp = randomInteger(20, 30); // Initial temperatur
+                    const coolingRate = randomInteger(2, 5); // Kylhastighet i grader per timme
+                    this.problem = `Övning 30. En het metallbit kyls ned från ${initialTemp}°C med en konstant hastighet av ${coolingRate}°C per timme. Skriv en linjär funktion som beskriver temperaturen y efter x timmar. Ange lutningen k och m-värdet.`;
+                    this.correctK = -coolingRate;
+                    this.correctM = initialTemp;
+                    this.hints = [
+                        'Lutningen k är negativ eftersom temperaturen minskar.',
+                        'M-värdet är den initiala temperaturen.'
+                    ];
+                    this.theory = 'Temperaturförändringen kan beskrivas som y = kx + m, där k är förändringshastigheten och m är initialtemperaturen.';
+                    this.drawLine = false;
+                }
+            }
+        ];
+
+        let currentExerciseIndex = 0;
+        let attempts = 0;
+        const maxAttempts = 2;
+        let currentExercise = null;
+        let userLine = null;
+
+        // För Plot Point Övningar
+        let isPlotting = false;
+        let targetPoint = null;
+        let plotAttempts = 0;
+        const maxPlotAttempts = 2;
+        let plottedPoints = [];
+
+        // Sätt upp canvas och kontext
+        const canvas = document.getElementById('graf');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Skala och panoreringsvariabler
+        let scaleX = 1;
+        let scaleY = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Skala för koordinatsystemet (kan ändras per övning)
+        let xScale = 40; // Antal pixlar per enhet på x-axeln
+        let yScale = 40; // Antal pixlar per enhet på y-axeln
+
+        // Variabler för skalstreck
+        let xUnitsPerTick = 1; // Enheter per skalstreck på x-axeln
+        let yUnitsPerTick = 1; // Enheter per skalstreck på y-axeln
+
+        // Funktioner för att konvertera mellan koordinatsystem
+        function toCanvasX(x) {
+            return (width / 2) + (x - offsetX) * xScale * scaleX;
+        }
+
+        function toCanvasY(y) {
+            return (height / 2) - (y - offsetY) * yScale * scaleY;
+        }
+
+        function toMathX(canvasX) {
+            return (canvasX - width / 2) / (xScale * scaleX) + offsetX;
+        }
+
+        function toMathY(canvasY) {
+            return (height / 2 - canvasY) / (yScale * scaleY) + offsetY;
+        }
+
+        // Klickhantering för Plot Point Övningar
+        canvas.addEventListener('click', function(e) {
+            if (isPlotting) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                const coord = { x: toMathX(mouseX), y: toMathY(mouseY) };
+                checkPlotAnswer(coord.x, coord.y);
+            }
+        });
+
+        // Uppdaterad drawGrid-funktion
+        function drawGrid() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Rita rutnät
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 1;
+
+    // Beräkna synliga området i matematiska koordinater
+    const xMin = offsetX - (width / (2 * xScale * scaleX));
+    const xMax = offsetX + (width / (2 * xScale * scaleX));
+    const yMin = offsetY - (height / (2 * yScale * scaleY));
+    const yMax = offsetY + (height / (2 * yScale * scaleY));
+
+    // Dynamiskt beräkna lämpliga intervall baserat på zoomnivå
+    const getOptimalTickInterval = (range, targetTicks = currentExercise?.targetTicks || 40) => {
+    const rawInterval = range / targetTicks;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawInterval)));
+    const normalized = rawInterval / magnitude;
+    
+    let tickInterval;
+    if (normalized < 1.5) tickInterval = magnitude;        // Detta ger oss heltal vid start
+    else if (normalized < 3.5) tickInterval = 2 * magnitude;
+    else if (normalized < 7.5) tickInterval = 5 * magnitude;
+    else tickInterval = 10 * magnitude;
+    
+    return Math.max(tickInterval, 0.001);
+};
+
+    // Beräkna optimala intervall för x- och y-axlarna
+    const xTickInterval = getOptimalTickInterval(xMax - xMin);
+    const yTickInterval = getOptimalTickInterval(yMax - yMin);
+
+    // Justera start och slutpunkter för att aligna med skalmarkeringarna
+    const xStart = Math.floor(xMin / xTickInterval) * xTickInterval;
+    const xEnd = Math.ceil(xMax / xTickInterval) * xTickInterval;
+    const yStart = Math.floor(yMin / yTickInterval) * yTickInterval;
+    const yEnd = Math.ceil(yMax / yTickInterval) * yTickInterval;
+
+    // Rita vertikala linjer och x-axel etiketter
+    for (let x = xStart; x <= xEnd; x += xTickInterval) {
+        const canvasX = toCanvasX(x);
+        if (canvasX >= 0 && canvasX <= width) {
+            ctx.beginPath();
+            ctx.moveTo(canvasX, 0);
+            ctx.lineTo(canvasX, height);
+            ctx.stroke();
+
+            // Rita etiketter med dynamisk precision
+            if (Math.abs(x) > 0.0001) { // Undvik att rita nollan två gånger
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const precision = Math.max(0, -Math.floor(Math.log10(xTickInterval)));
+                ctx.fillText(x.toFixed(precision), canvasX, toCanvasY(0) + 5);
+            }
+        }
+    }
+
+    // Rita horisontella linjer och y-axel etiketter
+    for (let y = yStart; y <= yEnd; y += yTickInterval) {
+        const canvasY = toCanvasY(y);
+        if (canvasY >= 0 && canvasY <= height) {
+            ctx.beginPath();
+            ctx.moveTo(0, canvasY);
+            ctx.lineTo(width, canvasY);
+            ctx.stroke();
+
+            // Rita etiketter med dynamisk precision
+            if (Math.abs(y) > 0.0001) { // Undvik att rita nollan två gånger
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                const precision = Math.max(0, -Math.floor(Math.log10(yTickInterval)));
+                ctx.fillText(y.toFixed(precision), toCanvasX(0) - 5, canvasY);
+            }
+        }
+    }
+
+    // Rita axlar
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+
+    // x-axel
+    ctx.beginPath();
+    ctx.moveTo(0, toCanvasY(0));
+    ctx.lineTo(width, toCanvasY(0));
+    ctx.stroke();
+
+    // y-axel
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(0), 0);
+    ctx.lineTo(toCanvasX(0), height);
+    ctx.stroke();
+
+    // Rita origo etikett
+    ctx.fillStyle = '#000';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'top';
+    ctx.fillText('0', toCanvasX(0) - 5, toCanvasY(0) + 5);
+}
+
+        // Rita en linje baserat på k och m värden
+        function drawLine(k, m, color = '#3b82f6', dash = []) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash(dash);
+
+            ctx.beginPath();
+            let started = false;
+
+            const xStart = offsetX - (width / (2 * xScale * scaleX));
+            const xEnd = offsetX + (width / (2 * xScale * scaleX));
+
+            for (let x = xStart; x <= xEnd; x += 0.1 / scaleX) {
+                const y = k * x + m;
+                if (!started) {
+                    ctx.moveTo(toCanvasX(x), toCanvasY(y));
+                    started = true;
+                } else {
+                    ctx.lineTo(toCanvasX(x), toCanvasY(y));
+                }
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Rita en punkt
+        function drawPoint(x, y, color = '#000') {
+            ctx.beginPath();
+            ctx.arc(toCanvasX(x), toCanvasY(y), 5, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // Uppdatera progress bar
+        function updateProgress() {
+            const progress = ((currentExerciseIndex) / exercises.length) * 100;
+            document.querySelector('.progress-bar').style.width = `${progress}%`;
+            document.getElementById('current-exercise').textContent = `Övning ${currentExerciseIndex + 1} av ${exercises.length}`;
+        }
+
+        // Kontrollera svar för Linjära Ekvationer
+        function checkAnswer() {
+            const kInput = parseFloat(document.getElementById('kInput').value);
+            const mInput = parseFloat(document.getElementById('mInput').value);
+            const feedback = document.getElementById('feedback');
+            const hintButton = document.getElementById('hint-button');
+            const nextButton = document.getElementById('next-button');
+            const skipButton = document.getElementById('skip-button');
+
+            // Kontrollera att användaren har matat in båda värdena
+            if (isNaN(kInput) || isNaN(mInput)) {
+                feedback.textContent = 'Vänligen fyll i både lutningen (k) och m-värdet.';
+                feedback.className = 'feedback error';
+                feedback.style.display = 'block';
+                return;
+            }
+
+            attempts++;
+
+            // Toleransgräns för numeriska jämförelser
+            const tolerance = 0.1;
+            const kCorrect = Math.abs(kInput - currentExercise.correctK) < tolerance;
+            const mCorrect = Math.abs(mInput - currentExercise.correctM) < tolerance;
+
+            userLine = { k: kInput, m: mInput };
+            draw();
+
+            if (kCorrect && mCorrect) {
+                feedback.textContent = 'Bra jobbat! Du har hittat rätt värden.';
+                feedback.className = 'feedback success';
+                feedback.style.display = 'block';
+                nextButton.style.display = 'block';
+                hintButton.style.display = 'none';
+                skipButton.style.display = 'none';
+            } else {
+                feedback.textContent = 'Försök igen. Kontrollera dina värden.';
+                feedback.className = 'feedback error';
+                feedback.style.display = 'block';
+
+                if (attempts >= maxAttempts) {
+                    hintButton.style.display = 'block';
+                }
+            }
+        }
+
+        // Kontrollera svar för Plot Point Övningar
+        function checkPlotAnswer(userX, userY) {
+            const feedback = document.getElementById('feedback');
+            const hintButton = document.getElementById('hint-button');
+            const nextButton = document.getElementById('next-button');
+            const skipButton = document.getElementById('skip-button');
+
+            // Toleransgräns för koordinatjämförelser
+            const tolerance = 0.5;
+            const xCorrect = Math.abs(userX - targetPoint.x) <= tolerance;
+            const yCorrect = Math.abs(userY - targetPoint.y) <= tolerance;
+
+            if (xCorrect && yCorrect) {
+                feedback.textContent = 'Korrekt! Punkten har prickats in rätt.';
+                feedback.className = 'feedback success';
+                feedback.style.display = 'block';
+                drawPoint(targetPoint.x, targetPoint.y, '#16a34a'); // Grön punkt
+                plottedPoints.push({ x: targetPoint.x, y: targetPoint.y });
+                isPlotting = false;
+                nextButton.style.display = 'block';
+                hintButton.style.display = 'none';
+                skipButton.style.display = 'none';
+                document.querySelector('.button-container').style.display = 'flex'; // Visa knapparna igen
+            } else {
+                feedback.textContent = 'Felaktig punkt. Försök igen.';
+                feedback.className = 'feedback error';
+                feedback.style.display = 'block';
+                plotAttempts++;
+
+                if (plotAttempts >= maxPlotAttempts) {
+                    hintButton.style.display = 'block';
+                }
+            }
+        }
+
+        // Visa nästa tips
+        function showNextHint() {
+            const hintDiv = document.getElementById('hint');
+            const hintButton = document.getElementById('hint-button');
+            let currentHintIndex;
+
+            if (isPlotting) {
+                currentHintIndex = plotAttempts - maxPlotAttempts;
+            } else {
+                currentHintIndex = attempts - maxAttempts;
+            }
+
+            if (currentHintIndex >= 0 && currentHintIndex < currentExercise.hints.length) {
+                hintDiv.textContent = currentExercise.hints[currentHintIndex];
+                hintDiv.style.display = 'block';
+            } else {
+                hintButton.style.display = 'none';
+            }
+        }
+
+        // Visa teori i modal
+        function showTheory() {
+            const theoryContent = document.getElementById('theory-content');
+            theoryContent.textContent = currentExercise.theory;
+            const modal = document.getElementById('help-modal');
+            modal.style.display = 'block';
+        }
+
+        // Uppdatera användarens ekvation
+        function updateUserEquation() {
+            if (currentExercise.type !== 'plot_point') {
+                const kValue = document.getElementById('kInput').value;
+                const mValue = document.getElementById('mInput').value;
+
+                // Kontrollera att båda värdena är ifyllda
+                if (kValue !== '' && mValue !== '') {
+                    const k = parseFloat(kValue);
+                    const m = parseFloat(mValue);
+                    const equation = formatEquation(k, m);
+                    document.getElementById('user-equation').textContent = 'Din ekvation: ' + equation;
+                } else {
+                    document.getElementById('user-equation').textContent = '';
+                }
+            } else {
+                document.getElementById('user-equation').textContent = '';
+            }
+        }
+
+        // Ladda nästa övning
+        function loadNextExercise() {
+            if (currentExerciseIndex >= exercises.length) {
+                document.querySelector('.container').innerHTML = `
+                    <h2>Grattis!</h2>
+                    <p>Du har klarat alla övningar. Bra jobbat!</p>
+                    <button onclick="location.reload()">Börja om</button>
+                `;
+                return;
+            }
+
+            currentExercise = exercises[currentExerciseIndex];
+            currentExercise.generate();
+            document.getElementById('problem').innerHTML = currentExercise.problem;
+
+            // Återställ skala och pan
+            scaleX = 1;
+            scaleY = 1;
+            offsetX = 0;
+            offsetY = 0;
+
+            // Återställ xUnitsPerTick och yUnitsPerTick
+            xUnitsPerTick = 1;
+            yUnitsPerTick = 1;
+
+            // Om övningen har olika skalor, uppdatera dem
+            if (currentExercise.differentScales) {
+                xUnitsPerTick = currentExercise.xUnitsPerTick;
+                yUnitsPerTick = currentExercise.yUnitsPerTick;
+
+                const pixelsPerTick = 50; // Antal pixlar mellan varje skalstreck
+
+                xScale = pixelsPerTick / xUnitsPerTick;
+                yScale = pixelsPerTick / yUnitsPerTick;
+            } else {
+                // Återställ xScale och yScale
+                xScale = 20;
+                yScale = 20;
+            }
+
+            // Återställ UI
+            if (currentExercise.type === 'plot_point') {
+                document.getElementById('input-container').style.display = 'none';
+                document.getElementById('user-equation').style.display = 'none';
+                document.querySelector('.button-container').style.display = 'none';
+                isPlotting = true;
+                plotAttempts = 0;
+                targetPoint = { x: currentExercise.x, y: currentExercise.y };
+                attempts = 0;
+                plottedPoints = [];
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('hint').style.display = 'none';
+                draw();
+            } else {
+                document.getElementById('input-container').style.display = 'grid';
+                document.getElementById('user-equation').style.display = 'block';
+                document.querySelector('.button-container').style.display = 'flex';
+                isPlotting = false;
+                targetPoint = null;
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('hint').style.display = 'none';
+                userLine = null;
+                draw();
+            }
+
+            // Justera synlighet av knappar
+            document.getElementById('check-button').style.display = currentExercise.type !== 'plot_point' ? 'block' : 'none';
+            document.getElementById('change-values-button').style.display = currentExercise.type !== 'plot_point' ? 'block' : 'none';
+            document.getElementById('skip-button').style.display = 'block'; // Alltid synlig
+            document.getElementById('hint-button').style.display = 'none';
+            document.getElementById('next-button').style.display = 'none';
+
+            // Rensa inputfälten
+            document.getElementById('kInput').value = '';
+            document.getElementById('mInput').value = '';
+
+            // Rensa användarens ekvation
+            document.getElementById('user-equation').textContent = '';
+
+            attempts = 0;
+            plotAttempts = 0;
+            updateProgress();
+
+            draw();
+        }
+
+        // Ladda om nuvarande övning med nya värden
+        function loadCurrentExercise() {
+            currentExercise.generate();
+            document.getElementById('problem').innerHTML = currentExercise.problem;
+
+            // Återställ skala och pan
+            scaleX = 1;
+            scaleY = 1;
+            offsetX = 0;
+            offsetY = 0;
+
+            // Återställ xUnitsPerTick och yUnitsPerTick
+            xUnitsPerTick = 1;
+            yUnitsPerTick = 1;
+
+            // Om övningen har olika skalor, uppdatera dem
+            if (currentExercise.differentScales) {
+                xUnitsPerTick = currentExercise.xUnitsPerTick;
+                yUnitsPerTick = currentExercise.yUnitsPerTick;
+
+                const pixelsPerTick = 50; // Antal pixlar mellan varje skalstreck
+
+                xScale = pixelsPerTick / xUnitsPerTick;
+                yScale = pixelsPerTick / yUnitsPerTick;
+            } else {
+                // Återställ xScale och yScale
+                xScale = 20;
+                yScale = 20;
+            }
+
+            // Återställ UI
+            if (currentExercise.type === 'plot_point') {
+                document.getElementById('input-container').style.display = 'none';
+                document.getElementById('user-equation').style.display = 'none';
+                document.querySelector('.button-container').style.display = 'none';
+                isPlotting = true;
+                plotAttempts = 0;
+                targetPoint = { x: currentExercise.x, y: currentExercise.y };
+                attempts = 0;
+                plottedPoints = [];
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('hint').style.display = 'none';
+                draw();
+            } else {
+                document.getElementById('input-container').style.display = 'grid';
+                document.getElementById('user-equation').style.display = 'block';
+                document.querySelector('.button-container').style.display = 'flex';
+                isPlotting = false;
+                targetPoint = null;
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('hint').style.display = 'none';
+                userLine = null;
+                draw();
+            }
+
+            // Justera synlighet av knappar
+            document.getElementById('check-button').style.display = currentExercise.type !== 'plot_point' ? 'block' : 'none';
+            document.getElementById('change-values-button').style.display = currentExercise.type !== 'plot_point' ? 'block' : 'none';
+            document.getElementById('skip-button').style.display = 'block'; // Alltid synlig
+            document.getElementById('hint-button').style.display = 'none';
+            document.getElementById('next-button').style.display = 'none';
+
+            // Rensa inputfälten
+            document.getElementById('kInput').value = '';
+            document.getElementById('mInput').value = '';
+
+            // Rensa användarens ekvation
+            document.getElementById('user-equation').textContent = '';
+
+            attempts = 0;
+            plotAttempts = 0;
+            updateProgress();
+
+            draw();
+        }
+
+        // Rita allt på canvas
+        function draw() {
+            drawGrid();
+
+            // Rita eventuella givna punkter för Plot Point Övningar
+            if (isPlotting && plottedPoints.length > 0) {
+                plottedPoints.forEach(point => {
+                    drawPoint(point.x, point.y, '#16a34a');
+                });
+            }
+
+            // Rita den korrekta linjen om den behövs
+            if (currentExercise.drawLine) {
+                drawLine(currentExercise.correctK, currentExercise.correctM);
+            }
+
+            // Rita eventuella givna punkter
+            if (currentExercise.type === 'draw_from_points') {
+                currentExercise.points.forEach(point => {
+                    drawPoint(point.x, point.y);
+                });
+            }
+
+            // Rita användarens inmatade linje om den finns
+            if (userLine) {
+                drawLine(userLine.k, userLine.m, '#ef4444', [5 / Math.min(scaleX, scaleY), 5 / Math.min(scaleX, scaleY)]); // Röd streckad linje
+            }
+        }
+
+        // Kalkylatorns funktionalitet
+        const calcDisplay = document.getElementById('calc-display');
+        const calcButtons = document.querySelectorAll('.calc-button');
+        let calcExpression = '';
+
+        calcButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.textContent;
+
+                if (value === 'C') {
+                    calcExpression = '';
+                    calcDisplay.value = '';
+                } else if (value === '=') {
+                    try {
+                        // Säkrare utvärdering utan eval
+                        const result = Function('"use strict";return (' + calcExpression + ')')();
+                        calcExpression = result.toString();
+                        calcDisplay.value = calcExpression;
+                    } catch (e) {
+                        calcDisplay.value = 'Error';
+                        calcExpression = '';
+                    }
+                } else {
+                    calcExpression += value;
+                    calcDisplay.value = calcExpression;
+                }
+            });
+        });
+
+        // Visa eller dölj miniräknaren
+        function toggleCalculator() {
+            const calculator = document.getElementById('calculator');
+            if (calculator.style.display === 'none' || calculator.style.display === '') {
+                calculator.style.display = 'block';
+            } else {
+                calculator.style.display = 'none';
+            }
+        }
+
+        // Stäng miniräknaren
+        document.querySelector('#calculator .close-btn').addEventListener('click', toggleCalculator);
+
+        // Eventlyssnare för uppdatering av användarens ekvation
+        document.getElementById('kInput').addEventListener('input', updateUserEquation);
+        document.getElementById('mInput').addEventListener('input', updateUserEquation);
+
+        // Modal funktionalitet
+        const modal = document.getElementById('help-modal');
+        const closeModalBtn = document.querySelector('.close-modal');
+
+        closeModalBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Eventlyssnare för zoom och pan
+        document.getElementById('zoom-in-x-button').addEventListener('click', () => {
+            scaleX *= 1.2;
+            draw();
+        });
+
+        document.getElementById('zoom-out-x-button').addEventListener('click', () => {
+            scaleX /= 1.2;
+            draw();
+        });
+
+        document.getElementById('zoom-in-y-button').addEventListener('click', () => {
+            scaleY *= 1.2;
+            draw();
+        });
+
+        document.getElementById('zoom-out-y-button').addEventListener('click', () => {
+            scaleY /= 1.2;
+            draw();
+        });
+
+        document.getElementById('pan-left-button').addEventListener('click', () => {
+            offsetX -= 1 / scaleX;
+            draw();
+        });
+
+        document.getElementById('pan-right-button').addEventListener('click', () => {
+            offsetX += 1 / scaleX;
+            draw();
+        });
+
+        document.getElementById('pan-up-button').addEventListener('click', () => {
+            offsetY += 1 / scaleY;
+            draw();
+        });
+
+        document.getElementById('pan-down-button').addEventListener('click', () => {
+            offsetY -= 1 / scaleY;
+            draw();
+        });
+
+        document.getElementById('reset-chart-button').addEventListener('click', () => {
+            scaleX = 1;
+            scaleY = 1;
+            offsetX = 0;
+            offsetY = 0;
+            xScale = 20;
+            yScale = 20;
+            xUnitsPerTick = 1;
+            yUnitsPerTick = 1;
+            draw();
+        });
+
+        // Eventlyssnare
+        document.getElementById('check-button').addEventListener('click', checkAnswer);
+        document.getElementById('hint-button').addEventListener('click', showNextHint);
+        document.getElementById('help-button').addEventListener('click', showTheory);
+        document.getElementById('next-button').addEventListener('click', () => {
+            currentExerciseIndex++;
+            loadNextExercise();
+        });
+        document.getElementById('change-values-button').addEventListener('click', () => {
+            attempts = 0;
+            loadCurrentExercise();
+        });
+        document.getElementById('skip-button').addEventListener('click', () => {
+            currentExerciseIndex++;
+            loadNextExercise();
+        });
+        document.getElementById('calculator-button').addEventListener('click', toggleCalculator);
+
+        // Starta första övningen
+        loadNextExercise();
+    </script>
+</body>
+</html>
