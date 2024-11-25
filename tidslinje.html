@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Interaktiv Tidslinje</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/inter/3.19.3/inter.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <style>
+        /* Allmänna stilar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0a0a0a;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            background-color: #111;
+            border-radius: 0.5rem;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            display: block;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        .control-panel {
+            background-color: #1a1a1a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input {
+            background-color: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input[type="text"] {
+            flex: 1;
+        }
+
+        input[type="number"] {
+            width: 120px;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background-color: #374151;
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background-color: #4b5563;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .toggle-button {
+            background-color: #374151;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .toggle-button.active {
+            background-color: #059669;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+.period-label {
+            position: absolute;
+            top: 10%;
+            transform: translateY(-50%);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            white-space: nowrap;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        [aria-invalid="true"] {
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="canvas-container">
+            <canvas id="timeline"></canvas>
+        </div>
+
+        <div class="control-panel">
+            <div class="input-group">
+                <input type="text" id="event-name" placeholder="Händelsens namn">
+                <input type="number" id="years-ago" placeholder="År sedan">
+                <button id="add-event">Lägg till händelse</button>
+            </div>
+            
+            <div class="error-message" id="error-message"></div>
+            
+            <div class="toggle-group">
+                <button id="toggle-periods" class="toggle-button">
+                    Visa geologiska perioder
+                </button>
+                <button id="toggle-scale" class="toggle-button">
+                    Visa skalstreck
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Redigera händelse</div>
+            <div class="modal-body">
+                <input type="text" id="edit-name" placeholder="Händelsens namn">
+                <input type="number" id="edit-years" placeholder="År sedan">
+                <div class="error-message" id="edit-error-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-event" class="secondary">Ta bort</button>
+                <div class="button-group">
+                    <button id="close-modal" class="secondary">Avbryt</button>
+                    <button id="save-edit">Spara</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+// Konstanter och konfiguration
+
+const CONSTANTS = {
+    TEXT: {
+        VERTICAL_SPACING: 80,  
+        MIN_HORIZONTAL_SPACING: 200,  
+        PADDING: 20,
+        MAX_LEVELS: 5,  
+    },
+    VIEWPORT: {
+        DEFAULT_PADDING: 0.1,
+        MIN_HEIGHT: 600,
+        ANIMATION_DURATION: 500, // Lagt till denna rad
+    }
+};
+
+// Geologiska perioder
+const PERIODS = [
+    { 
+        name: 'KENOZOIKUM', 
+        start: 66000000, 
+        end: 0, 
+        color: 'rgba(100, 149, 237, 0.15)',
+        textColor: 'rgba(100, 149, 237, 0.9)'
+    },
+    { 
+        name: 'MESOZOIKUM', 
+        start: 252000000, 
+        end: 66000000, 
+        color: 'rgba(144, 238, 144, 0.15)',
+        textColor: 'rgba(144, 238, 144, 0.9)'
+    },
+    { 
+        name: 'PALEOZOIKUM', 
+        start: 541000000, 
+        end: 252000000, 
+        color: 'rgba(255, 182, 193, 0.15)',
+        textColor: 'rgba(255, 182, 193, 0.9)'
+    }
+];
+
+// ViewportManager - Hanterar canvas och viewport
+const ViewportManager = {
+    state: {
+        startYear: 0,
+        endYear: 1000000,
+        scale: 1,
+        centerYear: 500000,
+        isDragging: false,
+        dragStart: null
+    },
+
+    canvas: null,
+    ctx: null,
+    
+    initialize(canvasElement) {
+        this.canvas = canvasElement;
+        this.ctx = canvasElement.getContext('2d');
+        this.setupCanvas();
+        this.setupEventListeners();
+        this.resetView();
+    },
+
+    setupCanvas() {
+        const updateCanvasSize = () => {
+            const container = this.canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+
+            // Beräkna och centrera vertikalt
+            const requiredHeight = CONSTANTS.VIEWPORT.MIN_HEIGHT;
+            const containerHeight = Math.max(requiredHeight, container.offsetHeight);
+            
+            container.style.height = `${containerHeight}px`;
+            this.canvas.style.marginTop = `${(containerHeight - requiredHeight) / 2}px`;
+
+            // Uppdatera canvas dimensioner
+            this.canvas.width = container.offsetWidth * dpr;
+            this.canvas.height = requiredHeight * dpr;
+            this.canvas.style.width = `${container.offsetWidth}px`;
+            this.canvas.style.height = `${requiredHeight}px`;
+
+            // Skala context för HiDPI
+            this.ctx.scale(dpr, dpr);
+        };
+
+        // Initial storlek
+        updateCanvasSize();
+
+        // Observera storleksförändringar
+        const resizeObserver = new ResizeObserver(_.debounce(() => {
+            updateCanvasSize();
+            TimelineRenderer.render();
+        }, 100));
+        
+        resizeObserver.observe(this.canvas.parentElement);
+    },
+
+    updateViewport(newViewport, animate = false) {
+        if (animate) {
+            const startState = { ...this.state };
+            const startTime = performance.now();
+            
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / CONSTANTS.VIEWPORT.ANIMATION_DURATION, 1);
+                
+                const eased = progress < .5 ? 
+                    4 * progress * progress * progress : 
+                    1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                this.state = {
+                    startYear: startState.startYear + (newViewport.startYear - startState.startYear) * eased,
+                    endYear: startState.endYear + (newViewport.endYear - startState.endYear) * eased,
+                    scale: startState.scale + (newViewport.scale - startState.scale) * eased,
+                    centerYear: startState.centerYear + (newViewport.centerYear - startState.centerYear) * eased
+                };
+                
+                TimelineRenderer.render();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        } else {
+            this.state = { ...this.state, ...newViewport };
+            TimelineRenderer.render();
+        }
+    },
+
+    setupEventListeners() {
+        // Drag and drop
+        this.canvas.addEventListener('mousedown', (e) => {
+            this.state.isDragging = true;
+            this.state.dragStart = {
+                x: e.offsetX,
+                year: this.pixelToYear(e.offsetX)
+            };
+            this.canvas.style.cursor = 'grabbing';
+        });
+
+        this.canvas.addEventListener('mousemove', (e) => {
+            if (!this.state.isDragging || !this.state.dragStart) return;
+            
+            const deltaX = e.offsetX - this.state.dragStart.x;
+            const deltaYear = this.pixelToYear(e.offsetX) - this.state.dragStart.year;
+
+            this.state.startYear -= deltaYear;
+            this.state.endYear -= deltaYear;
+            this.state.dragStart.x = e.offsetX;
+            this.state.dragStart.year = this.pixelToYear(e.offsetX);
+
+            TimelineRenderer.render();
+        });
+
+        const endDrag = () => {
+            this.state.isDragging = false;
+            this.state.dragStart = null;
+            this.canvas.style.cursor = 'grab';
+        };
+
+        this.canvas.addEventListener('mouseup', endDrag);
+        this.canvas.addEventListener('mouseleave', endDrag);
+    },
+
+    yearToPixel(year) {
+        const width = this.canvas.width / window.devicePixelRatio;
+        return width - ((year - this.state.startYear) / (this.state.endYear - this.state.startYear)) * width;
+    },
+
+    pixelToYear(pixel) {
+        const width = this.canvas.width / window.devicePixelRatio;
+        return this.state.startYear + (pixel / width) * (this.state.endYear - this.state.startYear);
+    },
+
+    resetView() {
+        const optimalViewport = this.calculateOptimalViewport(EventManager.events);
+        this.state = { ...this.state, ...optimalViewport };
+    },
+
+    <!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Interaktiv Tidslinje</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/inter/3.19.3/inter.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <style>
+        /* Allmänna stilar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0a0a0a;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            background-color: #111;
+            border-radius: 0.5rem;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            display: block;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        .control-panel {
+            background-color: #1a1a1a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input {
+            background-color: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input[type="text"] {
+            flex: 1;
+        }
+
+        input[type="number"] {
+            width: 120px;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background-color: #374151;
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background-color: #4b5563;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .toggle-button {
+            background-color: #374151;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .toggle-button.active {
+            background-color: #059669;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        [aria-invalid="true"] {
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="canvas-container">
+            <canvas id="timeline"></canvas>
+        </div>
+
+        <div class="control-panel">
+            <div class="input-group">
+                <input type="text" id="event-name" placeholder="Händelsens namn">
+                <input type="number" id="years-ago" placeholder="År sedan">
+                <button id="add-event">Lägg till händelse</button>
+            </div>
+            
+            <div class="error-message" id="error-message"></div>
+            
+            <div class="toggle-group">
+                <button id="toggle-periods" class="toggle-button">
+                    Visa geologiska perioder
+                </button>
+                <button id="toggle-scale" class="toggle-button">
+                    Visa skalstreck
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Redigera händelse</div>
+            <div class="modal-body">
+                <input type="text" id="edit-name" placeholder="Händelsens namn">
+                <input type="number" id="edit-years" placeholder="År sedan">
+                <div class="error-message" id="edit-error-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-event" class="secondary">Ta bort</button>
+                <div class="button-group">
+                    <button id="close-modal" class="secondary">Avbryt</button>
+                    <button id="save-edit">Spara</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+// Konstanter och konfiguration
+
+const CONSTANTS = {
+    TEXT: {
+        VERTICAL_SPACING: 80,  
+        MIN_HORIZONTAL_SPACING: 200,  
+        PADDING: 20,
+        MAX_LEVELS: 5,  
+    },
+    VIEWPORT: {
+        DEFAULT_PADDING: 0.1,
+        MIN_HEIGHT: 600,
+        ANIMATION_DURATION: 500, // Lagt till denna rad
+    }
+};
+
+// Geologiska perioder
+const PERIODS = [
+    { 
+        name: 'KENOZOIKUM', 
+        start: 66000000, 
+        end: 0, 
+        color: 'rgba(100, 149, 237, 0.15)',
+        textColor: 'rgba(100, 149, 237, 0.9)'
+    },
+    { 
+        name: 'MESOZOIKUM', 
+        start: 252000000, 
+        end: 66000000, 
+        color: 'rgba(144, 238, 144, 0.15)',
+        textColor: 'rgba(144, 238, 144, 0.9)'
+    },
+    { 
+        name: 'PALEOZOIKUM', 
+        start: 541000000, 
+        end: 252000000, 
+        color: 'rgba(255, 182, 193, 0.15)',
+        textColor: 'rgba(255, 182, 193, 0.9)'
+    }
+];
+
+// ViewportManager - Hanterar canvas och viewport
+const ViewportManager = {
+    state: {
+        startYear: 0,
+        endYear: 1000000,
+        scale: 1,
+        centerYear: 500000,
+        isDragging: false,
+        dragStart: null
+    },
+
+    canvas: null,
+    ctx: null,
+    
+    initialize(canvasElement) {
+        this.canvas = canvasElement;
+        this.ctx = canvasElement.getContext('2d');
+        this.setupCanvas();
+        this.setupEventListeners();
+        this.resetView();
+    },
+
+    setupCanvas() {
+        const updateCanvasSize = () => {
+            const container = this.canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+
+            // Beräkna och centrera vertikalt
+            const requiredHeight = CONSTANTS.VIEWPORT.MIN_HEIGHT;
+            const containerHeight = Math.max(requiredHeight, container.offsetHeight);
+            
+            container.style.height = `${containerHeight}px`;
+            this.canvas.style.marginTop = `${(containerHeight - requiredHeight) / 2}px`;
+
+            // Uppdatera canvas dimensioner
+            this.canvas.width = container.offsetWidth * dpr;
+            this.canvas.height = requiredHeight * dpr;
+            this.canvas.style.width = `${container.offsetWidth}px`;
+            this.canvas.style.height = `${requiredHeight}px`;
+
+            // Skala context för HiDPI
+            this.ctx.scale(dpr, dpr);
+        };
+
+        // Initial storlek
+        updateCanvasSize();
+
+        // Observera storleksförändringar
+        const resizeObserver = new ResizeObserver(_.debounce(() => {
+            updateCanvasSize();
+            TimelineRenderer.render();
+        }, 100));
+        
+        resizeObserver.observe(this.canvas.parentElement);
+    },
+
+    updateViewport(newViewport, animate = false) {
+        if (animate) {
+            const startState = { ...this.state };
+            const startTime = performance.now();
+            
+            const animate = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / CONSTANTS.VIEWPORT.ANIMATION_DURATION, 1);
+                
+                const eased = progress < .5 ? 
+                    4 * progress * progress * progress : 
+                    1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                this.state = {
+                    startYear: startState.startYear + (newViewport.startYear - startState.startYear) * eased,
+                    endYear: startState.endYear + (newViewport.endYear - startState.endYear) * eased,
+                    scale: startState.scale + (newViewport.scale - startState.scale) * eased,
+                    centerYear: startState.centerYear + (newViewport.centerYear - startState.centerYear) * eased
+                };
+                
+                TimelineRenderer.render();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+            
+            requestAnimationFrame(animate);
+        } else {
+            this.state = { ...this.state, ...newViewport };
+            TimelineRenderer.render();
+        }
+    },
+
+    setupEventListeners() {
+        // Drag and drop
+        this.canvas.addEventListener('mousedown', (e) => {
+            this.state.isDragging = true;
+            this.state.dragStart = {
+                x: e.offsetX,
+                year: this.pixelToYear(e.offsetX)
+            };
+            this.canvas.style.cursor = 'grabbing';
+        });
+
+        this.canvas.addEventListener('mousemove', (e) => {
+            if (!this.state.isDragging || !this.state.dragStart) return;
+            
+            const deltaX = e.offsetX - this.state.dragStart.x;
+            const deltaYear = this.pixelToYear(e.offsetX) - this.state.dragStart.year;
+
+            this.state.startYear -= deltaYear;
+            this.state.endYear -= deltaYear;
+            this.state.dragStart.x = e.offsetX;
+            this.state.dragStart.year = this.pixelToYear(e.offsetX);
+
+            TimelineRenderer.render();
+        });
+
+        const endDrag = () => {
+            this.state.isDragging = false;
+            this.state.dragStart = null;
+            this.canvas.style.cursor = 'grab';
+        };
+
+        this.canvas.addEventListener('mouseup', endDrag);
+        this.canvas.addEventListener('mouseleave', endDrag);
+    },
+
+    yearToPixel(year) {
+        const width = this.canvas.width / window.devicePixelRatio;
+        return width - ((year - this.state.startYear) / (this.state.endYear - this.state.startYear)) * width;
+    },
+
+    pixelToYear(pixel) {
+        const width = this.canvas.width / window.devicePixelRatio;
+        return this.state.startYear + (pixel / width) * (this.state.endYear - this.state.startYear);
+    },
+
+    resetView() {
+        const optimalViewport = this.calculateOptimalViewport(EventManager.events);
+        this.state = { ...this.state, ...optimalViewport };
+    },
+
+    calculateOptimalViewport(events) {
+    const MIN_VIEW_SPAN = 10; // Minsta vybredd för att undvika för snäv vy
+    const PADDING_RATIO = 0.2; // Öka padding till 20% för mer luft
+    
+    if (!events.length) {
+        return {
+            startYear: -MIN_VIEW_SPAN, // Börja före 0 för att ge padding även åt vänster
+            endYear: MIN_VIEW_SPAN,
+            scale: 1,
+            centerYear: 0
+        };
+    }
+
+    if (events.length === 1) {
+        const event = events[0];
+        
+        // Specialhantering för 0 år och mycket små värden
+        if (event.yearsAgo <= MIN_VIEW_SPAN) {
+            // För nutidshändelser, se till att vi har padding på båda sidor om 0
+            const viewSpan = MIN_VIEW_SPAN * 2;
+            return {
+                startYear: -viewSpan / 2, // Negativ startpunkt ger padding till vänster om 0
+                endYear: viewSpan / 2,    // Positiv endpoint ger padding till höger om 0
+                scale: 1,
+                centerYear: event.yearsAgo
+            };
+        }
+        
+        // För övriga värden, beräkna lämplig vybredd baserat på storleksordning
+        const magnitude = Math.floor(Math.log10(event.yearsAgo));
+        const baseViewSpan = Math.pow(10, magnitude);
+        
+        // Lägg till padding
+        const paddedViewSpan = baseViewSpan * (1 + 2 * PADDING_RATIO);
+        const halfSpan = paddedViewSpan / 2;
+        
+        // Centrera vyn runt händelsen med padding
+        // Om händelsen är nära 0, låt vyn gå förbi 0 för att behålla centreringen
+        const idealStart = event.yearsAgo - halfSpan;
+        const start = idealStart;  // Ta bort Math.max(0, ...) för att tillåta negativa år
+        const end = start + paddedViewSpan;
+        
+        return {
+            startYear: start,
+            endYear: end,
+            scale: 1,
+            centerYear: event.yearsAgo
+        };
+    }
+
+    // För flera händelser
+    const years = events.map(e => e.yearsAgo);
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+    const timespan = maxYear - minYear;
+    const padding = Math.max(timespan * PADDING_RATIO, MIN_VIEW_SPAN);
+
+    // Tillåt negativt startår för att ge padding även när minYear är 0
+    return {
+        startYear: minYear - padding,
+        endYear: maxYear + padding,
+        scale: 1,
+        centerYear: (minYear + maxYear) / 2
+    };
+}
+};
+// TextPlacementManager - Hanterar textplacering och kollisionsdetektering
+const TextPlacementManager = {
+    calculateTextDimensions(ctx, event) {
+        ctx.save();
+        ctx.font = '14px Inter';
+        const nameMetrics = ctx.measureText(event.name);
+        const yearMetrics = ctx.measureText(`${event.yearsAgo.toLocaleString()} år`);
+        ctx.restore();
+        
+        return {
+            width: Math.max(nameMetrics.width, yearMetrics.width) + CONSTANTS.TEXT.PADDING * 2,
+            height: 60
+        };
+    },
+
+    calculatePlacements(ctx, events) {
+    const placements = new Map();
+    const height = ctx.canvas.height / window.devicePixelRatio;
+    const width = ctx.canvas.width / window.devicePixelRatio;
+    const centerY = height / 2;
+    
+    // Sortera händelser baserat på x-position
+    const sortedEvents = [...events].sort((a, b) => 
+        ViewportManager.yearToPixel(a.yearsAgo) - ViewportManager.yearToPixel(b.yearsAgo)
+    );
+
+    // Skapa två arrays för händelser ovanför och under tidslinjen
+    const aboveEvents = [];
+    const belowEvents = [];
+    
+    // Fördela händelser jämnt ovanför och under
+    sortedEvents.forEach((event, index) => {
+        if (index % 2 === 0) {
+            aboveEvents.push(event);
+        } else {
+            belowEvents.push(event);
+        }
+    });
+
+    // Funktion för att placera händelser på en sida
+    const placeEvents = (eventsArray, isAbove) => {
+        let currentLevel = 0;
+        let lastX = -Infinity;
+
+        eventsArray.forEach(event => {
+            const x = ViewportManager.yearToPixel(event.yearsAgo);
+            const textDims = this.calculateTextDimensions(ctx, event);
+            
+            // Återställ level om det finns tillräckligt horisontellt utrymme
+            if (x - lastX > CONSTANTS.TEXT.MIN_HORIZONTAL_SPACING) {
+                currentLevel = 0;
+            } else {
+                currentLevel++;
+            }
+
+            // Beräkna y-position
+            const baseOffset = CONSTANTS.TEXT.VERTICAL_SPACING;
+            const levelOffset = currentLevel * CONSTANTS.TEXT.VERTICAL_SPACING;
+            const yOffset = isAbove ? -(baseOffset + levelOffset) : (baseOffset + levelOffset);
+            
+            // Justera x-position för textbox om den är nära kanten
+            const halfWidth = textDims.width / 2;
+            let adjustedX = x;
+            
+            // Se till att textboxen inte går utanför canvasen
+            if (x - halfWidth < 0) {
+                adjustedX = halfWidth; // Justera åt höger om för nära vänsterkanten
+            } else if (x + halfWidth > width) {
+                adjustedX = width - halfWidth; // Justera åt vänster om för nära högerkanten
+            }
+            
+            const placement = {
+                x: adjustedX,
+                y: centerY + yOffset,
+                width: textDims.width,
+                height: textDims.height,
+                isAbove,
+                level: currentLevel,
+                originalX: x // Spara originalpositionen för händelselinjen
+            };
+
+            placements.set(event.id, placement);
+            lastX = x + textDims.width;
+        });
+    };
+
+    // Placera händelser på båda sidor
+    placeEvents(aboveEvents, true);
+    placeEvents(belowEvents, false);
+
+    return placements;
+}
+};
+
+// EventManager - Hanterar händelser och användarinteraktion
+const EventManager = {
+    events: [],
+    selectedEvent: null,
+    
+    elements: {
+        nameInput: null,
+        yearsInput: null,
+        addButton: null,
+        errorMessage: null,
+        modal: null,
+        editNameInput: null,
+        editYearsInput: null,
+        editErrorMessage: null,
+        deleteButton: null,
+        closeModalButton: null,
+        saveEditButton: null
+    },
+
+    initialize() {
+        // Koppla DOM-element
+        this.elements = {
+            nameInput: document.getElementById('event-name'),
+            yearsInput: document.getElementById('years-ago'),
+            addButton: document.getElementById('add-event'),
+            errorMessage: document.getElementById('error-message'),
+            modal: document.getElementById('edit-modal'),
+            editNameInput: document.getElementById('edit-name'),
+            editYearsInput: document.getElementById('edit-years'),
+            editErrorMessage: document.getElementById('edit-error-message'),
+            deleteButton: document.getElementById('delete-event'),
+            closeModalButton: document.getElementById('close-modal'),
+            saveEditButton: document.getElementById('save-edit')
+        };
+
+        this.setupEventListeners();
+        this.setupCanvasHover();
+    },
+
+    setupEventListeners() {
+        // Add event
+        this.elements.addButton.addEventListener('click', () => this.addEvent());
+        
+        // Input validering
+        this.elements.nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addEvent();
+        });
+
+        this.elements.yearsInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addEvent();
+        });
+
+        // Modal kontroller
+        this.elements.closeModalButton.addEventListener('click', () => this.closeModal());
+        this.elements.saveEditButton.addEventListener('click', () => this.saveEdit());
+        this.elements.deleteButton.addEventListener('click', () => this.deleteEvent());
+
+        // Escape för att stänga modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.elements.modal.classList.contains('active')) {
+                this.closeModal();
+            }
+        });
+    },
+
+    addEvent() {
+        const name = this.elements.nameInput.value.trim();
+        const yearsAgo = parseInt(this.elements.yearsInput.value);
+
+        if (!this.validateEventInput(name, yearsAgo)) return;
+
+        const newEvent = {
+            id: Date.now(),
+            name: name,
+            yearsAgo: yearsAgo,
+            color: `hsl(${this.events.length * 137.5}deg, 70%, 60%)`
+        };
+
+        this.events.push(newEvent);
+        this.events.sort((a, b) => a.yearsAgo - b.yearsAgo);
+
+        // Reset form
+        this.elements.nameInput.value = '';
+        this.elements.yearsInput.value = '';
+        this.elements.errorMessage.textContent = '';
+
+        // Uppdatera viewport och rendera
+        const newViewport = ViewportManager.calculateOptimalViewport(this.events);
+        ViewportManager.updateViewport(newViewport, true);
+    },
+
+    validateEventInput(name, yearsAgo, isEdit = false) {
+        const errorElement = isEdit ? this.elements.editErrorMessage : this.elements.errorMessage;
+        
+        if (!name) {
+            this.showError('Ange ett namn för händelsen', isEdit);
+            return false;
+        }
+
+        if (isNaN(yearsAgo) || yearsAgo < 0) {
+            this.showError('Ange ett giltigt årtal', isEdit);
+            return false;
+        }
+
+        return true;
+    },
+
+    showError(message, isEdit = false) {
+        const element = isEdit ? this.elements.editErrorMessage : this.elements.errorMessage;
+        element.textContent = message;
+        
+        setTimeout(() => {
+            if (element.textContent === message) {
+                element.textContent = '';
+            }
+        }, 3000);
+    },
+
+    handleCanvasClick(x, y) {
+        if (ViewportManager.state.isDragging) return;
+
+        const height = ViewportManager.canvas.height / window.devicePixelRatio;
+        const centerY = height / 2;
+        const clickRadius = 10;
+        
+        const clickedEvent = this.events.find(event => {
+            const eventX = ViewportManager.yearToPixel(event.yearsAgo);
+            const distance = Math.sqrt(
+                Math.pow(eventX - x, 2) + 
+                Math.pow(centerY - y, 2)
+            );
+            return distance <= clickRadius;
+        });
+
+        if (clickedEvent) {
+            this.selectedEvent = clickedEvent;
+            this.showEditModal(clickedEvent);
+        } else {
+            this.selectedEvent = null;
+        }
+    },
+
+    showEditModal(event) {
+        this.elements.editNameInput.value = event.name;
+        this.elements.editYearsInput.value = event.yearsAgo;
+        this.elements.editErrorMessage.textContent = '';
+        this.elements.modal.classList.add('active');
+    },
+
+    closeModal() {
+        this.elements.modal.classList.remove('active');
+        this.selectedEvent = null;
+        TimelineRenderer.render();
+    },
+
+    saveEdit() {
+        const name = this.elements.editNameInput.value.trim();
+        const yearsAgo = parseInt(this.elements.editYearsInput.value);
+
+        if (!this.validateEventInput(name, yearsAgo, true)) return;
+
+        const index = this.events.findIndex(e => e.id === this.selectedEvent.id);
+        if (index !== -1) {
+            this.events[index] = {
+                ...this.events[index],
+                name: name,
+                yearsAgo: yearsAgo
+            };
+
+            this.events.sort((a, b) => a.yearsAgo - b.yearsAgo);
+            this.closeModal();
+
+            // Uppdatera viewport om nödvändigt
+            const newViewport = ViewportManager.calculateOptimalViewport(this.events);
+            ViewportManager.updateViewport(newViewport, true);
+        }
+    },
+
+    deleteEvent() {
+        if (!this.selectedEvent) return;
+
+        const index = this.events.findIndex(e => e.id === this.selectedEvent.id);
+        if (index !== -1) {
+            this.events.splice(index, 1);
+            this.closeModal();
+
+            // Uppdatera viewport
+            if (this.events.length > 0) {
+                const newViewport = ViewportManager.calculateOptimalViewport(this.events);
+                ViewportManager.updateViewport(newViewport, true);
+            } else {
+                ViewportManager.resetView();
+                TimelineRenderer.render();
+            }
+        }
+    },
+
+    getSelectedEventId() {
+        return this.selectedEvent?.id;
+    },
+
+    setupCanvasHover() {
+        const canvas = ViewportManager.canvas;
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const hoveredEvent = this.getEventAtPosition(x, y);
+
+            let needsRender = false;
+
+            this.events.forEach(event => {
+                if (hoveredEvent && event.id === hoveredEvent.id) {
+                    if (!event.isHovered) {
+                        event.isHovered = true;
+                        needsRender = true;
+                    }
+                } else if (event.isHovered) {
+                    event.isHovered = false;
+                    needsRender = true;
+                }
+            });
+
+            if (needsRender) {
+                TimelineRenderer.render();
+            }
+        });
+    },
+
+    getEventAtPosition(x, y) {
+        const height = ViewportManager.canvas.height / window.devicePixelRatio;
+        const centerY = height / 2;
+        const hoverRadius = 10;
+        
+        return this.events.find(event => {
+            const eventX = ViewportManager.yearToPixel(event.yearsAgo);
+            const distance = Math.sqrt(Math.pow(eventX - x, 2) + Math.pow(centerY - y, 2));
+            return distance <= hoverRadius;
+        });
+    }
+};
+// TimelineRenderer - Hanterar all rendering
+const TimelineRenderer = {
+    initialize() {
+        this.togglePeriods = false;
+        this.toggleScale = false;
+        
+        // Sätt upp toggle-knappar
+        const periodsButton = document.getElementById('toggle-periods');
+        const scaleButton = document.getElementById('toggle-scale');
+        
+        periodsButton.addEventListener('click', () => {
+            this.togglePeriods = !this.togglePeriods;
+            this.updateToggleButton(periodsButton, this.togglePeriods);
+            this.render();
+        });
+
+        scaleButton.addEventListener('click', () => {
+            this.toggleScale = !this.toggleScale;
+            this.updateToggleButton(scaleButton, this.toggleScale);
+            this.render();
+        });
+    },
+
+    updateToggleButton(button, state) {
+        button.classList.toggle('active', state);
+        button.textContent = state ? 
+            button.textContent.replace('Visa', 'Dölj') : 
+            button.textContent.replace('Dölj', 'Visa');
+    },
+
+    render() {
+        const ctx = ViewportManager.ctx;
+        const canvas = ViewportManager.canvas;
+        const width = canvas.width / window.devicePixelRatio;
+        const height = canvas.height / window.devicePixelRatio;
+
+        // Rensa canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Rita perioder om aktiverade
+        if (this.togglePeriods) {
+            this.renderPeriods(ctx, width, height);
+        }
+
+        // Rita tidslinje
+        this.renderMainLine(ctx, width, height);
+
+        // Rita skala om aktiverad
+        if (this.toggleScale) {
+            this.renderScale(ctx, width, height);
+        }
+
+        // Rita händelser och text
+        this.renderEvents(ctx, width, height);
+    },
+
+    renderPeriods(ctx, width, height) {
+        // Ta bort alla existerande period-labels
+        document.querySelectorAll('.period-label').forEach(el => el.remove());
+        
+        PERIODS.forEach(period => {
+            const startX = ViewportManager.yearToPixel(period.start);
+            const endX = ViewportManager.yearToPixel(period.end);
+            
+            // Kontrollera om perioden är inom synligt område
+            if (Math.min(startX, endX) <= width && Math.max(startX, endX) >= 0) {
+                // Rita bakgrund
+                const gradient = ctx.createLinearGradient(startX, 0, endX, 0);
+                gradient.addColorStop(0, period.color);
+                gradient.addColorStop(0.5, period.color.replace('0.15', '0.25'));
+                gradient.addColorStop(1, period.color);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(Math.min(startX, endX), 0, Math.abs(endX - startX), height);
+                
+                // Skapa en DOM-element för periodnamnet
+                const label = document.createElement('div');
+                label.className = 'period-label';
+                label.style.color = period.textColor;
+                label.textContent = period.name;
+                
+                // Beräkna position
+                const centerX = (startX + endX) / 2;
+                
+                // Beräkna optimal fontstorlek baserat på periodbredd
+                const periodWidth = Math.abs(endX - startX);
+                const optimalFontSize = Math.min(
+                    Math.max(20, periodWidth / period.name.length * 0.8),
+                    36  // Maximal fontstorlek
+                );
+                
+                // Sätt position och stil
+                label.style.left = `${centerX}px`;
+                label.style.transform = 'translate(-50%, -50%)';
+                label.style.fontSize = `${optimalFontSize}px`;
+                label.style.fontWeight = '600'; // Semi-bold för bättre läsbarhet
+                
+                // Lägg till labeln i DOM
+                const container = ViewportManager.canvas.parentElement;
+                container.appendChild(label);
+                
+                // Justera position om labeln går utanför synligt område
+                const labelRect = label.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                if (labelRect.left < containerRect.left) {
+                    label.style.left = '0';
+                    label.style.transform = 'translateY(-50%)';
+                } else if (labelRect.right > containerRect.right) {
+                    label.style.left = '100%';
+                    label.style.transform = 'translate(-100%, -50%)';
+                }
+            }
+        });
+    },
+
+    renderMainLine(ctx, width, height) {
+        const centerY = height / 2;
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(width, centerY);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.restore();
+    },
+
+    renderScale(ctx, width, height) {
+        const timespan = ViewportManager.state.endYear - ViewportManager.state.startYear;
+        const magnitude = Math.floor(Math.log10(timespan));
+        const normalized = timespan / Math.pow(10, magnitude);
+        
+        let step;
+        if (normalized <= 2) step = 0.2 * Math.pow(10, magnitude);
+        else if (normalized <= 5) step = 0.5 * Math.pow(10, magnitude);
+        else step = Math.pow(10, magnitude);
+        
+        const startYear = Math.ceil(ViewportManager.state.startYear / step) * step;
+        const centerY = height / 2;
+        
+        for (let year = startYear; year <= ViewportManager.state.endYear; year += step) {
+            const x = ViewportManager.yearToPixel(year);
+            
+            if (x >= 0 && x <= width) {
+                // Rita skalstreck
+                ctx.beginPath();
+                ctx.moveTo(x, centerY - 5);
+                ctx.lineTo(x, centerY + 5);
+                ctx.strokeStyle = '#666';
+                ctx.stroke();
+                
+                // Rita årtal
+                ctx.save();
+                ctx.font = '12px Inter';
+                ctx.fillStyle = '#666';
+                ctx.textAlign = 'center';
+                ctx.fillText(year.toLocaleString(), x, centerY + 25);
+                ctx.restore();
+            }
+        }
+    },
+
+    renderEvents(ctx, width, height) {
+        if (!EventManager.events.length) return;
+
+        const placements = TextPlacementManager.calculatePlacements(ctx, EventManager.events);
+        const selectedId = EventManager.getSelectedEventId();
+        const centerY = height / 2;
+
+        EventManager.events.forEach(event => {
+            const x = ViewportManager.yearToPixel(event.yearsAgo);
+            const isSelected = event.id === selectedId;
+            const isHovered = event.isHovered;
+
+            ctx.save();
+
+            // Lägg till skuggor och ändra storlek vid hover
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = isHovered ? 15 : 10;
+
+            ctx.beginPath();
+            ctx.arc(x, centerY, isSelected || isHovered ? 10 : 8, 0, Math.PI * 2);
+            ctx.fillStyle = event.color;
+            ctx.fill();
+
+            ctx.lineWidth = isHovered ? 3 : 2;
+            ctx.strokeStyle = isHovered ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)';
+            ctx.stroke();
+
+            ctx.restore();
+
+            // Rita text om placering finns
+            const placement = placements.get(event.id);
+            if (placement) {
+                this.renderEventText(ctx, event, placement, isSelected || isHovered);
+            }
+        });
+    },
+
+    renderEventText(ctx, event, placement, isSelected) {
+        const { x, y, isAbove } = placement;
+        const centerY = ctx.canvas.height / window.devicePixelRatio / 2;
+
+        // Rita kopplingslinjen först så den hamnar under boxen
+        ctx.beginPath();
+        ctx.moveTo(x, centerY);
+        
+        // Använd Bezier-kurva för mjukare linjer
+        const controlY = isAbove ? 
+            y + placement.height / 2 + 20 : 
+            y - placement.height / 2 - 20;
+        
+        ctx.bezierCurveTo(
+            x, centerY,
+            x, controlY,
+            x, y + (isAbove ? placement.height / 2 : -placement.height / 2)
+        );
+        
+        ctx.strokeStyle = event.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Rita bakgrundsbox
+        ctx.save();
+        ctx.fillStyle = 'rgba(30, 30, 30, 0.95)';
+        ctx.strokeStyle = event.color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+
+        // Rita boxen med rundade hörn
+        ctx.beginPath();
+        ctx.roundRect(
+            x - placement.width / 2,
+            y - placement.height / 2,
+            placement.width,
+            placement.height,
+            8
+        );
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // Rita texten
+        ctx.save();
+        ctx.font = `${isSelected ? 'bold ' : ''}14px Inter`;
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(event.name, x, y - 10);
+        ctx.fillText(`${event.yearsAgo.toLocaleString()} år`, x, y + 10);
+        ctx.restore();
+    }
+};
+
+// Initialisering när dokumentet är laddat
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('timeline');
+    
+    // Initiera i rätt ordning
+    ViewportManager.initialize(canvas);
+    EventManager.initialize();
+    TimelineRenderer.initialize();
+    
+    // Lägg till klickhantering på canvas
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        EventManager.handleCanvasClick(x, y);
+    });
+
+    // Första rendering
+    TimelineRenderer.render();
+});
+</script>
+</body>
+</html>
+};
+// TextPlacementManager - Hanterar textplacering och kollisionsdetektering
+const TextPlacementManager = {
+    calculateTextDimensions(ctx, event) {
+        ctx.save();
+        ctx.font = '14px Inter';
+        const nameMetrics = ctx.measureText(event.name);
+        const yearMetrics = ctx.measureText(`${event.yearsAgo.toLocaleString()} år`);
+        ctx.restore();
+        
+        return {
+            width: Math.max(nameMetrics.width, yearMetrics.width) + CONSTANTS.TEXT.PADDING * 2,
+            height: 60
+        };
+    },
+
+    calculatePlacements(ctx, events) {
+        const placements = new Map();
+        const height = ctx.canvas.height / window.devicePixelRatio;
+        const centerY = height / 2;
+        
+        // Sortera händelser baserat på x-position
+        const sortedEvents = [...events].sort((a, b) => 
+            ViewportManager.yearToPixel(a.yearsAgo) - ViewportManager.yearToPixel(b.yearsAgo)
+        );
+
+        // Skapa två arrays för händelser ovanför och under tidslinjen
+        const aboveEvents = [];
+        const belowEvents = [];
+        
+        // Fördela händelser jämnt ovanför och under
+        sortedEvents.forEach((event, index) => {
+            if (index % 2 === 0) {
+                aboveEvents.push(event);
+            } else {
+                belowEvents.push(event);
+            }
+        });
+
+        // Funktion för att placera händelser på en sida
+        const placeEvents = (eventsArray, isAbove) => {
+            let currentLevel = 0;
+            let lastX = -Infinity;
+
+            eventsArray.forEach(event => {
+                const x = ViewportManager.yearToPixel(event.yearsAgo);
+                const textDims = this.calculateTextDimensions(ctx, event);
+                
+                // Återställ level om det finns tillräckligt horisontellt utrymme
+                if (x - lastX > CONSTANTS.TEXT.MIN_HORIZONTAL_SPACING) {
+                    currentLevel = 0;
+                } else {
+                    currentLevel++;
+                }
+
+                // Beräkna y-position
+                const baseOffset = CONSTANTS.TEXT.VERTICAL_SPACING;
+                const levelOffset = currentLevel * CONSTANTS.TEXT.VERTICAL_SPACING;
+                const yOffset = isAbove ? -(baseOffset + levelOffset) : (baseOffset + levelOffset);
+                
+                const placement = {
+                    x,
+                    y: centerY + yOffset,
+                    width: textDims.width,
+                    height: textDims.height,
+                    isAbove,
+                    level: currentLevel
+                };
+
+                placements.set(event.id, placement);
+                lastX = x + textDims.width;
+            });
+        };
+
+        // Placera händelser på båda sidor
+        placeEvents(aboveEvents, true);
+        placeEvents(belowEvents, false);
+
+        return placements;
+    }
+};
+
+// EventManager - Hanterar händelser och användarinteraktion
+const EventManager = {
+    events: [],
+    selectedEvent: null,
+    
+    elements: {
+        nameInput: null,
+        yearsInput: null,
+        addButton: null,
+        errorMessage: null,
+        modal: null,
+        editNameInput: null,
+        editYearsInput: null,
+        editErrorMessage: null,
+        deleteButton: null,
+        closeModalButton: null,
+        saveEditButton: null
+    },
+
+    initialize() {
+        // Koppla DOM-element
+        this.elements = {
+            nameInput: document.getElementById('event-name'),
+            yearsInput: document.getElementById('years-ago'),
+            addButton: document.getElementById('add-event'),
+            errorMessage: document.getElementById('error-message'),
+            modal: document.getElementById('edit-modal'),
+            editNameInput: document.getElementById('edit-name'),
+            editYearsInput: document.getElementById('edit-years'),
+            editErrorMessage: document.getElementById('edit-error-message'),
+            deleteButton: document.getElementById('delete-event'),
+            closeModalButton: document.getElementById('close-modal'),
+            saveEditButton: document.getElementById('save-edit')
+        };
+
+        this.setupEventListeners();
+        this.setupCanvasHover();
+    },
+
+    setupEventListeners() {
+        // Add event
+        this.elements.addButton.addEventListener('click', () => this.addEvent());
+        
+        // Input validering
+        this.elements.nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addEvent();
+        });
+
+        this.elements.yearsInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addEvent();
+        });
+
+        // Modal kontroller
+        this.elements.closeModalButton.addEventListener('click', () => this.closeModal());
+        this.elements.saveEditButton.addEventListener('click', () => this.saveEdit());
+        this.elements.deleteButton.addEventListener('click', () => this.deleteEvent());
+
+        // Escape för att stänga modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.elements.modal.classList.contains('active')) {
+                this.closeModal();
+            }
+        });
+    },
+
+    addEvent() {
+        const name = this.elements.nameInput.value.trim();
+        const yearsAgo = parseInt(this.elements.yearsInput.value);
+
+        if (!this.validateEventInput(name, yearsAgo)) return;
+
+        const newEvent = {
+            id: Date.now(),
+            name: name,
+            yearsAgo: yearsAgo,
+            color: `hsl(${this.events.length * 137.5}deg, 70%, 60%)`
+        };
+
+        this.events.push(newEvent);
+        this.events.sort((a, b) => a.yearsAgo - b.yearsAgo);
+
+        // Reset form
+        this.elements.nameInput.value = '';
+        this.elements.yearsInput.value = '';
+        this.elements.errorMessage.textContent = '';
+
+        // Uppdatera viewport och rendera
+        const newViewport = ViewportManager.calculateOptimalViewport(this.events);
+        ViewportManager.updateViewport(newViewport, true);
+    },
+
+    validateEventInput(name, yearsAgo, isEdit = false) {
+        const errorElement = isEdit ? this.elements.editErrorMessage : this.elements.errorMessage;
+        
+        if (!name) {
+            this.showError('Ange ett namn för händelsen', isEdit);
+            return false;
+        }
+
+        if (isNaN(yearsAgo) || yearsAgo < 0) {
+            this.showError('Ange ett giltigt årtal', isEdit);
+            return false;
+        }
+
+        return true;
+    },
+
+    showError(message, isEdit = false) {
+        const element = isEdit ? this.elements.editErrorMessage : this.elements.errorMessage;
+        element.textContent = message;
+        
+        setTimeout(() => {
+            if (element.textContent === message) {
+                element.textContent = '';
+            }
+        }, 3000);
+    },
+
+    handleCanvasClick(x, y) {
+        if (ViewportManager.state.isDragging) return;
+
+        const height = ViewportManager.canvas.height / window.devicePixelRatio;
+        const centerY = height / 2;
+        const clickRadius = 10;
+        
+        const clickedEvent = this.events.find(event => {
+            const eventX = ViewportManager.yearToPixel(event.yearsAgo);
+            const distance = Math.sqrt(
+                Math.pow(eventX - x, 2) + 
+                Math.pow(centerY - y, 2)
+            );
+            return distance <= clickRadius;
+        });
+
+        if (clickedEvent) {
+            this.selectedEvent = clickedEvent;
+            this.showEditModal(clickedEvent);
+        } else {
+            this.selectedEvent = null;
+        }
+    },
+
+    showEditModal(event) {
+        this.elements.editNameInput.value = event.name;
+        this.elements.editYearsInput.value = event.yearsAgo;
+        this.elements.editErrorMessage.textContent = '';
+        this.elements.modal.classList.add('active');
+    },
+
+    closeModal() {
+        this.elements.modal.classList.remove('active');
+        this.selectedEvent = null;
+        TimelineRenderer.render();
+    },
+
+    saveEdit() {
+        const name = this.elements.editNameInput.value.trim();
+        const yearsAgo = parseInt(this.elements.editYearsInput.value);
+
+        if (!this.validateEventInput(name, yearsAgo, true)) return;
+
+        const index = this.events.findIndex(e => e.id === this.selectedEvent.id);
+        if (index !== -1) {
+            this.events[index] = {
+                ...this.events[index],
+                name: name,
+                yearsAgo: yearsAgo
+            };
+
+            this.events.sort((a, b) => a.yearsAgo - b.yearsAgo);
+            this.closeModal();
+
+            // Uppdatera viewport om nödvändigt
+            const newViewport = ViewportManager.calculateOptimalViewport(this.events);
+            ViewportManager.updateViewport(newViewport, true);
+        }
+    },
+
+    deleteEvent() {
+        if (!this.selectedEvent) return;
+
+        const index = this.events.findIndex(e => e.id === this.selectedEvent.id);
+        if (index !== -1) {
+            this.events.splice(index, 1);
+            this.closeModal();
+
+            // Uppdatera viewport
+            if (this.events.length > 0) {
+                const newViewport = ViewportManager.calculateOptimalViewport(this.events);
+                ViewportManager.updateViewport(newViewport, true);
+            } else {
+                ViewportManager.resetView();
+                TimelineRenderer.render();
+            }
+        }
+    },
+
+    getSelectedEventId() {
+        return this.selectedEvent?.id;
+    },
+
+    setupCanvasHover() {
+        const canvas = ViewportManager.canvas;
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const hoveredEvent = this.getEventAtPosition(x, y);
+
+            let needsRender = false;
+
+            this.events.forEach(event => {
+                if (hoveredEvent && event.id === hoveredEvent.id) {
+                    if (!event.isHovered) {
+                        event.isHovered = true;
+                        needsRender = true;
+                    }
+                } else if (event.isHovered) {
+                    event.isHovered = false;
+                    needsRender = true;
+                }
+            });
+
+            if (needsRender) {
+                TimelineRenderer.render();
+            }
+        });
+    },
+
+    getEventAtPosition(x, y) {
+        const height = ViewportManager.canvas.height / window.devicePixelRatio;
+        const centerY = height / 2;
+        const hoverRadius = 10;
+        
+        return this.events.find(event => {
+            const eventX = ViewportManager.yearToPixel(event.yearsAgo);
+            const distance = Math.sqrt(Math.pow(eventX - x, 2) + Math.pow(centerY - y, 2));
+            return distance <= hoverRadius;
+        });
+    }
+};
+// TimelineRenderer - Hanterar all rendering
+const TimelineRenderer = {
+    initialize() {
+        this.togglePeriods = false;
+        this.toggleScale = false;
+        
+        // Sätt upp toggle-knappar
+        const periodsButton = document.getElementById('toggle-periods');
+        const scaleButton = document.getElementById('toggle-scale');
+        
+        periodsButton.addEventListener('click', () => {
+            this.togglePeriods = !this.togglePeriods;
+            this.updateToggleButton(periodsButton, this.togglePeriods);
+            this.render();
+        });
+
+        scaleButton.addEventListener('click', () => {
+            this.toggleScale = !this.toggleScale;
+            this.updateToggleButton(scaleButton, this.toggleScale);
+            this.render();
+        });
+    },
+
+    updateToggleButton(button, state) {
+        button.classList.toggle('active', state);
+        button.textContent = state ? 
+            button.textContent.replace('Visa', 'Dölj') : 
+            button.textContent.replace('Dölj', 'Visa');
+    },
+
+    render() {
+        const ctx = ViewportManager.ctx;
+        const canvas = ViewportManager.canvas;
+        const width = canvas.width / window.devicePixelRatio;
+        const height = canvas.height / window.devicePixelRatio;
+
+        // Rensa canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Rita perioder om aktiverade
+        if (this.togglePeriods) {
+            this.renderPeriods(ctx, width, height);
+        }
+
+        // Rita tidslinje
+        this.renderMainLine(ctx, width, height);
+
+        // Rita skala om aktiverad
+        if (this.toggleScale) {
+            this.renderScale(ctx, width, height);
+        }
+
+        // Rita händelser och text
+        this.renderEvents(ctx, width, height);
+    },
+
+    renderPeriods(ctx, width, height) {
+        PERIODS.forEach(period => {
+            const startX = ViewportManager.yearToPixel(period.start);
+            const endX = ViewportManager.yearToPixel(period.end);
+            
+            // Endast rita om perioden är inom synligt område
+            if (Math.min(startX, endX) <= width && Math.max(startX, endX) >= 0) {
+                // Rita bakgrund
+                const gradient = ctx.createLinearGradient(startX, 0, endX, 0);
+                gradient.addColorStop(0, period.color);
+                gradient.addColorStop(0.5, period.color.replace('0.15', '0.25'));
+                gradient.addColorStop(1, period.color);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(Math.min(startX, endX), 0, Math.abs(endX - startX), height);
+
+                // Rita periodnamn
+                const blockWidth = Math.abs(endX - startX);
+                const fontSize = Math.min(
+                    Math.max(14, blockWidth / period.name.length * 0.8),
+                    24
+                );
+                
+                ctx.save();
+                ctx.font = `${fontSize}px Inter`;
+                ctx.fillStyle = period.textColor;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                ctx.shadowBlur = 5;
+                
+                const textX = (startX + endX) / 2;
+                const textY = height * 0.1;
+                
+                ctx.fillText(period.name, textX, textY);
+                ctx.restore();
+            }
+        });
+    },
+
+    renderMainLine(ctx, width, height) {
+        const centerY = height / 2;
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(0, centerY);
+        ctx.lineTo(width, centerY);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.restore();
+    },
+
+    renderScale(ctx, width, height) {
+        const timespan = ViewportManager.state.endYear - ViewportManager.state.startYear;
+        const magnitude = Math.floor(Math.log10(timespan));
+        const normalized = timespan / Math.pow(10, magnitude);
+        
+        let step;
+        if (normalized <= 2) step = 0.2 * Math.pow(10, magnitude);
+        else if (normalized <= 5) step = 0.5 * Math.pow(10, magnitude);
+        else step = Math.pow(10, magnitude);
+        
+        const startYear = Math.ceil(ViewportManager.state.startYear / step) * step;
+        const centerY = height / 2;
+        
+        for (let year = startYear; year <= ViewportManager.state.endYear; year += step) {
+            const x = ViewportManager.yearToPixel(year);
+            
+            if (x >= 0 && x <= width) {
+                // Rita skalstreck
+                ctx.beginPath();
+                ctx.moveTo(x, centerY - 5);
+                ctx.lineTo(x, centerY + 5);
+                ctx.strokeStyle = '#666';
+                ctx.stroke();
+                
+                // Rita årtal
+                ctx.save();
+                ctx.font = '12px Inter';
+                ctx.fillStyle = '#666';
+                ctx.textAlign = 'center';
+                ctx.fillText(year.toLocaleString(), x, centerY + 25);
+                ctx.restore();
+            }
+        }
+    },
+
+    renderEvents(ctx, width, height) {
+        if (!EventManager.events.length) return;
+
+        const placements = TextPlacementManager.calculatePlacements(ctx, EventManager.events);
+        const selectedId = EventManager.getSelectedEventId();
+        const centerY = height / 2;
+
+        EventManager.events.forEach(event => {
+            const x = ViewportManager.yearToPixel(event.yearsAgo);
+            const isSelected = event.id === selectedId;
+            const isHovered = event.isHovered;
+
+            ctx.save();
+
+            // Lägg till skuggor och ändra storlek vid hover
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = isHovered ? 15 : 10;
+
+            ctx.beginPath();
+            ctx.arc(x, centerY, isSelected || isHovered ? 10 : 8, 0, Math.PI * 2);
+            ctx.fillStyle = event.color;
+            ctx.fill();
+
+            ctx.lineWidth = isHovered ? 3 : 2;
+            ctx.strokeStyle = isHovered ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.2)';
+            ctx.stroke();
+
+            ctx.restore();
+
+            // Rita text om placering finns
+            const placement = placements.get(event.id);
+            if (placement) {
+                this.renderEventText(ctx, event, placement, isSelected || isHovered);
+            }
+        });
+    },
+
+    renderEventText(ctx, event, placement, isSelected) {
+        const { x, y, isAbove } = placement;
+        const centerY = ctx.canvas.height / window.devicePixelRatio / 2;
+
+        // Rita kopplingslinjen först så den hamnar under boxen
+        ctx.beginPath();
+        ctx.moveTo(x, centerY);
+        
+        // Använd Bezier-kurva för mjukare linjer
+        const controlY = isAbove ? 
+            y + placement.height / 2 + 20 : 
+            y - placement.height / 2 - 20;
+        
+        ctx.bezierCurveTo(
+            x, centerY,
+            x, controlY,
+            x, y + (isAbove ? placement.height / 2 : -placement.height / 2)
+        );
+        
+        ctx.strokeStyle = event.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Rita bakgrundsbox
+        ctx.save();
+        ctx.fillStyle = 'rgba(30, 30, 30, 0.95)';
+        ctx.strokeStyle = event.color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+
+        // Rita boxen med rundade hörn
+        ctx.beginPath();
+        ctx.roundRect(
+            x - placement.width / 2,
+            y - placement.height / 2,
+            placement.width,
+            placement.height,
+            8
+        );
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // Rita texten
+        ctx.save();
+        ctx.font = `${isSelected ? 'bold ' : ''}14px Inter`;
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(event.name, x, y - 10);
+        ctx.fillText(`${event.yearsAgo.toLocaleString()} år`, x, y + 10);
+        ctx.restore();
+    }
+};
+
+// Initialisering när dokumentet är laddat
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('timeline');
+    
+    // Initiera i rätt ordning
+    ViewportManager.initialize(canvas);
+    EventManager.initialize();
+    TimelineRenderer.initialize();
+    
+    // Lägg till klickhantering på canvas
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        EventManager.handleCanvasClick(x, y);
+    });
+
+    // Första rendering
+    TimelineRenderer.render();
+});
+</script>
+</body>
+</html>
