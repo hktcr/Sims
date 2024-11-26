@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Begrepp i Atom- och Kärnfysik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f0ff;
+        }
+
+        #quiz-container {
+            width: 60%;
+            margin: auto;
+            background-color: white;
+            padding: 2em;
+            margin-top: 2%;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        #question {
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        .btn {
+            background-color: #6b46c1;
+            border: none;
+            border-radius: 5px;
+            margin: 0.5em 0;
+            padding: 1em;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .btn:hover {
+            background-color: #553c9a;
+        }
+
+        #next-btn, #retry-btn {
+            margin-top: 1em;
+            padding: 0.5em 1em;
+            font-size: 1em;
+            display: none;
+            background-color: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #explanation {
+            margin-top: 1em;
+            background-color: #e9d8fd;
+            padding: 1em;
+            border-radius: 5px;
+            display: none;
+            font-size: 1em;
+        }
+
+        .correct {
+            background-color: #48bb78;
+        }
+
+        .incorrect {
+            background-color: #e53e3e;
+        }
+
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 1em;
+            display: flex;
+        }
+
+        .progress-segment {
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        #result {
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 1em;
+            background-color: #e9d8fd;
+            padding: 1em;
+            border-radius: 5px;
+        }
+
+        #detailed-result {
+            margin-top: 2em;
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div id="quiz-container">
+    <h1>Begrepp i Atom- och Kärnfysik</h1>
+    <div id="progress-bar"></div>
+    <div id="question-container">
+        <div id="question"></div>
+        <div id="answer-buttons"></div>
+        <button id="next-btn">Nästa fråga</button>
+        <button id="retry-btn">Nu repeterar vi de frågor som besvarades fel</button>
+        <div id="explanation"></div>
+        <div id="result"></div>
+        <div id="detailed-result"></div>
+    </div>
+</div>
+
+<script>
+    const originalQuestions = [
+    {
+            question: "Vad är en atom?",
+            answers: [
+                { text: "En odelbar partikel", correct: false },
+                { text: "Den minsta delen av ett grundämne som behåller dess egenskaper", correct: true },
+                { text: "En samling av protoner", correct: false },
+                { text: "Ett energipaket", correct: false }
+            ],
+            explanation: "En atom är den minsta enheten av ett grundämne som behåller grundämnets kemiska egenskaper. Den består av en kärna med protoner och neutroner, omgiven av elektroner."
+        },
+        {
+            question: "Hur fungerar excitation av en elektron?",
+            answers: [
+                { text: "Elektronen lämnar atomen permanent", correct: false },
+                { text: "Den tar upp energi och byter skal", correct: true },
+                { text: "Den splittras i mindre delar", correct: false },
+                { text: "Elektronen kolliderar med kärnan", correct: false }
+            ],
+            explanation: "Vid excitation tar en elektron upp energi och flyttar till ett högre energinivå (skal). När den återgår till sin grundnivå avges energin som en foton."
+        },
+        {
+            question: "Vad utmärker en proton?",
+            answers: [
+                { text: "Saknar elektrisk laddning", correct: false },
+                { text: "Negativ laddning och låg massa", correct: false },
+                { text: "Positiv laddning", correct: true },
+                { text: "Rör sig runt atomkärnan", correct: false }
+            ],
+            explanation: "En proton är en positivt laddad partikel som finns i atomkärnan. Antalet protoner bestämmer vilket grundämne det är."
+        },
+        {
+            question: "Vilket påstående om neutroner stämmer?",
+            answers: [
+                { text: "De har negativ laddning", correct: false },
+                { text: "De kretsar kring kärnan", correct: false },
+                { text: "De är elektriskt neutrala", correct: true },
+                { text: "De finns endast i radioaktiva ämnen", correct: false }
+            ],
+            explanation: "Neutronen är en elektriskt neutral partikel som finns i atomkärnan tillsammans med protoner och bidrar till kärnans stabilitet."
+        },
+        {
+            question: "Hur skiljer sig elektroner från andra partiklar?",
+            answers: [
+                { text: "De finns i atomkärnan", correct: false },
+                { text: "De är negativt laddade och rör sig runt kärnan", correct: true },
+                { text: "De saknar laddning", correct: false },
+                { text: "De väger mest av alla partiklar", correct: false }
+            ],
+            explanation: "Elektroner är lätta, negativt laddade partiklar som rör sig i olika skal runt atomkärnan."
+        },
+        {
+            question: "Vad kännetecknar joniserande strålning?",
+            answers: [
+                { text: "Värmer endast upp föremål", correct: false },
+                { text: "Kan slå ut elektroner", correct: true },
+                { text: "Är alltid synlig för ögat", correct: false },
+                { text: "Förekommer bara i laboratorier", correct: false }
+            ],
+            explanation: "Joniserande strålning har tillräckligt hög energi för att slå ut elektroner från atomer och skapa joner."
+        },
+        {
+            question: "Vad kännetecknar alfastrålning?",
+            answers: [
+                { text: "Består av elektroner", correct: false },
+                { text: "Är elektromagnetisk strålning", correct: false },
+                { text: "Utgörs av heliumkärnor", correct: true },
+                { text: "Har oändlig räckvidd", correct: false }
+            ],
+            explanation: "Alfastrålning består av heliumkärnor (två protoner och två neutroner) som sänds ut från tunga, instabila atomkärnor."
+        },
+        {
+            question: "Hur uppstår betastrålning?",
+            answers: [
+                { text: "När en atomkärna sönderfaller till helium", correct: false },
+                { text: "När en neutron omvandlas och en elektron sänds ut", correct: true },
+                { text: "Vid fusion av lätta atomkärnor", correct: false },
+                { text: "När protoner kolliderar", correct: false }
+            ],
+            explanation: "Betastrålning uppstår när en neutron i kärnan omvandlas till en proton och en elektron (betapartikel) som skickas ut."
+        },
+        {
+            question: "Vad utmärker gammastrålning?",
+            answers: [
+                { text: "Består av partiklar", correct: false },
+                { text: "Har låg energi", correct: false },
+                { text: "Är elektromagnetisk", correct: true },
+                { text: "Sprids endast i vatten", correct: false }
+            ],
+            explanation: "Gammastrålning är mycket energirik elektromagnetisk strålning som ofta uppstår i samband med andra radioaktiva sönderfall."
+        },
+        {
+            question: "Vad är en kärnreaktion?",
+            answers: [
+                { text: "När atomkärnor förändras", correct: true },
+                { text: "När elektroner byter plats", correct: false },
+                { text: "En kemisk process", correct: false },
+                { text: "Ett elektronbyte", correct: false }
+            ],
+            explanation: "En kärnreaktion innebär en förändring i atomkärnan, som kan involvera fission, fusion eller radioaktivt sönderfall."
+        },
+        {
+            question: "Hur fungerar kärnfission?",
+            answers: [
+                { text: "Lätta kärnor slås ihop", correct: false },
+                { text: "Elektroner frigörs", correct: false },
+                { text: "Tunga kärnor delas", correct: true },
+                { text: "Atomer joniseras", correct: false }
+            ],
+            explanation: "Fission är processen där en tung atomkärna klyvs till lättare kärnor under frigörelse av energi."
+        },
+        {
+            question: "Vilken process driver solen?",
+            answers: [
+                { text: "Kemisk förbränning", correct: false },
+                { text: "Kärnfission", correct: false },
+                { text: "Fusion av väte", correct: true },
+                { text: "Radioaktivitet", correct: false }
+            ],
+            explanation: "I solen sker fusion där lätta atomkärnor (väte) slås samman till tyngre (helium) under frigörelse av enorm energi."
+        },
+        {
+            question: "Hur fungerar kol-14-datering?",
+            answers: [
+                { text: "Mäter jordlagrets ålder", correct: false },
+                { text: "Analyserar radioaktivt sönderfall", correct: true },
+                { text: "Räknar årsringar", correct: false },
+                { text: "Studerar fossiler", correct: false }
+            ],
+            explanation: "Kol-14-datering mäter mängden kvarvarande radioaktivt kol-14 i organiskt material för att bestämma dess ålder."
+        },
+        {
+            question: "Vad är en kedjereaktion?",
+            answers: [
+                { text: "Fusion av atomer", correct: false },
+                { text: "Kemiska bindningar", correct: false },
+                { text: "Självupprepande kärnreaktioner", correct: true },
+                { text: "Elektronförflyttningar", correct: false }
+            ],
+            explanation: "En kedjereaktion är en process där varje kärnreaktion utlöser nya reaktioner i en självunderhållande serie."
+        },
+        {
+            question: "Vad är plasma?",
+            answers: [
+                { text: "Fast materia", correct: false },
+                { text: "Joniserad gas", correct: true },
+                { text: "Flytande metall", correct: false },
+                { text: "Komprimerad vätska", correct: false }
+            ],
+            explanation: "Plasma är ett tillstånd där materia är så energirik att elektronerna separerats från atomkärnorna."
+        },
+        {
+            question: "Vad menas med halveringstid?",
+            answers: [
+                { text: "Tiden för total nedbrytning av alla atomkärnor", correct: false },
+                { text: "Sönderfallstid för hälften av atomkärnorna", correct: true },
+                { text: "Den absoluta livslängden för en atomkärna", correct: false },
+                { text: "Strålningens varaktighet", correct: false }
+            ],
+            explanation: "Halveringstid är den tid det tar för hälften av ett radioaktivt ämne att sönderfalla."
+        },
+        {
+            question: "Vad är elektronskal?",
+            answers: [
+                { text: "Atomens yttre hölje", correct: false },
+                { text: "Protonernas banor", correct: false },
+                { text: "Områden där elektroner rör sig", correct: true },
+                { text: "Kärnans skyddslager", correct: false }
+            ],
+            explanation: "Elektronskal är bestämda energinivåer runt atomkärnan där elektroner kan befinna sig."
+        },
+        {
+            question: "Vad är deuterium?",
+            answers: [
+                { text: "En elektron i yttersta skalet", correct: false },
+                { text: "En radioaktiv isotop", correct: false },
+                { text: "En väteisotop med en neutron", correct: true },
+                { text: "Ett grundämne", correct: false }
+            ],
+            explanation: "Deuterium är en väteisotop vars kärna innehåller en proton och en neutron."
+        },
+        {
+            question: "Hur skiljer sig fysikaliska reaktioner från kärnreaktioner?",
+            answers: [
+                { text: "Ändrar atomers struktur", correct: false },
+                { text: "Påverkar endast ytan", correct: false },
+                { text: "Kräver högre temperatur", correct: false },
+                { text: "Ändrar inte atomkärnan", correct: true }
+            ],
+            explanation: "Fysikaliska reaktioner ändrar ämnens tillstånd eller form men påverkar inte atomkärnans sammansättning."
+        },
+        {
+            question: "Vad är särskilt med helium-4?",
+            answers: [
+                { text: "En instabil isotop", correct: false },
+                { text: "En stabil atomkärna med två protoner och två neutroner", correct: true },
+                { text: "En radioaktiv gas", correct: false },
+                { text: "Ett enatomigt grundämne utan neutroner", correct: false }
+            ],
+            explanation: "Helium-4 är den vanligaste och stabilaste isotopen av helium, med två protoner och två neutroner i kärnan."
+        },
+        {
+            question: "Hur fungerar ett kärnkraftverk?",
+            answers: [
+                { text: "Genom fusion av väte", correct: false },
+                { text: "Genom förbränning av uran", correct: false },
+                { text: "Genom kontrollerad fission", correct: true },
+                { text: "Genom kemiska reaktioner", correct: false }
+            ],
+            explanation: "Kärnkraftverk utvinner energi genom kontrollerad klyvning (fission) av tunga atomkärnor, oftast uran."
+        },
+        {
+            question: "Vad är en isotop?",
+            answers: [
+                { text: "Ett radioaktivt ämne", correct: false },
+                { text: "En jon med olika laddning", correct: false },
+                { text: "En atom med annat neutronantal", correct: true },
+                { text: "En atomkärna utan elektroner", correct: false }
+            ],
+            explanation: "Isotoper är olika former av samma grundämne med samma antal protoner men olika antal neutroner."
+        },
+        {
+            question: "Hur uppstår radioaktivt sönderfall?",
+            answers: [
+                { text: "När atomer kolliderar", correct: false },
+                { text: "När instabila kärnor stabiliseras", correct: true },
+                { text: "Vid kemiska reaktioner", correct: false },
+                { text: "När elektroner exciteras", correct: false }
+            ],
+            explanation: "Radioaktivt sönderfall sker när instabila atomkärnor spontant omvandlas till mer stabila former genom att avge partiklar eller strålning."
+        },
+        {
+            question: "Vad är valenselektroner?",
+            answers: [
+                { text: "Elektroner i innersta skalet", correct: false },
+                { text: "Fria elektroner i metaller", correct: false },
+                { text: "Elektroner i yttersta skalet", correct: true },
+                { text: "Exciterade elektroner", correct: false }
+            ],
+            explanation: "Valenselektroner är de elektroner som finns i atomens yttersta skal och kan delta i kemiska bindningar."
+        },
+        {
+            question: "Hur uppstår en foton?",
+            answers: [
+                { text: "Vid kärnklyvning", correct: false },
+                { text: "När en elektron faller till lägre energinivå", correct: true },
+                { text: "När neutroner kolliderar", correct: false },
+                { text: "Vid radioaktivt sönderfall", correct: false }
+            ],
+            explanation: "En foton skapas när en elektron går från en högre till en lägre energinivå och skillnaden i energi avges som ljus."
+        },
+        {
+            question: "Vad händer vid jonisering?",
+            answers: [
+                { text: "Atomkärnan delas", correct: false },
+                { text: "Neutroner tillförs", correct: false },
+                { text: "Elektroner avges eller tas upp", correct: true },
+                { text: "Protoner flyttas", correct: false }
+            ],
+            explanation: "Vid jonisering förlorar eller tar atomen upp elektroner och blir elektriskt laddad."
+        },
+        {
+            question: "Hur fungerar stark kärnkraft?",
+            answers: [
+                { text: "Binder elektroner till kärnan", correct: false },
+                { text: "Håller samman nukleoner (kärnpartiklarna) i kärnan", correct: true },
+                { text: "Stöter bort protoner", correct: false },
+                { text: "Påverkar endast neutroner", correct: false }
+            ],
+            explanation: "Stark kärnkraft är den kraft som håller samman protoner och neutroner (nukleoner) i atomkärnan."
+        },
+        {
+            question: "Vad är särskilt med kemiska reaktioner?",
+            answers: [
+                { text: "Ändrar atomkärnor", correct: false },
+                { text: "Påverkar endast elektronerna", correct: true },
+                { text: "Skapar nya protoner", correct: false },
+                { text: "Ändrar neutronantal", correct: false }
+            ],
+            explanation: "Kemiska reaktioner involverar endast förändringar i elektronernas arrangemang, inte i atomkärnan."
+        },
+        {
+            question: "Hur fungerar ett elektronmikroskop?",
+            answers: [
+                { text: "Använder röntgenstrålning", correct: false },
+                { text: "Använder elektronstrålning", correct: true },
+                { text: "Använder gammastrålning", correct: false },
+                { text: "Använder synligt ljus", correct: false }
+            ],
+            explanation: "Elektronmikroskop använder en stråle av elektroner istället för ljus för att skapa bilder av mycket små objekt."
+        },
+        {
+            question: "Hur räknar man ut ett ämnes atomnummer?",
+            answers: [
+                { text: "Totala antalet partiklar", correct: false },
+                { text: "Antalet neutroner", correct: false },
+                { text: "Antalet protoner", correct: true },
+                { text: "Antalet elektronskal", correct: false }
+            ],
+            explanation: "Atomnumret anger antalet protoner i kärnan och bestämmer vilket grundämne det är."
+        },
+        {
+            question: "Hur skiljer sig Bohrs atommodell från tidigare modeller?",
+            answers: [
+                { text: "Beskrev atomen som solid (fast)", correct: false },
+                { text: "Införde fasta energinivåer", correct: true },
+                { text: "Saknade elektroner", correct: false },
+                { text: "Hade endast protoner", correct: false }
+            ],
+            explanation: "Bohrs modell introducerade idén om att elektroner rör sig i bestämda energinivåer runt kärnan."
+        },
+        {
+            question: "Vad händer vid en fusionsreaktion?",
+            answers: [
+                { text: "Tunga kärnor klyvs", correct: false },
+                { text: "Elektroner slås samman", correct: false },
+                { text: "Lätta kärnor förenas", correct: true },
+                { text: "Neutroner sönderfaller", correct: false }
+            ],
+            explanation: "Vid fusion slås lätta atomkärnor samman till tyngre under frigörelse av energi."
+        },
+        {
+            question: "Hur beräknas ett ämnes masstal?",
+            answers: [
+                { text: "Antalet elektroner", correct: false },
+                { text: "Protoner plus neutroner", correct: true },
+                { text: "Endast neutronantal", correct: false },
+                { text: "Antalet skal", correct: false }
+            ],
+            explanation: "Masstalet är summan av antalet protoner och neutroner i atomkärnan."
+        }
+
+
+
+    ]; // Här avslutas originalQuestions array
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let incorrectQuestions = [];
+
+    const questionElement = document.getElementById('question');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const retryButton = document.getElementById('retry-btn');
+    const explanationElement = document.getElementById('explanation');
+    const progressBar = document.getElementById('progress-bar');
+    const resultElement = document.getElementById('result');
+    const detailedResultElement = document.getElementById('detailed-result');
+
+    startQuiz();
+
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        incorrectQuestions = [];
+        progressBar.innerHTML = '';
+        nextButton.innerText = 'Nästa fråga';
+        nextButton.style.display = 'none';
+        retryButton.style.display = 'none';
+        resultElement.style.display = 'none';
+        detailedResultElement.style.display = 'none';
+        detailedResultElement.innerHTML = '';
+        questions = shuffleArray([...originalQuestions]);
+        showQuestion();
+    }
+
+    function showQuestion() {
+        resetState();
+        const currentQuestion = questions[currentQuestionIndex];
+        questionElement.innerText = currentQuestion.question;
+
+        const shuffledAnswers = currentQuestion.answers.sort(() => Math.random() - 0.5);
+
+        shuffledAnswers.forEach(answer => {
+            const button = document.createElement('button');
+            button.innerText = answer.text;
+            button.classList.add('btn');
+            if (answer.correct) {
+                button.dataset.correct = answer.correct;
+            }
+            button.addEventListener('click', selectAnswer);
+            answerButtonsElement.appendChild(button);
+        });
+    }
+
+    function resetState() {
+        nextButton.style.display = 'none';
+        retryButton.style.display = 'none';
+        explanationElement.style.display = 'none';
+        while (answerButtonsElement.firstChild) {
+            answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+        }
+    }
+
+    function selectAnswer(e) {
+    const selectedButton = e.target;
+    const correct = selectedButton.dataset.correct === 'true';
+    const currentQuestion = questions[currentQuestionIndex];
+
+    const existingAnswerIndex = userAnswers.findIndex(ans => ans.question === currentQuestion.question);
+    if (existingAnswerIndex !== -1) {
+        userAnswers[existingAnswerIndex].correct = correct;
+    } else {
+        userAnswers.push({ question: currentQuestion.question, correct: correct });
+    }
+
+    // Om svaret är korrekt och frågan finns i incorrectQuestions, ta bort den
+    if (correct) {
+        const indexToRemove = incorrectQuestions.findIndex(q => q.question === currentQuestion.question);
+        if (indexToRemove !== -1) {
+            incorrectQuestions.splice(indexToRemove, 1);
+        }
+    } else if (!incorrectQuestions.some(q => q.question === currentQuestion.question)) {
+        incorrectQuestions.push(currentQuestion);
+    }
+
+    Array.from(answerButtonsElement.children).forEach(button => {
+        setStatusClass(button, button.dataset.correct === 'true');
+        button.disabled = true;
+    });
+
+    explanationElement.innerText = correct ? 
+        "Rätt svar! " + currentQuestion.explanation : 
+        "Fel svar. " + currentQuestion.explanation;
+    explanationElement.style.display = 'block';
+
+    updateProgressBar();
+
+    if (currentQuestionIndex === questions.length - 1) {
+        showRetryButtonOrResult();
+    } else {
+        nextButton.style.display = 'block';
+    }
+}
+
+    function setStatusClass(element, correct) {
+        element.classList.add(correct ? 'correct' : 'incorrect');
+    }
+
+    nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            showQuestion();
+        } else {
+            showRetryButtonOrResult();
+        }
+    });
+
+    function showRetryButtonOrResult() {
+    resetState();
+    
+    if (incorrectQuestions.length > 0) {
+        retryButton.style.display = 'block';
+        retryButton.style.visibility = 'visible';
+        retryButton.onclick = () => {
+            questions = [...incorrectQuestions];
+            currentQuestionIndex = 0;
+            retryButton.style.display = 'none';
+            showQuestion();
+        };
+    }
+    showResult();
+}
+
+function showResult() {
+    resetState();
+
+    const totalQuestions = originalQuestions.length;
+    const correctAnswers = userAnswers.filter(ans => ans.correct).length;
+
+    const percentage = (correctAnswers / totalQuestions) * 100;
+    let feedback = '';
+    if (percentage === 100) {
+        feedback = "Fantastiskt! Alla frågor har nu besvarats korrekt!";
+    } else if (percentage >= 70) {
+        feedback = `Bra jobbat! Du har hittills svarat rätt på ${correctAnswers} av ${totalQuestions} frågor!`;
+    } else if (percentage >= 50) {
+        feedback = `Helt okej, men det finns utrymme för förbättring. Du har hittills svarat rätt på ${correctAnswers} av ${totalQuestions} frågor.`;
+    } else {
+        feedback = `Fortsätt öva! Du har hittills svarat rätt på ${correctAnswers} av ${totalQuestions} frågor. Ge inte upp!`;
+    }
+
+    resultElement.innerText = feedback;
+    resultElement.style.display = 'block';
+
+    const table = document.createElement('table');
+    table.innerHTML = `<tr><th>Fråga</th><th>Resultat</th></tr>`;
+    originalQuestions.forEach((question, index) => {
+        const userAnswer = userAnswers.find(ans => ans.question === question.question);
+        const row = table.insertRow();
+        row.insertCell(0).innerText = `Fråga ${index + 1}: ${question.question}`;
+        row.insertCell(1).innerText = userAnswer ? 
+            (userAnswer.correct ? "Rätt" : "Fel") : 
+            "Ej besvarad";
+    });
+    detailedResultElement.appendChild(table);
+    detailedResultElement.style.display = 'block';
+
+    if (incorrectQuestions.length === 0) {
+        nextButton.innerText = 'Starta om';
+        nextButton.style.display = 'block';
+        nextButton.onclick = startQuiz;
+    } else {
+        nextButton.innerText = 'Gå igenom de frågor du missade';
+        nextButton.style.display = 'block';
+        nextButton.onclick = () => {
+            questions = [...incorrectQuestions];
+            currentQuestionIndex = 0;
+            nextButton.style.display = 'none';
+            showQuestion();
+        };
+    }
+}
+
+    function updateProgressBar() {
+        progressBar.innerHTML = '';
+        const totalQuestions = originalQuestions.length;
+        originalQuestions.forEach(question => {
+            const userAnswer = userAnswers.find(ans => ans.question === question.question);
+            const segment = document.createElement('div');
+            segment.classList.add('progress-segment');
+            segment.style.width = `${100 / totalQuestions}%`;
+            if (userAnswer) {
+                segment.style.backgroundColor = userAnswer.correct ? '#48bb78' : '#e53e3e';
+            } else {
+                segment.style.backgroundColor = '#ddd';
+            }
+            progressBar.appendChild(segment);
+        });
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+</script>
+</body>
+</html>
