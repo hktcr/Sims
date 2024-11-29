@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workshop: Lär dig prompta</title>
+    <style>
+      /* Samma CSS-stilar som tidigare */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: white;
+        min-height: 100vh;
+      }
+
+      .header {
+        background-color: #8c1f41;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: 700;
+        position: relative;
+      }
+
+      #slide-selector {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .slideshow {
+        position: relative;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+
+      .slide {
+        display: none;
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        color: black;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      .prompt-box {
+        width: 100%;
+        min-height: 200px;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        margin-bottom: 1rem;
+        font-family: inherit;
+        line-height: 1.5;
+        background: white;
+        color: #333;
+        white-space: pre-wrap;
+      }
+
+      .copy-button {
+        background-color: #8c1f41;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .copy-button:hover {
+        background-color: #6b1731;
+      }
+
+      .copy-button.success {
+        background-color: #2ecc71;
+      }
+
+      .navigation {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .navigation button {
+        background-color: #8c1f41;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin: 0 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .navigation button:hover {
+        background-color: #6b1731;
+      }
+
+      h2 {
+        margin-bottom: 1rem;
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      .reflection {
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border-left: 4px solid #8c1f41;
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      Workshop: Lär dig prompta
+      <select id="slide-selector" aria-label="Välj slide"></select>
+    </div>
+
+    <div class="slideshow">
+      <!-- Slide 1: Introduktion -->
+      <div class="slide active" data-slide-number="1" data-title="Introduktion">
+        <h2>Välkommen till workshopen!</h2>
+        <p>
+          I denna workshop kommer vi att utforska olika sätt att skriva effektiva
+          prompter för AI. Vi kommer att använda samma exempel i flera steg för att visa
+          hur du kan förbättra dina prompter och därmed få bättre resultat.
+        </p>
+        <p>
+          Använd knapparna nedan eller dropdown-menyn i högra hörnet för att navigera
+          mellan olika exempel.
+        </p>
+      </div>
+
+      <!-- Användningsområde 1: Administrativa uppgifter -->
+
+      <!-- Slide 2: Administrativa uppgifter – Enkel prompt -->
+      <div
+        class="slide"
+        data-slide-number="2"
+        data-title="Administrativa uppgifter – Enkel prompt"
+      >
+        <h2>Administrativa uppgifter – Enkel prompt</h2>
+        <p>
+          En enkel prompt för att skriva ett mejl till vårdnadshavare om föräldramöte:
+        </p>
+        <textarea class="prompt-box" id="prompt1">
+Skriv ett mejl till föräldrarna om ett föräldramöte.</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt1')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Denna prompt är mycket generell och ger AI lite information att arbeta med.
+            Resultatet kan därför bli oprecist eller inte möta dina behov.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Administrativa uppgifter – Förbättrad prompt -->
+      <div
+        class="slide"
+        data-slide-number="3"
+        data-title="Administrativa uppgifter – Förbättrad prompt"
+      >
+        <h2>Administrativa uppgifter – Förbättrad prompt</h2>
+        <p>
+          En förbättrad prompt med mer detaljer:
+        </p>
+        <textarea class="prompt-box" id="prompt2">
+Skriv ett mejl till föräldrarna i klass 5A och bjud in dem till ett föräldramöte nästa vecka.</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt2')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Genom att lägga till mer information som klass och tidpunkt ger du AI bättre
+            förutsättningar att skapa ett relevant mejl. Men det finns fortfarande utrymme
+            för förbättring.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 4: Administrativa uppgifter – Avancerad prompt -->
+      <div
+        class="slide"
+        data-slide-number="4"
+        data-title="Administrativa uppgifter – Avancerad prompt"
+      >
+        <h2>Administrativa uppgifter – Avancerad prompt</h2>
+        <p>
+          En avancerad prompt med specifika detaljer och önskad ton:
+        </p>
+        <textarea class="prompt-box" id="prompt3">
+Du är klasslärare i klass 5A.
+
+Skriv ett formellt men vänligt mejl till vårdnadshavarna där du:
+
+- Bjuder in till ett föräldramöte tisdagen den 15 november kl. 18:00 i skolans aula.
+- Informerar om att agendan inkluderar diskussion om kommande utflykt till Ven och terminens mål.
+- Ber dem att bekräfta sin närvaro senast den 10 november.
+
+Använd ett professionellt språk och uppmuntra till dialog.</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt3')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Genom att specificera roll, målgrupp, innehåll och ton i prompten ger du AI
+            all nödvändig information för att skapa ett mejl som exakt matchar dina behov.
+          </p>
+        </div>
+      </div>
+
+      <!-- Användningsområde 2: Lektionsplanering -->
+
+      <!-- Slide 5: Lektionsplanering – Enkel prompt -->
+      <div
+        class="slide"
+        data-slide-number="5"
+        data-title="Lektionsplanering – Enkel prompt"
+      >
+        <h2>Lektionsplanering – Enkel prompt</h2>
+        <p>
+          En enkel prompt för att planera en lektion om vattnets kretslopp:
+        </p>
+        <textarea class="prompt-box" id="prompt4">
+Planera en lektion om vattnets kretslopp för årskurs 5.</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt4')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Prompten är generell och kan resultera i en lektion som inte är anpassad efter
+            dina specifika behov eller undervisningsstil.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 6: Lektionsplanering – Förbättrad prompt -->
+      <div
+        class="slide"
+        data-slide-number="6"
+        data-title="Lektionsplanering – Förbättrad prompt"
+      >
+        <h2>Lektionsplanering – Förbättrad prompt</h2>
+        <p>
+          En förbättrad prompt med mer detaljer:
+        </p>
+        <textarea class="prompt-box" id="prompt5">
+Du är NO-lärare i årskurs 5.
+
+Planera en 60-minuters lektion om vattnets kretslopp som inkluderar:
+
+- En genomgång av de olika stegen i kretsloppet.
+- En klassdiskussion om varför vattnets kretslopp är viktigt.
+- En enkel experimentell aktivitet.
+
+Ange material som behövs.</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt5')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Genom att inkludera lektionens längd och specifika aktiviteter hjälper du AI
+            att skapa en mer strukturerad lektionsplan. Men ytterligare detaljer kan
+            förbättra resultatet ytterligare.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Lektionsplanering – Avancerad prompt -->
+      <div
+        class="slide"
+        data-slide-number="7"
+        data-title="Lektionsplanering – Avancerad prompt"
+      >
+        <h2>Lektionsplanering – Avancerad prompt</h2>
+        <p>
+          En avancerad prompt med detaljerad struktur och lärandemål:
+        </p>
+        <textarea class="prompt-box" id="prompt6">
+Du är NO-lärare i årskurs 5.
+
+Planera en 60-minuters lektion om vattnets kretslopp med följande:
+
+- **Lärandemål**: Eleverna ska förstå och kunna förklara de olika stegen i vattnets kretslopp.
+- **Inledning (10 min)**: Visa en kort animationsfilm om vattnets kretslopp.
+- **Huvuddel (40 min)**:
+  - Förklara varje steg i kretsloppet med hjälp av bilder och frågor.
+  - Genomför ett enkelt experiment där eleverna får skapa ett eget "mini-kretslopp" i en burk.
+- **Avslutning (10 min)**: Sammanfatta lektionen och låt eleverna reflektera över vad de lärt sig.
+
+Inkludera en lista över nödvändigt material och säkerhetsinstruktioner.</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt6')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Genom att specificera struktur, tidsåtgång, lärandemål och detaljerade
+            aktiviteter får du en omfattande lektionsplan som är direkt användbar.
+          </p>
+        </div>
+      </div>
+
+      <!-- Användningsområde 3: Översättning -->
+
+      <!-- Slide 8: Översättning – Enkel prompt -->
+      <div
+        class="slide"
+        data-slide-number="8"
+        data-title="Översättning – Enkel prompt"
+      >
+        <h2>Översättning – Enkel prompt</h2>
+        <p>
+          En enkel prompt för att översätta en text:
+        </p>
+        <textarea class="prompt-box" id="prompt7">
+Översätt denna text till [välj språk]:
+
+"Glöm inte att ta med idrottskläder imorgon. Vi ska springa runt skolan."</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt7')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Välj ett språk att översätta till. Öppna sedan en ny chatt för att översätta tillbaka till svenska för att se om resultatet blev som förväntat.
+          </p>
+        </div>
+      </div>
+
+      
+
+      <!-- Slide 10: Översättning – Utmaning -->
+      <div
+        class="slide"
+        data-slide-number="10"
+        data-title="Översättning – Utmaning"
+      >
+        <h2>Översättning – Utmaning</h2>
+        <p>
+          Översätt följande till tjetjenska:
+        </p>
+        <textarea class="prompt-box" id="prompt9">
+Översätt denna text till tjetjenska:
+
+"Glöm inte att ta med idrottskläder imorgon. Vi ska springa runt skolan."</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt9')"
+        >
+          Kopiera till urklipp
+        </button>
+       
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Kontrollera översättningen genom att öppna en ny chatt och be om översättning tillbaka till svenska.
+          </p>
+        </div>
+      </div>
+
+      <!-- Användningsområde 4: Etik och varningar -->
+
+      <!-- Slide 11: Varning – Riskabel användning av bedömning -->
+      <div
+        class="slide"
+        data-slide-number="11"
+        data-title="Varning – Bedömning"
+      >
+        <h2>Varning – Riskabel användning av bedömning</h2>
+        <p>
+          Ett exempel på en olämplig prompt kring bedömning:
+        </p>
+        <textarea class="prompt-box" id="warning1">
+Bedöm denna elevtext utifrån kunskapskraven i svenska för årskurs 5.</textarea>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Att använda AI för att bedöma elevtexter kan vara problematiskt då AI:n inte kan
+            göra rättvisa bedömningar enligt läroplanens kunskapskrav. Dessutom kan det
+            finnas integritetsaspekter att beakta. AI kan dock användas som stöd för att ge
+            generella kommentarer eller förslag på förbättringar om texten är anonymiserad.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 12: Varning – Falska källor och faktakontroll -->
+      <div
+        class="slide"
+        data-slide-number="12"
+        data-title="Varning – Källor och fakta"
+      >
+        <h2>Varning – Falska källor och faktakontroll</h2>
+        <p>
+          Ett exempel på en riskabel prompt kring källor:
+        </p>
+        <textarea class="prompt-box" id="warning2">
+Ge mig fem källor som stöder teorin om att läxor inte förbättrar elevers inlärning.</textarea>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            AI kan ibland fabricera källor eller referenser som inte existerar. Det är
+            viktigt att alltid kontrollera och verifiera källor från pålitliga
+            informationskanaler. Använd AI som ett verktyg för att få en översikt, men gör
+            egen faktakontroll.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 13: Varning – Riskabel användning -->
+      <div
+        class="slide"
+        data-slide-number="13"
+        data-title="Varning – Riskabel användning"
+      >
+        <h2>Varning – Riskabel användning</h2>
+        <p>
+          Ett exempel på olämplig användning av AI:
+        </p>
+        <textarea class="prompt-box" id="warning3">
+Skriv ett omdöme om eleven Lisa i 5B för utvecklingssamtalet.</textarea>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Att inkludera personuppgifter i prompter kan bryta mot integritetslagar och
+            etiska riktlinjer. Undvik att använda AI för att skapa bedömningar eller
+            dokumentation om enskilda elever.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 14: Varning – Känslig dokumentation -->
+      <div
+        class="slide"
+        data-slide-number="14"
+        data-title="Varning – Känslig information"
+      >
+        <h2>Varning – Känslig dokumentation</h2>
+        <p>
+          Ett exempel på en olämplig prompt kring känslig information:
+        </p>
+        <textarea class="prompt-box" id="warning4">
+Hur dokumenterar jag händelsen med mobbning i 4A?</textarea>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Undvik att diskutera eller dela känsliga händelser eller personuppgifter med AI.
+            Följ alltid skolans policy och riktlinjer för hantering av sådana ärenden.
+          </p>
+        </div>
+      </div>
+
+      <!-- Användningsområde 5: Föra en dialog -->
+
+      <!-- Slide 15: Bättre resultat efter dialog -->
+      <div
+  class="slide"
+  data-slide-number="15"
+  data-title="Bättre resultat med dialog"
+>
+  <h2>Bättre resultat med dialog</h2>
+  <p>
+    Ett exempel på hur du kan använda dialog för att få en mer detaljerad och anpassad lektionsplan:
+  </p>
+  <textarea class="prompt-box" id="prompt-dialog">
+Nu vill jag att vi skapar en lektionsplan för ett antal veckor som leder eleverna genom arbetsområdet 'Så styrs Sverige'.
+
+- Ge ett första förslag på en struktur som täcker arbetsområdet.
+- Ta hänsyn till att min undervisningsgrupp är varierad i nivå och att jag vill inkludera stödmaterial för elever som behöver det samt utmanande uppgifter för de som ligger långt fram. Detta behöver vi diskutera.
+- Jag vill att vi diskuterar fram planen så att den blir så tydlig som möjligt och tillgodoser de skiftande behov jag identifierat i min undervisningsgrupp.
+
+Efter första förslaget kommer jag att ge dig återkoppling, och vi fortsätter tills vi når en plan som fungerar.</textarea>
+  <button
+    type="button"
+    class="copy-button"
+    onclick="copyToClipboard('prompt-dialog')"
+  >
+    Kopiera till urklipp
+  </button>
+  <div class="reflection">
+    <strong>Reflektion kring promptningsteknik:</strong>
+    <p>
+      Genom att använda dialog och iterativ återkoppling kan du samarbeta med AI för att skapa material som bättre svarar mot dina förväntningar. Att använda AI som ett "bollplank" kan också leda till tankar och idéer som man annars kanske inte nått fram till.
+    </p>
+  </div>
+</div>
+<!-- Slide: Fullständig mall för promptar -->
+<div
+  class="slide"
+  data-slide-number="16"
+  data-title="Fullständig mall för promptar"
+>
+  <h2>Fullständig mall för promptar</h2>
+  <p>
+    Här är en mall som kan hjälpa dig att skapa välformulerade promptar för att få så precisa och användbara svar som möjligt från AI:
+  </p>
+  <textarea class="prompt-box" id="prompt-template">
+Du är en [...] (t.ex. gymnasielärare, specialpedagog, matematiklärare) som är expert på [...] (t.ex. pedagogiska metoder, inkludering i klassrummet, algebra).
+
+Din uppgift är att [...] (t.ex. utveckla en lektionsplan, ge råd om klassrumshantering, förklara ett matematiskt koncept).
+
+Svara på ett sätt som är [...] (t.ex. pedagogiskt, detaljerat, kortfattat).
+
+Inkludera [...] om det behövs (t.ex. exempel, illustrationer, definitioner).
+
+Maxlängden för svaret är [...] (t.ex. 200 ord, 3 stycken, 10 meningar).
+
+Svaret ska innehålla exempel på [...] (t.ex. undervisningsstrategier, klassrumsscenarier, matematiska problem).
+
+Använd ett språk som är [...] (t.ex. enkelt, tekniskt, formellt, ungdomligt).
+
+Fokusera på att förklara/diskutera/analysera [...] (t.ex. de underliggande orsakerna, för- och nackdelar, den pedagogiska implementeringen).
+
+Svaret ska vara strukturerat som en [...] (t.ex. punktlista, sammanhängande text, steg-för-steg-guide).
+
+Använd följande format för svaret: [...] (t.ex. rubriker, fetstil för viktiga punkter, numrerade listor).
+
+Undvik att inkludera [...] i svaret (t.ex. spekulativa påståenden, teknisk jargong, irrelevanta detaljer).
+
+Om du inte har tillräcklig information för att ge ett fullständigt svar, ange detta tydligt (t.ex. “Baserat på tillgänglig information…”).</textarea>
+  <button
+    type="button"
+    class="copy-button"
+    onclick="copyToClipboard('prompt-template')"
+  >
+    Kopiera till urklipp
+  </button>
+  <div class="reflection">
+    <strong>Styrkan i välformulerade promptar:</strong>
+    <p>
+      Att använda en mall som denna hjälper dig att strukturera dina frågor till AI på ett sätt som säkerställer att svaren är både relevanta och användbara. Genom att inkludera detaljer som roll, mål, format och språklig ton kan du anpassa AI:s svar för att möta just dina behov.
+    </p>
+    <p>
+      En välformulerad prompt sparar tid och minskar risken för missförstånd, vilket gör AI till ett mer kraftfullt verktyg i din undervisning eller arbetsprocess.
+    </p>
+  </div>
+</div>
+
+    </div>
+
+    <div class="navigation">
+      <button type="button" id="prev-btn">◀ Föregående</button>
+      <button type="button" id="next-btn">Nästa ▶</button>
+    </div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      const slideSelector = document.getElementById("slide-selector");
+
+      let currentSlide = 0;
+
+      // Sortera slides baserat på data-slide-number
+      slides.sort((a, b) => {
+        return (
+          parseInt(a.getAttribute("data-slide-number")) -
+          parseInt(b.getAttribute("data-slide-number"))
+        );
+      });
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.classList.remove("active");
+          if (i === index) {
+            slide.classList.add("active");
+          }
+        });
+        slideSelector.selectedIndex = index;
+      }
+
+      // Event listeners för navigering
+      prevBtn.addEventListener("click", () => {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      });
+
+      // Populera dropdown-menyn
+      slides.forEach((slide, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = slide.getAttribute("data-title");
+        slideSelector.add(option);
+      });
+
+      // Event listener för dropdown
+      slideSelector.addEventListener("change", () => {
+        currentSlide = parseInt(slideSelector.value);
+        showSlide(currentSlide);
+      });
+
+      // Kopiera till urklipp funktion
+      function copyToClipboard(id) {
+        const copyText = document.getElementById(id);
+        navigator.clipboard
+          .writeText(copyText.value)
+          .then(() => {
+            const copyButton = copyText.nextElementSibling;
+            const originalText = copyButton.textContent;
+            copyButton.textContent = "Kopierat!";
+            copyButton.classList.add("success");
+
+            setTimeout(() => {
+              copyButton.textContent = originalText;
+              copyButton.classList.remove("success");
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Misslyckades med att kopiera:", err);
+            alert("Kunde inte kopiera texten. Var god försök igen.");
+          });
+      }
+
+      // Visa första sliden vid start
+      showSlide(currentSlide);
+    </script>
+  </body>
+</html>
