@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workshop: Prompter - för skolledare</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: white;
+        min-height: 100vh;
+      }
+
+      .header {
+        background-color: #8c1f41;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: 700;
+        position: relative;
+      }
+
+      #slide-selector {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .slideshow {
+        position: relative;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+      }
+
+      .slide {
+        display: none;
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        color: black;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      .prompt-box {
+        width: 100%;
+        min-height: 200px;
+        padding: 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        margin-bottom: 1rem;
+        font-family: inherit;
+        line-height: 1.5;
+        background: white;
+        color: #333;
+        white-space: pre-wrap;
+      }
+
+      .copy-button {
+        background-color: #8c1f41;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .copy-button:hover {
+        background-color: #6b1731;
+      }
+
+      .copy-button.success {
+        background-color: #2ecc71;
+      }
+
+      .navigation {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .navigation button {
+        background-color: #8c1f41;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin: 0 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .navigation button:hover {
+        background-color: #6b1731;
+      }
+
+      h2 {
+        margin-bottom: 1rem;
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      .reflection {
+        background-color: #f9f9f9;
+        padding: 1rem;
+        border-left: 4px solid #8c1f41;
+        margin-bottom: 1rem;
+      }
+
+      .warning {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+      }
+
+      .reflection strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .reflection p {
+        margin-bottom: 0.5rem;
+      }
+
+      .reflection ul {
+        margin-left: 1.5rem;
+        list-style-type: disc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      Workshop: Prompter - för skolledare
+      <select id="slide-selector" aria-label="Välj slide"></select>
+    </div>
+
+    <div class="slideshow">
+      <!-- Slide 1: Introduktion -->
+      <div class="slide active" data-slide-number="1" data-title="Introduktion">
+        <h2>Välkommen till workshopen!</h2>
+        <p>
+          Denna workshop ger en introduktion till hur utformningen av en prompt – den instruktion som ges till AI – påverkar kvaliteten på resultaten. Genom att jämföra olika exempel och arbeta med flera prompter undersöks hur justeringar i språk, struktur och detaljer kan förbättra svarens relevans och användbarhet. Syftet är att skapa en grundläggande förståelse för hur AI-stödet kan optimeras för skolledarens behov.
+<p></p>
+<b>80/20-regeln:</b> AI som ett stöd, inte en ersättare. 
+
+Skulle AI kunna utföra de mest grundläggande 80 procenten av uppgiften så att du endast behöver arbeta med de sista 20 procenten? Du kan fokusera på att granska, justera och förädla resultatet. Denna fördelning skulle kunna göra det möjligt att spara tid och resurser samtidigt som kvaliteten upprätthålls.
+<p></p>
+<b>Ansvarsfull användning</b>: 
+När en prompt utformas är det viktigt att tänka på etik och ansvar. En användbar tumregel kan vara:
+<i>“Skriv inget som du inte skulle kunna stå för om det dök upp på en löpsedel dagen efter.”</i>
+Denna princip påminner om att hantera information med omsorg och att undvika att sprida känslig information.
+        </p>
+        <p>
+          Använd knapparna nedan eller dropdown-menyn i högra hörnet för att navigera mellan olika exempel.
+        </p>
+      </div>
+
+      <!-- Slide 2: Kvalitetsarbete – Enkel prompt -->
+      <div class="slide" data-slide-number="2" data-title="Kvalitetsarbete – Enkel prompt">
+        <h2>Systematiskt kvalitetsarbete – Enkel prompt</h2>
+        <p>En enkel prompt för analys av skolresultat:</p>
+        <textarea class="prompt-box" id="prompt1">Analysera våra resultat i matematik åk 6.
+
+Betygsfördelning:
+            A     B     C     D     E     F
+VT23:       8%    12%   25%   30%   20%   5%
+VT22:       7%    15%   28%   25%   18%   7%
+VT21:       6%    10%   22%   32%   22%   8%
+
+Nationella prov:
+            Godkända    Ej godkända
+VT23:       92%         8%
+VT22:       90%         10%
+VT21:       88%         12%
+
+Gruppjämförelser VT23:
+- Flickor: 95% godkända (A-E)
+- Pojkar: 93% godkända (A-E)
+- Nyanlända (< 4 år): 82% godkända (A-E)
+
+Undervisningsförändringar:
+- VT21: Traditionell klassrumsundervisning
+- VT22: Införande av digitala läromedel
+- VT23: Ökad nivågruppering och stödinsatser.</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt1')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Denna prompt är för generell och ger AI mycket begränsad information att arbeta med. Resultatet blir troligen ytligt och kanske inte användbart för ditt systematiska kvalitetsarbete.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 3: Mall för effektiva promptar -->
+      <div class="slide" data-slide-number="3" data-title="Mall för effektiva promptar">
+        <h2>Mall för effektiva promptar</h2>
+        <p>
+          Använd denna mall som utgångspunkt för att skapa välstrukturerade promptar:
+        </p>
+        <textarea class="prompt-box" id="prompt-template">
+Du är en [...] som är expert på [...] || 
+
+Din uppgift är att [...]  || 
+
+Svara på ett sätt som är [...]   || 
+
+Inkludera [...] om det behövs   || 
+
+Maxlängden för svaret är [...]  || 
+
+Svaret ska innehålla exempel på [...]   || 
+
+Använd ett språk som är [...]   || 
+
+Fokusera på att förklara/diskutera/analysera [...]   || 
+
+Svaret ska vara strukturerat som en [...]  || 
+
+Använd följande format för svaret: [...]   || 
+
+Undvik att inkludera [...] i svaret   || 
+
+Om du inte har tillräcklig information för att ge ett fullständigt svar, ange detta tydligt (t.ex. “Baserat på tillgänglig information…”).</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt-template')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Fördelar med en strukturerad mall:</strong>
+          <ul>
+            <li>Säkerställer att alla viktiga aspekter inkluderas</li>
+            <li>Ger konsekvent kvalitet i promptar</li>
+            <li>Underlättar för AI att ge relevanta och användbara svar</li>
+            <li>Minskar risken för missförstånd och otydligheter</li><p></p>
+<h3>Exempel:</h3><p></p>
+Du är en erfaren <b>skolledare med expertis inom skolutveckling och systematiskt kvalitetsarbete.</b><p></p>
+
+Din uppgift är att <b>analysera vår skolas matematikresultat och föreslå konkreta utvecklingsområden för att höja måluppfyllelsen genom att först intervjua mig för att samla in information</b>.<p></p>
+
+Svara på ett sätt som är <b>analytiskt och lösningsfokuserat</b>.<p></p>
+
+Inkludera <b>forskningsbaserade metoder, praktiska implementeringsstrategier och exempel på framgångsrika insatser från andra skolor.</b><p></p>
+
+Maxlängden för svaret är <b>2 A4-sidor</b>.<p></p>
+
+Använd ett språk som är <b>professionellt och anpassat för presentation i ledningsgrupp och för huvudman.</b><p></p>
+
+Fokusera på att <b>identifiera både systemiska faktorer och specifika utvecklingsområden.</b><p></p>
+
+Svaret ska vara strukturerat som en <b>strategisk handlingsplan</b>.<p></p>
+
+Använd följande format för svaret: <b>Nulägesanalys, Utvecklingsområden, Åtgärdsplan, Uppföljning.</b><p></p>
+
+Undvik att inkludera <b>alltför detaljerade metodbeskrivningar eller spekulativa orsakssamband.</b><p></p>
+
+Om du inte har tillräcklig information för att ge ett fullständigt svar, ange detta tydligt.<p></p>
+
+
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 4: Kvalitetsarbete – Förbättrad prompt -->
+      <div class="slide" data-slide-number="4" data-title="Kvalitetsarbete – Förbättrad prompt">
+        <h2>Systematiskt kvalitetsarbete – Förbättrad prompt</h2>
+        <textarea class="prompt-box" id="prompt2">
+Du är en erfaren skolledare.
+
+Din uppgift är att analysera matematikresultaten för åk 6 med fokus på:
+
+- Trendutveckling över de senaste tre åren
+- Skillnader mellan olika elevgrupper
+- Effekt av undervisningsförändringar
+- Sambandet mellan betyg och nationella prov
+- Förslag på evidensbaserade åtgärder
+
+Svara på ett sätt som är strukturerat och professionellt.
+
+Inkludera specifika exempel och dataanalys.
+
+Använd ett språk som är professionellt och anpassat för skolledning och huvudman.
+
+Fokusera på att förklara de underliggande orsakerna och diskutera möjliga åtgärder.
+
+Svaret ska vara strukturerat som en rapport med följande sektioner:
+
+1. NULÄGESANALYS
+2. IDENTIFIERADE UTVECKLINGSOMRÅDEN
+3. ÅTGÄRDSFÖRSLAG
+4. IMPLEMENTERINGSPLAN
+
+Använd följande format för svaret: rubriker och punktlistor där det är lämpligt.
+
+Undvik att inkludera spekulativa påståenden utan datastöd.
+
+Om du inte har tillräcklig information för att ge ett fullständigt svar, ange detta tydligt.
+
+Data:
+Betygsfördelning:
+            A     B     C     D     E     F
+VT23:       8%    12%   25%   30%   20%   5%
+VT22:       7%    15%   28%   25%   18%   7%
+VT21:       6%    10%   22%   32%   22%   8%
+
+Nationella prov:
+            Godkända    Ej godkända
+VT23:       92%         8%
+VT22:       90%         10%
+VT21:       88%         12%
+
+Gruppjämförelser VT23:
+- Flickor: 95% godkända (A-E)
+- Pojkar: 93% godkända (A-E)
+- Nyanlända (< 4 år): 82% godkända (A-E)
+
+Undervisningsförändringar:
+- VT21: Traditionell klassrumsundervisning
+- VT22: Införande av digitala läromedel
+- VT23: Ökad nivågruppering och stödinsatser
+</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt2')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Genom att följa mallen blir prompten mer detaljerad och ger AI bättre förutsättningar att leverera ett användbart svar. Den strukturerade uppbyggnaden säkerställer att viktiga områden inte förbises.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 5: Personal – Enkel prompt -->
+      <div class="slide" data-slide-number="5" data-title="Personal – Enkel prompt">
+        <h2>Personalkommunikation – Enkel prompt</h2>
+        <textarea class="prompt-box" id="prompt4">Skriv ett mejl till personalen om arbetsmiljön.</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt4')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Alltför vag prompt som kan leda till generiska svar utan konkret värde för verksamheten. Specificera kontext och syfte för bättre resultat.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 6: Personal – Förbättrad prompt -->
+      <div class="slide" data-slide-number="6" data-title="Personal – Förbättrad prompt">
+        <h2>Personalkommunikation – Förbättrad prompt</h2>
+        <textarea class="prompt-box" id="prompt5">Du är rektor på en F-9 skola.
+
+Din uppgift är att skriva ett mejl till personalen om:
+
+- Resultaten från senaste arbetsmiljöenkäten
+- Planerade åtgärder för att förbättra arbetsmiljön
+- Tid för uppföljande arbetsmiljömöte
+- Personalens möjlighet att påverka processen
+
+Svara på ett sätt som är professionellt men omtänksamt.
+
+Fokusera på konkreta åtgärder och transparens i processen.
+
+Använd följande format för svaret: hälsningsfras, huvuddel med tydliga stycken, avslutningsfras.</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt5')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Bättre struktur som ger tydligare kontext och innehåll. Inkluderar viktiga element som uppföljning och delaktighet, vilket gör meddelandet mer engagerande och relevant för mottagarna.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 7: Varningar – Sekretess -->
+      <div class="slide" data-slide-number="7" data-title="Varningar – Sekretess">
+        <h2>Viktigt att tänka på – Sekretess</h2>
+        <textarea class="prompt-box" id="warning1">Skriv en sammanfattning av elevärende gällande Lisa i 7B för EHT-mötet på tisdag. Hon har hög frånvaro och konflikter med flera lärare.</textarea>
+        <div class="reflection warning">
+          <strong>Varning!</strong>
+          <p>
+            Denna typ av prompt riskerar att bryta mot sekretess och GDPR. Det är olämpligt att:
+          </p>
+          <ul>
+            <li>Inkludera personuppgifter eller identifierbar information om elever</li>
+            <li>Dela känslig information om elever eller personal i AI-verktyg</li>
+            <li>Dokumentera sekretessbelagda ärenden via AI</li>
+          </ul>
+          <p>
+            <strong>Bättre alternativ:</strong>
+          </p>
+          <ul>
+            <li>Skapa generella mallar för dokumentation</li>
+            <li>Be om vägledning i anonymiserad form</li>
+            <li>Använda AI för att utveckla rutiner och processer</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 8: Varningar – Källkritik -->
+      <div class="slide" data-slide-number="8" data-title="Varningar – Källkritik">
+        <h2>Viktigt att tänka på – Källkritik</h2>
+        <textarea class="prompt-box" id="warning2">Lista relevanta lagparagrafer och rättsfall som stödjer vårt beslut att stänga av eleven från undervisningen.</textarea>
+        <div class="reflection warning">
+          <strong>Viktigt!</strong>
+          <p>
+            AI kan vara ett värdefullt verktyg för att få en överblick över juridiska frågor och för att strukturera information. Men kom ihåg att:
+          </p>
+          <ul>
+            <li>Alltid dubbelkolla mot aktuell lagtext och officiella källor</li>
+            <li>Vara medveten om att AI kan ge felaktig eller inaktuell information</li>
+            <li>Konsultera juridisk expertis vid behov</li>
+          </ul>
+          <p>
+            Så kan du få stor nytta av AI samtidigt som du säkerställer att informationen stämmer överens med verkligheten.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 9: Exempel: Stöd vid åtgärder -->
+      <div
+        class="slide"
+        data-slide-number="9"
+        data-title="Exempel: Stöd vid åtgärder"
+      >
+        <h2>Säkerställ information</h2>
+        
+        <textarea class="prompt-box" id="prompt7">
+Vilka möjligheter finns det att beslagta en elevs mobiltelefon.
+Sök information och redovisa länkar till den information du hittar.
+Den första länken måste vara till Skollagen. Ange var i skollagen du hittar relevant information. (https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/skollag-2010800_sfs-2010-800/)</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt7')"
+        >
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Det finns många olika strategier som kan hjälpa till att säkerställa relevansen i den information som presenteras.
+            Om AI har möjlighet att söka information på internet (som exempelvis Copilot har) bör man ha för vana att kolla igenom källorna.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 10: Översättning – Utmaning -->
+      <div
+        class="slide"
+        data-slide-number="10"
+        data-title="Översättning – Utmaning"
+      >
+        <h2>Översättning – Utmaning</h2>
+        
+        <textarea class="prompt-box" id="prompt9">
+Översätt följande till engelska, kinesiska samt tjetjenska:
+
+"Glöm inte att ta med idrottskläder imorgon. Vi ska springa runt skolan."</textarea>
+        <button
+          type="button"
+          class="copy-button"
+          onclick="copyToClipboard('prompt9')"
+        >
+          Kopiera till urklipp
+        </button>
+
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Kontrollera översättningen genom att öppna en ny chatt och be om översättning tillbaka till svenska. Endast ett språk åt gången för att inte översättningarna ska påverka varandra (för att du ska kunna bli säker på översättningens kvalitet).
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 11: SWOT-analys – Avancerad prompt -->
+      <div class="slide" data-slide-number="11" data-title="SWOT-analys – Avancerad prompt">
+        <h2>SWOT-analys – Avancerad prompt</h2>
+        <textarea class="prompt-box" id="prompt-swot">
+Du är en biträdande rektor med ansvar för skolans utvecklingsarbete.
+
+BAKGRUND:
+- Skolan ska genomföra en ny strategisk plan för de kommande tre åren.
+- Du behöver en djupgående SWOT-analys för att identifiera interna och externa faktorer som påverkar verksamheten.
+
+UPPGIFT:
+Genomför en omfattande SWOT-analys som inkluderar:
+
+STYRKOR:
+- Interna resurser och kompetenser
+- Tidigare framgångsrika projekt
+- Personalens engagemang och kompetens
+
+SVAGHETER:
+- Områden med låg måluppfyllelse
+- Resursbrist inom vissa ämnen
+- Hög personalomsättning
+
+MÖJLIGHETER:
+- Nya pedagogiska metoder
+- Samarbete med lokala företag och organisationer
+- Finansieringsmöjligheter genom bidrag
+
+HOT:
+- Demografiska förändringar i närområdet
+- Konkurrens från andra skolor
+- Förändringar i nationella utbildningspolicys
+
+FORMAT:
+- Presentera analysen i tabellform för tydlighet.
+- Inkludera konkreta exempel under varje punkt.
+- Avsluta med rekommendationer för hur styrkor kan utnyttjas och svagheter adresseras.
+
+SPRÅK OCH TON:
+- Professionellt och analytiskt
+- Tydligt och koncist
+</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt-swot')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Denna prompt ger en strukturerad vägledning för att skapa en detaljerad SWOT-analys, vilket är användbart för strategisk planering på ledningsnivå.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 12: Verksamhetsplanering – Avancerad prompt -->
+      <div class="slide" data-slide-number="12" data-title="Verksamhetsplanering – Avancerad prompt">
+        <h2>Verksamhetsplanering – Avancerad prompt</h2>
+        <textarea class="prompt-box" id="prompt-planering">
+Du är en rektor som ska leda verksamhetsplaneringen för nästa läsår.
+
+BAKGRUND:
+- Skolan har satt som mål att höja elevernas resultat i naturvetenskapliga ämnen.
+- Det finns behov av att integrera mer digitala verktyg i undervisningen.
+- Budgeten för nästa år är begränsad och kräver effektiv resursanvändning.
+
+UPPGIFT:
+Utveckla en verksamhetsplan som inkluderar:
+
+1. MÅL OCH PRIORITERINGAR
+   - Specifika, mätbara mål för elevernas resultat
+   - Implementering av digitala verktyg
+
+2. STRATEGIER OCH AKTIVITETER
+   - Fortbildning för personal inom digital pedagogik
+   - Projektbaserat lärande i naturvetenskap
+
+3. RESURSPLANERING
+   - Budgetfördelning
+   - Tidsplaner för implementering
+
+4. UPPFÖLJNING OCH UTVÄRDERING
+   - Indikatorer för framgång
+   - Plan för regelbunden uppföljning
+
+FORMAT:
+- Använd en tydlig disposition med rubriker och underpunkter.
+- Max 5 A4-sidor.
+- Inkludera en sammanfattning i början.
+
+TON OCH SPRÅK:
+- Strategiskt och visionärt
+- Motiverande för personal och intressenter
+</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt-planering')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring promptningsteknik:</strong>
+          <p>
+            Denna avancerade prompt hjälper till att skapa en omfattande verksamhetsplan, vilket är centralt för skolledare i planeringsprocessen.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 13: Dialogpartner – Exempel -->
+      <div class="slide" data-slide-number="13" data-title="Dialogpartner – Exempel">
+        <h2>Dialogpartner – Exempel på användning</h2>
+        <textarea class="prompt-box" id="prompt-dialog">
+Du är en erfaren skolledare med gedigen erfarenhet av pedagogiskt utvecklingsarbete och reflekterande samtal.
+
+Din uppgift är att engagera dig i en genuin dialog där du fungerar som ett reflekterande bollplank, bygger vidare på svaren som ges och bidrar med relevanta insikter från din erfarenhet.
+
+Svara på ett sätt som kombinerar aktivt lyssnande med utforskande frågor och egna reflektioner.
+
+Inkludera både frågor och insikter baserade på din erfarenhet när det är relevant för dialogen.
+
+Maxlängden för varje svar är ett kort stycke som kombinerar reflektion och följdfråga.
+
+Använd ett språk som är professionellt men personligt, och som uppmuntrar till fördjupad reflektion.
+
+Fokusera på att skapa en naturlig dialog där dina egna erfarenheter och insikter vävs samman med utforskande frågor.
+
+Svaret ska vara strukturerat som ett kollegialt samtal mellan erfarna skolledare.
+
+Använd följande format för svaret:
+- Lyssna och reflektera över det som sägs
+- Dela relevanta erfarenheter och insikter
+- Ställ fördjupande frågor som växer naturligt ur samtalet
+
+Undvik att stapla frågor på varandra eller skapa en mekanisk intervjukänsla.
+</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('prompt-dialog')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring användning av AI som dialogpartner:</strong>
+          <p>
+            Denna prompt visar hur AI kan användas som en dialogpartner för personlig utveckling och reflektion, vilket kan vara värdefullt för ledare på alla nivåer.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 14: Risk- och konsekvensanalys – Avancerad prompt -->
+      <div class="slide" data-slide-number="14" data-title="Risk & Konsekvens – Avancerad">
+        <h2>Risk- och konsekvensanalys – Avancerad prompt</h2>
+        <textarea class="prompt-box" id="risk2">Du är rektor med expertis inom systematiskt kvalitetsarbete och verksamhetsutveckling.
+
+BAKGRUND OCH KONTEXT:
+- Förslag om att förkorta skoldagen med en timme för samtliga årskurser
+- Syftar till att förbättra elevers välmående och studiefokus
+- Behöver beakta timplaner och lagkrav
+- Måste hantera påverkan på tjänstefördelning och schemaläggning
+
+UPPGIFT:
+Genomför en omfattande konsekvensanalys som ska:
+- Analysera effekter på alla verksamhetsnivåer
+- Identifiera risker och möjligheter
+- Föreslå förebyggande åtgärder
+- Skapa underlag för beslut
+
+KRAV PÅ INNEHÅLL:
+1. Pedagogiska aspekter
+   - Måluppfyllelse och kunskapskrav
+   - Särskilt stöd och anpassningar
+   - Undervisningens kvalitet och omfattning
+
+2. Organisatoriska faktorer
+   - Schemastruktur och resursutnyttjande
+   - Personal- och kompetensbehov
+   - Samverkan mellan stadier och ämnen
+
+3. Sociala konsekvenser
+   - Elevernas arbetsmiljö och mående
+   - Vårdnadshavares situation
+   - Likvärdighetsfrågor
+
+4. Formella krav
+   - Juridiska förutsättningar
+   - Fackliga aspekter
+   - Systematiskt kvalitetsarbete
+
+FORMAT OCH STRUKTUR:
+- Strukturerad rapport med tydliga rubriker
+- Konkreta exempel och scenarios
+- Tabeller för risk- och konsekvensbedömning
+- Sammanfattande rekommendationer
+
+TON OCH SPRÅK:
+- Professionellt och sakligt
+- Anpassat för olika målgrupper (personal, vårdnadshavare, huvudman)
+- Tydligt och transparent kring osäkerheter
+
+ÖVRIGT:
+- Tidsperspektiv: Både kort- och långsiktiga effekter
+- Uppföljning genom systematiskt kvalitetsarbete
+- Särskild hänsyn till sårbara grupper
+- Koppling till skolans övergripande utvecklingsarbete</textarea>
+        <button type="button" class="copy-button" onclick="copyToClipboard('risk2')">
+          Kopiera till urklipp
+        </button>
+        <div class="reflection">
+          <strong>Reflektion kring användning av mallen:</strong>
+          <p>
+            Denna prompt följer mallens struktur och skapar därmed förutsättningar för en systematisk och heltäckande analys genom att:
+          </p>
+          <ul>
+            <li>Tydligt definiera uppdraget och dess kontext</li>
+            <li>Strukturera innehållet i logiska kategorier</li>
+            <li>Specificera format och målgruppsanpassning</li>
+            <li>Inkludera uppföljning och kvalitetssäkring</li>
+          </ul>
+          <br>
+          <p>
+            Användningen av mallen säkerställer att:
+          </p>
+          <ul>
+            <li>Inga viktiga aspekter förbises</li>
+            <li>Analysen blir strukturerad och användbar</li>
+            <li>Olika perspektiv och behov beaktas</li>
+            <li>Resultatet kan användas i det fortsatta utvecklingsarbetet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="navigation">
+      <button type="button" id="prev-btn">◀ Föregående</button>
+      <button type="button" id="next-btn">Nästa ▶</button>
+    </div>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      const slideSelector = document.getElementById("slide-selector");
+
+      let currentSlide = 0;
+
+      // Sortera slides baserat på data-slide-number
+      slides.sort((a, b) => {
+        return (
+          parseInt(a.getAttribute("data-slide-number")) -
+          parseInt(b.getAttribute("data-slide-number"))
+        );
+      });
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.classList.remove("active");
+          if (i === index) {
+            slide.classList.add("active");
+          }
+        });
+        slideSelector.selectedIndex = index;
+      }
+
+      // Event listeners för navigering
+      prevBtn.addEventListener("click", () => {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+      });
+
+      // Populera dropdown-menyn
+      slides.forEach((slide, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.text = slide.getAttribute("data-title");
+        slideSelector.add(option);
+      });
+
+      // Event listener för dropdown
+      slideSelector.addEventListener("change", () => {
+        currentSlide = parseInt(slideSelector.value);
+        showSlide(currentSlide);
+      });
+
+      // Kopiera till urklipp funktion
+      function copyToClipboard(id) {
+        const copyText = document.getElementById(id);
+        navigator.clipboard
+          .writeText(copyText.value)
+          .then(() => {
+            const copyButton = copyText.nextElementSibling;
+            const originalText = copyButton.textContent;
+            copyButton.textContent = "Kopierat!";
+            copyButton.classList.add("success");
+
+            setTimeout(() => {
+              copyButton.textContent = originalText;
+              copyButton.classList.remove("success");
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Misslyckades med att kopiera:", err);
+            alert("Kunde inte kopiera texten. Var god försök igen.");
+          });
+      }
+
+      // Visa första sliden vid start
+      showSlide(currentSlide);
+    </script>
+  </body>
+</html>
