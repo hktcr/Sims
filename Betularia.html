@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Björkmätarens Naturliga Urval (Mendelsk Nedärvning)</title>
+    <!-- Inkludera nödvändiga skript och stilar -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* CSS-stilar */
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .simulation-container {
+            position: relative;
+            background-color: white;
+            border-radius: 12px;
+            min-height: 70vh;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden; /* Förhindra att detektionsradier går utanför */
+            padding: 20px;
+        }
+
+        /* Bakgrundspatchar */
+        .background-patch {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0; /* Bakgrundspatchar längst bak */
+        }
+
+        /* Fjärilar */
+        .moth {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            z-index: 1; /* Fjärilar över bakgrundspatchar */
+        }
+
+        .moth.light {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+        }
+
+        .moth.dark {
+            background-color: #1a1a1a;
+        }
+
+        /* Fåglar */
+        .bird {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff6b00;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 2; 
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bird.hunting {
+            background-color: #ff0000; 
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        }
+
+        /* Detektionsradien för fjärilar */
+        .detection-radius {
+            position: absolute;
+            border: 2px dashed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .stats-display {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-display span {
+            margin-right: 20px;
+            font-weight: 500;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Stil för avslutningsskärmen */
+        .ending-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(240, 242, 245, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .ending-screen h2 {
+            margin-bottom: 20px;
+        }
+
+        .ending-screen .btn {
+            margin-top: 20px;
+        }
+
+        /* ========= Overlay för "professionellt" helskärmsläge av diagram+tabell ========== */
+        #fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(240, 242, 245, 0.98);
+            z-index: 99999; /* över allt annat */
+            display: none;  /* visas först när vi aktiverar det */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+        }
+
+        /* Layout för diagram och tabeller i overlay */
+        .overlay-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            flex: 1; /* så att row kan fylla ut */
+        }
+
+        .overlay-col {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .overlay-col canvas {
+            width: 100% !important;
+            height: 400px !important; /* justerbar höjd */
+        }
+
+        .overlay-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Simuleringsområde -->
+        <div id="simulation-area" class="simulation-container">
+            <!-- Fjärilar, fåglar och bakgrundslappar läggs till här dynamiskt -->
+        </div>
+
+        <!-- Statistikrad -->
+        <div class="stats-display">
+            <span>Vita fjärilar: <span id="light-count">15</span></span>
+            <span>Svarta fjärilar: <span id="dark-count">15</span></span>
+            <span>Generation: <span id="generation-count">0</span></span>
+        </div>
+
+        <!-- Kontrollknappar -->
+        <div class="control-buttons">
+            <button id="start-btn" class="btn btn-success">Starta</button>
+            <button class="btn btn-danger" onclick="stopSimulation()">Återställ</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                Inställningar
+            </button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#environmentModal">
+                Miljöförändringar
+            </button>
+
+            <!-- NYTT: Infoknapp som öppnar en modal med introduktion/grundläggande information -->
+            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#infoModal">
+                Information
+            </button>
+            <!-- SLUT NYTT -->
+        </div>
+
+        <!-- Layout för diagram + tabell -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="chart-container mt-4">
+                    <!-- Befintligt linjediagram för fenotyper -->
+                    <canvas id="population-chart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Ny container för genotyp/fenotyp-tabell -->
+                <div class="genotype-table-container mt-4">
+                    <h5>Populationsöversikt</h5>
+
+                    <!-- Genotyp-tabell -->
+                    <p><strong>Genotyper i livet</strong></p>
+                    <table class="table table-sm" id="genotype-table">
+                        <thead>
+                            <tr>
+                                <th>Genotyp</th>
+                                <th>Antal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MM (svart)</td>
+                                <td id="count-MM">0</td>
+                            </tr>
+                            <tr>
+                                <td>Mm (svart)</td>
+                                <td id="count-Mm">0</td>
+                            </tr>
+                            <tr>
+                                <td>mm (vit)</td>
+                                <td id="count-mm">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Fenotyp-tabell -->
+                    <p><strong>Fenotyper i livet</strong></p>
+                    <table class="table table-sm" id="phenotype-table">
+                        <thead>
+                            <tr>
+                                <th>Fenotyp</th>
+                                <th>Antal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dark (Svart)</td>
+                                <td id="phenotype-dark">0</td>
+                            </tr>
+                            <tr>
+                                <td>Light (Vit)</td>
+                                <td id="phenotype-light">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal fade" id="settingsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Simulationsinställningar</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Inställningsinmatningar -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="initial-light-moths" class="form-label">Antal vita fjärilar:</label>
+                                    <input type="number" class="form-control" id="initial-light-moths" value="10" min="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="initial-dark-moths" class="form-label">Antal svarta fjärilar:</label>
+                                    <input type="number" class="form-control" id="initial-dark-moths" value="10" min="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bird-count" class="form-label">Antal fåglar:</label>
+                                    <input type="number" class="form-control" id="bird-count" value="15" min="1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="number-of-offspring" class="form-label">Antal avkommor per reproduktion:</label>
+                                    <input type="number" class="form-control" id="number-of-offspring" value="1" min="1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reproduction-radius" class="form-label">Reproduktionsradie (pixlar):</label>
+                                    <input type="number" class="form-control" id="reproduction-radius" value="50" min="20">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mutation-rate" class="form-label">Mutationsfrekvens (0-1):</label>
+                                    <input type="number" class="form-control" id="mutation-rate" value="0.01" min="0" max="1" step="0.01">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="generation-time" class="form-label">Generationstid (ms):</label>
+                                    <input type="number" class="form-control" id="generation-time" value="800" min="100" step="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="total-generations" class="form-label">Totalt antal generationer:</label>
+                                    <input type="number" class="form-control" id="total-generations" value="300" min="1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="landscape-heterogeneity" class="form-label">Landskapets heterogenitet (%):</label>
+                                    <input type="number" class="form-control" id="landscape-heterogeneity" value="50" min="0" max="100">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="moth-movement-radius" class="form-label">Fjärilarnas rörelseradie (pixlar):</label>
+                                    <input type="number" class="form-control" id="moth-movement-radius" value="300" min="10">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="moth-lifespan" class="form-label">Fjärilens livslängd (generationer):</label>
+                                    <input type="number" class="form-control" id="moth-lifespan" value="10" min="1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="max-moth-population" class="form-label">Maximalt antal fjärilar:</label>
+                                    <input type="number" class="form-control" id="max-moth-population" value="200" min="50">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="fragmentation-index" class="form-label">Fragmenteringsindex (%):</label>
+                                    <input type="number" class="form-control" id="fragmentation-index" value="1" min="0" max="100">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="min-detection-radius" class="form-label">Minsta upptäcktsradie (pixlar):</label>
+                                    <input type="number" class="form-control" id="min-detection-radius" value="20" min="5">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="max-detection-radius" class="form-label">Största upptäcktsradie (pixlar):</label>
+                                    <input type="number" class="form-control" id="max-detection-radius" value="100" min="20">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="moth-speed" class="form-label">Fjärilarnas rörelsehastighet:</label>
+                                    <input type="number" class="form-control" id="moth-speed" value="3" min="0.1" step="0.1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bird-speed" class="form-label">Fåglarnas rörelsehastighet:</label>
+                                    <input type="number" class="form-control" id="bird-speed" value="5" min="0.1" step="0.1">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bird-hunt-duration" class="form-label">Fågelns jaktläge varaktighet (ms):</label>
+                                    <input type="number" class="form-control" id="bird-hunt-duration" value="3000" min="100" step="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stäng</button>
+                        <button type="button" class="btn btn-primary" onclick="applySettings()">Spara</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Environment Modal -->
+        <div class="modal fade" id="environmentModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Miljöförändringar över tid</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Pollution Level Editor -->
+                        <h5>Föroreningsnivåer över tid</h5>
+                        <table class="table" id="pollution-table">
+                            <thead>
+                                <tr>
+                                    <th>Generation</th>
+                                    <th>Föroreningsnivå (%)</th>
+                                    <th>Åtgärder</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamiskt -->
+                            </tbody>
+                        </table>
+                        <button class="btn btn-primary mb-3" onclick="addPollutionPoint()">Lägg till punkt</button>
+                        <canvas id="pollution-chart"></canvas>
+
+                        <!-- Heterogeneity Level Editor -->
+                        <h5 class="mt-4">Landskapets heterogenitet över tid</h5>
+                        <table class="table" id="heterogeneity-table">
+                            <thead>
+                                <tr>
+                                    <th>Generation</th>
+                                    <th>Heterogenitet (%)</th>
+                                    <th>Åtgärder</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamiskt -->
+                            </tbody>
+                        </table>
+                        <button class="btn btn-primary mb-3" onclick="addHeterogeneityPoint()">Lägg till punkt</button>
+                        <canvas id="heterogeneity-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NYTT: Modal för information/introduktion -->
+        <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Information om simuleringen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    I den här simuleringen studerar vi ett exempel på naturligt urval bland björkmätare
+                    (en fjärilsart). På 1800-talet observerade man hur den tidigare sällsynta mörka formen
+                    plötsligt blev dominerande i förorenade områden. Anledningen tros vara att mörka fjärilar
+                    var bättre kamouflerade mot de nedsmutsade träden och därmed kunde undvika att bli tagna av rovdjur (ofta fåglar) i högre grad.
+                </p>
+                <p>
+                    I den här simuleringsmodellen undersker vi detta genom en Mendelsk nedärvning (klassisk genetik), där genotypen (allelerna) <code>MM</code> eller
+                    <code>Mm</code> ger mörk fenotyp (utseende), medan <code>mm</code> ger ljus fenotyp. Du kan justera många olika faktorer i modellens inställningar, exempelvis hur många fjärilar eller fåglar som ska finnas med, beteendet hos dessa, hur de fortplantar sig, hur många generationer som simuleringen ska köras, 
+                    mutationsfrekvens (hur ofta mutationer sker), föroreningsgrad (hur förorenad miljön är), fåglars jaktbeteende och mycket annat
+                    för att se hur populationen förändras över generationerna.
+                </p>
+                <p>
+                    Prova också att ändra landskapets heterogenitet (hur varierad miljön är) och se hur både mörka och ljusa fjärilar
+                    kanske gynnas eller missgynnas beroende på miljön!
+                </p>
+                <!-- Ny tillagd text för att förklara visuella element -->
+                <hr>
+                <h6>Förklaring av visuella element i simuleringen:</h6>
+                <p>
+                    <strong>Fjärilar:</strong> 
+                    <span style="color: #ffffff; background-color: #1a1a1a; padding: 2px 4px; border-radius: 3px;">Svarta/mörka fjärilar</span> representeras med svarta fyllda cirklar färger, medan 
+                    <span style="color: #000000; background-color: #ffffff; padding: 2px 4px; border-radius: 3px;">vita fjärilar</span> visas med vita fyllda cirklar. Dessa färger visar deras fenotyp (utseende) och hur bra de döljer sig i miljön.
+                </p>
+                <p>
+                    <strong>Fåglar:</strong> 
+                    <span style="background-color: #ff6b00; border-radius: 50%; display: inline-block; width: 12px; height: 12px;"></span> Orangefärgade cirklar representerar fåglar som rör sig över simuleringen och jagar fjärilar.
+                </p>
+                <p>
+                    <strong>Detektionsradier:</strong> 
+                    <span style="border: 2px dashed #ff0000; border-radius: 50%; display: inline-block; width: 12px; height: 12px;"></span> Streckade cirklar runt varje fjäril visar deras detektionsradie. Denna radie avgör hur långt bort fåglar kan upptäcka fjärilarna.
+                </p>
+                <p>
+    <strong>Miljöområden (habitat):</strong> Olika gråa områden (kvadrater) i bakgrunden representerar variationer i miljön som påverkar fjärilarnas överlevnad. Dessa områden kan ändras baserat på landskapets heterogenitet (hur varierad miljön är). Fjärilarnas detektionsradier ändras beroende på vilken miljö de befinner sig i. Svarta fjärilar upptäcks exempelvis lättare av fåglar (större detektionsradie) om de befinner sig mot en ljus bakgrund (ju ljusare bakgrund desto större detektionsradie).
+</p>
+
+                <p>
+                    Genom att titta på färgerna och formerna kan du snabbt identifiera olika typer av fjärilar och fåglar, samt förstå deras interaktioner (hur de påverkar varandra) i simuleringen.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stäng</button>
+            </div>
+        </div>
+    </div>
+</div>         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stäng</button>
+            </div>
+        </div>
+    </div>
+</div>
+        <!-- SLUT NYTT -->
+
+        <!-- Ending Screen -->
+        <div id="ending-screen" class="ending-screen" style="display: none;">
+            <h2>Simuleringen är avslutad</h2>
+            <div class="chart-container">
+                <canvas id="ending-population-chart"></canvas>
+            </div>
+            <div class="stats-display">
+                <p>Totalt antal generationer: <span id="ending-generation-count"></span></p>
+                <p>Slutlig population av vita fjärilar: <span id="ending-light-count"></span></p>
+                <p>Slutlig population av svarta fjärilar: <span id="ending-dark-count"></span></p>
+            </div>
+            <!-- Knapp för att öppna overlay (diagram + tabell) -->
+            <button class="btn btn-secondary" onclick="openFullscreenChart()">Visa diagram och tabell i overlay</button>
+            <button class="btn btn-primary" onclick="closeEndingScreen()">Stäng</button>
+        </div>
+
+    </div>
+
+    <!-- ========= Overlay för "professionellt" helskärmsläge av diagram OCH tabell ========== -->
+    <div id="fullscreen-overlay">
+      <div class="fullscreen-content">
+        <button class="close-btn btn btn-danger" onclick="closeFullscreenChart()">Stäng</button>
+
+        <!-- Här visar vi generation och fenotyp-summering -->
+        <h4>Slutlig data</h4>
+        <p>Totalt antal generationer: <span id="overlay-generation-count"></span></p>
+        <p>Slutlig population av vita fjärilar: <span id="overlay-light-count"></span></p>
+        <p>Slutlig population av svarta fjärilar: <span id="overlay-dark-count"></span></p>
+
+        <!-- Layout för diagram + tabell i overlay -->
+        <div class="overlay-row">
+          <div class="overlay-col">
+            <canvas id="fullscreen-chart"></canvas>
+          </div>
+          <div class="overlay-col">
+            <div class="overlay-table-container">
+              <h5>Populationsöversikt</h5>
+
+              <p><strong>Genotyper i slutet</strong></p>
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Genotyp</th>
+                    <th>Antal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>MM</td>
+                    <td id="overlay-count-MM"></td>
+                  </tr>
+                  <tr>
+                    <td>Mm</td>
+                    <td id="overlay-count-Mm"></td>
+                  </tr>
+                  <tr>
+                    <td>mm</td>
+                    <td id="overlay-count-mm"></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p><strong>Fenotyper i slutet</strong></p>
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th>Fenotyp</th>
+                    <th>Antal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Dark (Svart)</td>
+                    <td id="overlay-phenotype-dark"></td>
+                  </tr>
+                  <tr>
+                    <td>Light (Vit)</td>
+                    <td id="overlay-phenotype-light"></td>
+                  </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+        // Globala variabler
+        let simulationArea = null;
+        let moths = [];
+        let birds = [];
+        let movementInterval;
+        let generationInterval;
+        let isSimulationRunning = false;
+        let currentGeneration = 0;
+        let populationHistory = {
+            generations: [],
+            lightMoths: [],
+            darkMoths: []
+        };
+        let populationChart;
+        let endingPopulationChart;
+        let pollutionChart;
+        let pollutionData;
+        let pollutionKeyPoints = [];
+        let heterogeneityChart;
+        let heterogeneityData = {
+            labels: [],
+            datasets: [{
+                label: 'Heterogenitet',
+                data: [],
+                borderColor: 'rgba(0, 100, 0, 1)',
+                backgroundColor: 'rgba(0, 100, 0, 0.2)',
+                tension: 0.1
+            }]
+        };
+        let heterogeneityKeyPoints = [];
+        let backgroundPatches = [];
+
+        // *** CHANGED: Ny global variabel för att spara slutdata åt Overlayn
+        let finalOverlayData = {
+            generation: 0,
+            lightCount: 0,
+            darkCount: 0,
+            genotypeMM: 0,
+            genotypeMm: 0,
+            genotypemm: 0,
+            phenotypeDark: 0,
+            phenotypeLight: 0,
+            historyGenerations: [],
+            historyLight: [],
+            historyDark: []
+        };
+        // *** Slut CHANGED
+
+        // Konfigurationsobjekt
+        const config = {
+            mothSize: 20,
+            initialLightMoths: 10,
+            initialDarkMoths: 10,
+            birdCount: 15,
+            mutationRate: 0.01,
+            reproductionRadius: 50,
+            baseReproductionRate: 0.5,
+            numberOfOffspring: 1,
+            generationTime: 800,
+            totalGenerations: 300,
+            movementSpeed: 50,
+            mothSpeed: 3,
+            birdSpeed: 5,
+            birdHuntDuration: 3000,
+            landscapeHeterogeneity: 50,
+            fragmentationIndex: 1,
+            minDetectionRadius: 20,
+            maxDetectionRadius: 100,
+            mothMovementRadius: 300,
+            maxMothPopulation: 200,
+            mothLifespan: 10
+        };
+
+        // När sidan laddats
+        document.addEventListener('DOMContentLoaded', () => {
+            simulationArea = document.getElementById('simulation-area');
+            if (!simulationArea) {
+                console.error('Simuleringsområdet hittades inte');
+                return;
+            }
+
+            initializeSimulation();
+
+            document.getElementById('start-btn').addEventListener('click', () => {
+                if (isSimulationRunning) {
+                    pauseSimulation();
+                } else {
+                    startSimulation();
+                }
+            });
+        });
+
+        /* =======================
+         *  GENETISK DEL (Mendelsk)
+         * ======================= */
+
+        function getOffspringGenotype(parent1Genotype, parent2Genotype) {
+            const alleles1 = parent1Genotype.split('');
+            const alleles2 = parent2Genotype.split('');
+
+            const alleleFromP1 = alleles1[Math.floor(Math.random() * 2)];
+            const alleleFromP2 = alleles2[Math.floor(Math.random() * 2)];
+
+            let child = [alleleFromP1, alleleFromP2].sort().join('');
+            child = maybeMutate(child);
+
+            return child;
+        }
+
+        function maybeMutate(genotypeString) {
+            let result = '';
+            for (const allele of genotypeString) {
+                if (Math.random() < config.mutationRate) {
+                    result += allele === 'M' ? 'm' : 'M';
+                } else {
+                    result += allele;
+                }
+            }
+            return result.split('').sort().join('');
+        }
+
+        function getColorFromGenotype(genotype) {
+            return genotype.includes('M') ? 'dark' : 'light';
+        }
+
+        function createMoth(genotype = null, x = null, y = null) {
+            if (!simulationArea) return null;
+
+            if (!genotype) {
+                genotype = 'mm'; // default (vit)
+            }
+            const type = getColorFromGenotype(genotype);
+
+            const mothEl = document.createElement('div');
+            mothEl.className = `moth ${type}`;
+
+            const radiusEl = document.createElement('div');
+            radiusEl.className = 'detection-radius';
+            radiusEl.style.borderColor = (type === 'light') ? 'yellow' : 'red';
+
+            simulationArea.appendChild(mothEl);
+            simulationArea.appendChild(radiusEl);
+
+            x = x !== null ? x : Math.random() * (simulationArea.clientWidth - config.mothSize);
+            y = y !== null ? y : Math.random() * (simulationArea.clientHeight - config.mothSize);
+
+            mothEl.style.left = `${x}px`;
+            mothEl.style.top = `${y}px`;
+
+            const mothObj = {
+                element: mothEl,
+                radius: radiusEl,
+                genotype: genotype,
+                type: type,
+                initialX: x,
+                initialY: y,
+                angle: Math.random() * 2 * Math.PI,
+                age: 0,
+                hasReproduced: false
+            };
+
+            moths.push(mothObj);
+            updateMothDetectionRadius(mothObj);
+
+            return mothObj;
+        }
+
+        function handleReproduction() {
+            const newMoths = [];
+            const currentPopulation = moths.length;
+
+            for (let i = 0; i < moths.length; i++) {
+                const moth1 = moths[i];
+                if (moth1.hasReproduced) continue;
+
+                for (let j = i + 1; j < moths.length; j++) {
+                    const moth2 = moths[j];
+                    if (moth2.hasReproduced) continue;
+
+                    if (getDistance(moth1, moth2) <= config.reproductionRadius) {
+                        if (Math.random() < config.baseReproductionRate) {
+                            for (let k = 0; k < config.numberOfOffspring; k++) {
+                                if (currentPopulation + newMoths.length >= config.maxMothPopulation) {
+                                    break;
+                                }
+
+                                const childGenotype = getOffspringGenotype(moth1.genotype, moth2.genotype);
+                                const x = (parseFloat(moth1.element.style.left) + parseFloat(moth2.element.style.left)) / 2;
+                                const y = (parseFloat(moth1.element.style.top) + parseFloat(moth2.element.style.top)) / 2;
+
+                                newMoths.push(createMoth(childGenotype, x, y));
+                            }
+                            moth1.hasReproduced = true;
+                            moth2.hasReproduced = true;
+                            break; 
+                        }
+                    }
+                }
+            }
+
+            moths.push(...newMoths);
+        }
+
+        /* =====================
+         *   SIMULERINGENS LOOP
+         * ===================== */
+
+        function startSimulation() {
+            if (isSimulationRunning) return;
+            isSimulationRunning = true;
+
+            movementInterval = setInterval(() => {
+                if (!isSimulationRunning) return;
+
+                moths.forEach(moth => {
+                    if (moth && moth.element) {
+                        const dx = Math.cos(moth.angle) * config.mothSpeed;
+                        const dy = Math.sin(moth.angle) * config.mothSpeed;
+                        updateMothPosition(moth, dx, dy);
+                    }
+                });
+
+                birds.forEach(bird => {
+                    if (bird && bird.element) {
+                        updateBirdPosition(bird);
+                    }
+                });
+
+                handlePredation();
+            }, 50);
+
+            generationInterval = setInterval(() => {
+                if (!isSimulationRunning) return;
+                currentGeneration++;
+                document.getElementById('generation-count').textContent = currentGeneration;
+
+                updateBackground();
+                ageMoths();
+                handleReproduction();
+                updateStats();
+
+                // *** Ta bort eller ändra begränsningen i cleanupMemory ***
+                cleanupMemory();
+
+                if (currentGeneration >= config.totalGenerations) {
+                    showEndingScreen();
+                    stopSimulation(false); // Viktigt att behålla datan tills slutskärmen visas
+                }
+            }, config.generationTime);
+
+            const startBtn = document.getElementById('start-btn');
+            if (startBtn) {
+                startBtn.textContent = 'Pausa';
+                startBtn.classList.replace('btn-success', 'btn-warning');
+            }
+        }
+
+        function pauseSimulation() {
+            isSimulationRunning = false;
+            clearInterval(movementInterval);
+            clearInterval(generationInterval);
+
+            const startBtn = document.getElementById('start-btn');
+            if (startBtn) {
+                startBtn.textContent = 'Fortsätt';
+                startBtn.classList.replace('btn-warning', 'btn-success');
+            }
+        }
+
+        function stopSimulation(reset = true) {
+            isSimulationRunning = false;
+            clearInterval(movementInterval);
+            clearInterval(generationInterval);
+            movementInterval = null;
+            generationInterval = null;
+
+            if (reset) {
+                clearSimulation();
+                initializeSimulation();
+            }
+
+            const startBtn = document.getElementById('start-btn');
+            if (startBtn) {
+                startBtn.textContent = 'Starta';
+                startBtn.classList.replace('btn-warning', 'btn-success');
+            }
+        }
+
+        function clearSimulation() {
+            moths.forEach(moth => {
+                if (moth.element) moth.element.remove();
+                if (moth.radius) moth.radius.remove();
+            });
+            birds.forEach(bird => {
+                if (bird.element) bird.element.remove();
+            });
+            backgroundPatches.forEach(patch => {
+                if (patch) patch.remove();
+            });
+            moths = [];
+            birds = [];
+            backgroundPatches = [];
+        }
+
+        function ageMoths() {
+            moths.forEach(moth => {
+                moth.age++;
+                moth.hasReproduced = false; 
+                if (moth.age >= config.mothLifespan) {
+                    removeMoth(moth);
+                } else {
+                    updateMothDetectionRadius(moth);
+                }
+            });
+        }
+
+        function removeMoth(moth) {
+            if (moth.radius) moth.radius.remove();
+            if (moth.element) moth.element.remove();
+            moths = moths.filter(m => m !== moth);
+        }
+
+        function updateMothPosition(moth, dx, dy) {
+            const x = parseFloat(moth.element.style.left) || 0;
+            const y = parseFloat(moth.element.style.top) || 0;
+            const distFromStart = Math.sqrt(Math.pow(x + dx - moth.initialX, 2) + Math.pow(y + dy - moth.initialY, 2));
+
+            if (distFromStart >= config.mothMovementRadius) {
+                moth.angle += Math.PI; 
+            } else {
+                moth.angle += (Math.random() - 0.5) * 0.1; 
+            }
+
+            const newDx = Math.cos(moth.angle) * config.mothSpeed;
+            const newDy = Math.sin(moth.angle) * config.mothSpeed;
+            updateEntityPosition(moth, newDx, newDy);
+        }
+
+        function updateBirdPosition(bird) {
+            let dx, dy;
+            if (bird.mode === 'hunting') {
+                const timeElapsed = Date.now() - bird.huntStartTime;
+                const angleIncrement = (timeElapsed / 500);
+                const angle = bird.angle + angleIncrement;
+                dx = Math.cos(angle) * config.birdSpeed;
+                dy = Math.sin(angle) * config.birdSpeed;
+
+                if (timeElapsed > config.birdHuntDuration) {
+                    bird.mode = 'random';
+                    bird.angle = Math.random() * 2 * Math.PI;
+                    bird.element.classList.remove('hunting');
+                } else {
+                    bird.angle = angle;
+                }
+            } else {
+                if (Math.random() < 0.05) {
+                    bird.angle = Math.random() * 2 * Math.PI;
+                }
+                dx = Math.cos(bird.angle) * config.birdSpeed;
+                dy = Math.sin(bird.angle) * config.birdSpeed;
+            }
+            updateEntityPosition(bird, dx, dy);
+        }
+
+        function updateEntityPosition(entity, dx, dy) {
+            if (!entity.element || !simulationArea) return;
+
+            let x = parseFloat(entity.element.style.left) || 0;
+            let y = parseFloat(entity.element.style.top) || 0;
+            let newX = x + dx;
+            let newY = y + dy;
+
+            const entityWidth = parseFloat(getComputedStyle(entity.element).width);
+            const entityHeight = parseFloat(getComputedStyle(entity.element).height);
+
+            let bounced = false;
+
+            if (newX < 0) {
+                newX = 0;
+                entity.angle = Math.PI - entity.angle;
+                bounced = true;
+            } else if (newX + entityWidth > simulationArea.clientWidth) {
+                newX = simulationArea.clientWidth - entityWidth;
+                entity.angle = Math.PI - entity.angle;
+                bounced = true;
+            }
+
+            if (newY < 0) {
+                newY = 0;
+                entity.angle = -entity.angle;
+                bounced = true;
+            } else if (newY + entityHeight > simulationArea.clientHeight) {
+                newY = simulationArea.clientHeight - entityHeight;
+                entity.angle = -entity.angle;
+                bounced = true;
+            }
+
+            entity.element.style.left = `${newX}px`;
+            entity.element.style.top = `${newY}px`;
+
+            if (bounced) {
+                entity.angle = (entity.angle + 2 * Math.PI) % (2 * Math.PI);
+            }
+
+            if (entity.type === 'light' || entity.type === 'dark') {
+                updateMothDetectionRadius(entity);
+            }
+        }
+
+        function handlePredation() {
+            birds.forEach(bird => {
+                for (let i = 0; i < moths.length; i++) {
+                    const moth = moths[i];
+                    if (!moth || !moth.element || !bird || !bird.element) continue;
+
+                    const distance = getDistance(bird, moth);
+                    if (distance <= moth.detectionRadiusValue) {
+                        removeMoth(moth);
+
+                        if (bird.mode !== 'hunting') {
+                            bird.mode = 'hunting';
+                            bird.huntStartTime = Date.now();
+                            bird.element.classList.add('hunting');
+                        } else {
+                            bird.huntStartTime = Date.now();
+                        }
+                        break;
+                    }
+                }
+            });
+        }
+
+        function getDistance(obj1, obj2) {
+            if (!obj1 || !obj2 || !obj1.element || !obj2.element) return Infinity;
+            const x1 = parseInt(obj1.element.style.left) || 0;
+            const y1 = parseInt(obj1.element.style.top) || 0;
+            const x2 = parseInt(obj2.element.style.left) || 0;
+            const y2 = parseInt(obj2.element.style.top) || 0;
+            return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        }
+
+        function calculateVisibility(moth) {
+            const backgroundDarkness = getBackgroundDarknessAtPosition(moth);
+            const mothColor = (moth.type === 'dark') ? 0.9 : 0.1;
+            const visibility = Math.abs(backgroundDarkness - mothColor);
+            return Math.min(Math.max(visibility, 0), 1);
+        }
+
+        function updateMothDetectionRadius(moth) {
+            const visibility = calculateVisibility(moth);
+            const minRadius = config.minDetectionRadius;
+            const maxRadius = config.maxDetectionRadius;
+
+            const adjustedRadius = minRadius + ((maxRadius - minRadius) * (1 - visibility));
+            moth.detectionRadiusValue = adjustedRadius;
+
+            const x = parseFloat(moth.element.style.left) || 0;
+            const y = parseFloat(moth.element.style.top) || 0;
+            const radiusLeft = x - adjustedRadius + (config.mothSize / 2);
+            const radiusTop = y - adjustedRadius + (config.mothSize / 2);
+
+            moth.radius.style.width = `${adjustedRadius * 2}px`;
+            moth.radius.style.height = `${adjustedRadius * 2}px`;
+            moth.radius.style.left = `${radiusLeft}px`;
+            moth.radius.style.top = `${radiusTop}px`;
+        }
+
+        function getBackgroundDarknessAtPosition(entity) {
+            const x = parseFloat(entity.element.style.left) || 0;
+            const y = parseFloat(entity.element.style.top) || 0;
+            const pollutionLevel = getCurrentPollutionLevel();
+            let backgroundDarkness = (100 - pollutionLevel) / 100;
+
+            let totalGrayValue = backgroundDarkness * 255;
+
+            const coveringPatches = backgroundPatches.filter(patch => {
+                if (patch.style.display === 'none') return false;
+                const px = parseFloat(patch.style.left);
+                const py = parseFloat(patch.style.top);
+                const pw = parseFloat(patch.style.width);
+                const ph = parseFloat(patch.style.height);
+                return x >= px && x <= px + pw && y >= py && y <= py + ph;
+            });
+
+            coveringPatches.forEach(patch => {
+                const patchGrayValue = parseFloat(patch.dataset.grayValue);
+                const patchAlpha = 0.5;
+                totalGrayValue = blendColors(totalGrayValue, patchGrayValue, patchAlpha);
+            });
+
+            backgroundDarkness = totalGrayValue / 255;
+            return backgroundDarkness;
+        }
+
+        function blendColors(bgGray, patchGray, alpha) {
+            return bgGray * (1 - alpha) + patchGray * alpha;
+        }
+
+        function updateBackground() {
+            const pollutionLevel = getCurrentPollutionLevel();
+            const baseGrayValue = (100 - pollutionLevel) * 2.55;
+            simulationArea.style.backgroundColor = `rgb(${baseGrayValue}, ${baseGrayValue}, ${baseGrayValue})`;
+            updateBackgroundPatches();
+        }
+
+        function updateBackgroundPatches() {
+            const heterogeneityLevel = getCurrentHeterogeneityLevel();
+            const fragmentationFactor = config.fragmentationIndex / 100;
+            const maxPatches = backgroundPatches.length;
+
+            const activePatchCount = Math.floor((heterogeneityLevel / 100) * maxPatches);
+
+            for (let i = 0; i < maxPatches; i++) {
+                const patch = backgroundPatches[i];
+                if (i < activePatchCount) {
+                    patch.style.display = 'block';
+                    const minSize = 30;
+                    const maxSize = 200;
+                    const size = minSize + (maxSize - minSize) * (1 - fragmentationFactor);
+                    patch.style.width = `${size}px`;
+                    patch.style.height = `${size}px`;
+                } else {
+                    patch.style.display = 'none';
+                }
+            }
+        }
+
+        function updateStats() {
+            const lightCount = moths.filter(m => m.type === 'light').length;
+            const darkCount = moths.filter(m => m.type === 'dark').length;
+
+            document.getElementById('light-count').textContent = lightCount;
+            document.getElementById('dark-count').textContent = darkCount;
+
+            populationHistory.generations.push(currentGeneration);
+            populationHistory.lightMoths.push(lightCount);
+            populationHistory.darkMoths.push(darkCount);
+
+            updateCharts();
+
+            let countMM = 0;
+            let countMm = 0;
+            let countmm = 0;
+            for (const moth of moths) {
+                if (moth.genotype === 'MM') countMM++;
+                else if (moth.genotype === 'Mm') countMm++;
+                else countmm++;
+            }
+
+            document.getElementById('count-MM').textContent = countMM;
+            document.getElementById('count-Mm').textContent = countMm;
+            document.getElementById('count-mm').textContent = countmm;
+
+            document.getElementById('phenotype-dark').textContent = darkCount;
+            document.getElementById('phenotype-light').textContent = lightCount;
+        }
+
+        function cleanupMemory() {
+            // Rensa bort moths och birds som inte längre finns i DOM
+            moths = moths.filter(moth => moth && moth.element && moth.element.parentNode);
+            birds = birds.filter(bird => bird && bird.element && bird.element.parentNode);
+
+            // *** Ändring: Ta bort eller kommentera ut begränsningen för populationHistory ***
+            /*
+            const maxHistoryLength = 100;
+            if (populationHistory.generations.length > maxHistoryLength) {
+                populationHistory.generations = populationHistory.generations.slice(-maxHistoryLength);
+                populationHistory.lightMoths = populationHistory.lightMoths.slice(-maxHistoryLength);
+                populationHistory.darkMoths = populationHistory.darkMoths.slice(-maxHistoryLength);
+            }
+            */
+
+            // *** Alternativ: Öka maxHistoryLength ***
+            /*
+            const maxHistoryLength = config.totalGenerations; // eller ett högre värde
+            if (populationHistory.generations.length > maxHistoryLength) {
+                populationHistory.generations = populationHistory.generations.slice(-maxHistoryLength);
+                populationHistory.lightMoths = populationHistory.lightMoths.slice(-maxHistoryLength);
+                populationHistory.darkMoths = populationHistory.darkMoths.slice(-maxHistoryLength);
+            }
+            */
+        }
+
+        function createBird() {
+            if (!simulationArea) return null;
+
+            const birdEl = document.createElement('div');
+            birdEl.className = 'bird';
+            simulationArea.appendChild(birdEl);
+
+            const x = Math.random() * (simulationArea.clientWidth - config.mothSize);
+            const y = Math.random() * (simulationArea.clientHeight - config.mothSize);
+            birdEl.style.left = `${x}px`;
+            birdEl.style.top = `${y}px`;
+
+            const birdObj = {
+                element: birdEl,
+                type: 'bird',
+                mode: 'random',
+                huntStartTime: null,
+                angle: Math.random() * 2 * Math.PI
+            };
+
+            birds.push(birdObj);
+            return birdObj;
+        }
+
+        function createBackgroundPatches() {
+            const maxPatches = 50;
+            backgroundPatches = [];
+
+            for (let i = 0; i < maxPatches; i++) {
+                const patch = document.createElement('div');
+                patch.className = 'background-patch';
+
+                const fragmentationFactor = config.fragmentationIndex / 100;
+                const minSize = 30;
+                const maxSize = 200;
+                const size = minSize + (maxSize - minSize) * (1 - fragmentationFactor);
+
+                const x = Math.random() * (simulationArea.clientWidth - size);
+                const y = Math.random() * (simulationArea.clientHeight - size);
+                patch.style.width = `${size}px`;
+                patch.style.height = `${size}px`;
+                patch.style.left = `${x}px`;
+                patch.style.top = `${y}px`;
+
+                const grayValue = Math.floor(Math.random() * 256); 
+                patch.dataset.grayValue = grayValue;
+                patch.style.backgroundColor = `rgba(${grayValue}, ${grayValue}, ${grayValue}, 0.5)`;
+
+                simulationArea.appendChild(patch);
+                backgroundPatches.push(patch);
+            }
+        }
+
+        /* ==========================
+         *  CHARTS / VISUALISERING
+         * ========================== */
+        function initializeCharts() {
+            const ctx = document.getElementById('population-chart').getContext('2d');
+            if (populationChart) populationChart.destroy();
+
+            // För att x-axeln ska synas från start (0...totalGenerations), 
+            // skapar vi redan här en array av "labels" med alla generationer.
+            populationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: config.totalGenerations + 1 }, (_, i) => i),
+                    datasets: [{
+                        label: 'Vita fjärilar',
+                        data: [],
+                        borderColor: 'rgba(200, 200, 200, 1)',
+                        backgroundColor: 'rgba(200, 200, 200, 0.2)',
+                        tension: 0.1
+                    }, {
+                        label: 'Svarta fjärilar',
+                        data: [],
+                        borderColor: 'rgba(50, 50, 50, 1)',
+                        backgroundColor: 'rgba(50, 50, 50, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            title: { display: true, text: 'Antal Fjärilar' }
+                        },
+                        x: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: config.totalGenerations, 
+                            title: { display: true, text: 'Generation' },
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+
+            const pollutionCtx = document.getElementById('pollution-chart').getContext('2d');
+            const maxGenerations = config.totalGenerations;
+            const pollutionLabels = Array.from({ length: maxGenerations + 1 }, (_, i) => i);
+
+            pollutionData = {
+                labels: pollutionLabels,
+                datasets: [{
+                    label: 'Föroreningsnivå',
+                    data: [],
+                    borderColor: 'rgba(0, 0, 0, 1)',
+                    fill: false,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    showLine: true
+                }]
+            };
+
+            if (pollutionChart) pollutionChart.destroy();
+
+            pollutionChart = new Chart(pollutionCtx, {
+                type: 'line',
+                data: pollutionData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Föroreningsnivå (%)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Generation' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+
+            const heterogeneityCtx = document.getElementById('heterogeneity-chart').getContext('2d');
+            heterogeneityData = {
+                labels: Array.from({ length: maxGenerations + 1 }, (_, i) => i),
+                datasets: [{
+                    label: 'Heterogenitet',
+                    data: [],
+                    borderColor: 'rgba(0, 100, 0, 1)',
+                    backgroundColor: 'rgba(0, 100, 0, 0.2)',
+                    tension: 0.1
+                }]
+            };
+
+            if (heterogeneityChart) heterogeneityChart.destroy();
+
+            heterogeneityChart = new Chart(heterogeneityCtx, {
+                type: 'line',
+                data: heterogeneityData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Heterogenitet (%)' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Generation' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (populationChart) {
+                // Uppdatera data dynamiskt när nya generationer kommer in.
+                populationChart.data.datasets[0].data = populationHistory.lightMoths;
+                populationChart.data.datasets[1].data = populationHistory.darkMoths;
+                populationChart.update();
+            }
+
+            if (pollutionChart) {
+                pollutionChart.data.labels = pollutionData.labels;
+                pollutionChart.data.datasets[0].data = pollutionData.datasets[0].data;
+                pollutionChart.update();
+            }
+
+            if (heterogeneityChart) {
+                heterogeneityChart.data.labels = heterogeneityData.labels;
+                heterogeneityChart.data.datasets[0].data = heterogeneityData.datasets[0].data;
+                heterogeneityChart.update();
+            }
+        }
+
+        function getCurrentHeterogeneityLevel() {
+            const index = Math.min(currentGeneration, heterogeneityData.datasets[0].data.length - 1);
+            return heterogeneityData.datasets[0].data[index];
+        }
+
+        function getCurrentPollutionLevel() {
+            const index = Math.min(currentGeneration, pollutionData.datasets[0].data.length - 1);
+            return pollutionData.datasets[0].data[index];
+        }
+
+        function showEndingScreen() {
+            const endingScreen = document.getElementById('ending-screen');
+            endingScreen.style.display = 'flex';
+
+            document.getElementById('ending-generation-count').textContent = currentGeneration;
+            document.getElementById('ending-light-count').textContent =
+                populationHistory.lightMoths[populationHistory.lightMoths.length - 1] || 0;
+            document.getElementById('ending-dark-count').textContent =
+                populationHistory.darkMoths[populationHistory.darkMoths.length - 1] || 0;
+
+            const ctx = document.getElementById('ending-population-chart').getContext('2d');
+            if (endingPopulationChart) endingPopulationChart.destroy();
+
+            endingPopulationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: populationHistory.generations,
+                    datasets: [{
+                        label: 'Vita fjärilar',
+                        data: populationHistory.lightMoths,
+                        borderColor: 'rgba(200, 200, 200, 1)',
+                        backgroundColor: 'rgba(200, 200, 200, 0.2)',
+                        tension: 0.1
+                    }, {
+                        label: 'Svarta fjärilar',
+                        data: populationHistory.darkMoths,
+                        borderColor: 'rgba(50, 50, 50, 1)',
+                        backgroundColor: 'rgba(50, 50, 50, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Antal Fjärilar' }
+                        },
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Generation' },
+                            ticks: { autoSkip: true, maxTicksLimit: 20 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+
+            // *** CHANGED: Spara finala data i finalOverlayData
+            finalOverlayData.generation = currentGeneration;
+            finalOverlayData.lightCount = populationHistory.lightMoths[populationHistory.lightMoths.length - 1] || 0;
+            finalOverlayData.darkCount = populationHistory.darkMoths[populationHistory.darkMoths.length - 1] || 0;
+
+            // Räkna slutliga genotyper
+            let finalMM = 0;
+            let finalMm = 0;
+            let finalmm = 0;
+            for (const moth of moths) {
+                if (moth.genotype === 'MM') finalMM++;
+                else if (moth.genotype === 'Mm') finalMm++;
+                else finalmm++;
+            }
+            finalOverlayData.genotypeMM = finalMM;
+            finalOverlayData.genotypeMm = finalMm;
+            finalOverlayData.genotypemm = finalmm;
+
+            // Räkna slutliga fenotyper
+            let finalDark = 0;
+            let finalLight = 0;
+            for (const moth of moths) {
+                if (moth.type === 'dark') finalDark++;
+                else finalLight++;
+            }
+            finalOverlayData.phenotypeDark = finalDark;
+            finalOverlayData.phenotypeLight = finalLight;
+
+            // Spara hela populationshistoriken
+            finalOverlayData.historyGenerations = [...populationHistory.generations];
+            finalOverlayData.historyLight = [...populationHistory.lightMoths];
+            finalOverlayData.historyDark = [...populationHistory.darkMoths];
+            // *** Slut CHANGED
+        }
+
+        function closeEndingScreen() {
+            const endingScreen = document.getElementById('ending-screen');
+            endingScreen.style.display = 'none';
+        }
+
+        function applySettings() {
+            config.initialLightMoths = parseInt(document.getElementById('initial-light-moths').value);
+            config.initialDarkMoths = parseInt(document.getElementById('initial-dark-moths').value);
+            config.birdCount = parseInt(document.getElementById('bird-count').value);
+            config.numberOfOffspring = parseInt(document.getElementById('number-of-offspring').value);
+            config.reproductionRadius = parseInt(document.getElementById('reproduction-radius').value);
+            config.mutationRate = parseFloat(document.getElementById('mutation-rate').value);
+            config.minDetectionRadius = parseInt(document.getElementById('min-detection-radius').value);
+            config.maxDetectionRadius = parseInt(document.getElementById('max-detection-radius').value);
+            config.generationTime = parseInt(document.getElementById('generation-time').value);
+            config.totalGenerations = parseInt(document.getElementById('total-generations').value);
+            config.landscapeHeterogeneity = parseInt(document.getElementById('landscape-heterogeneity').value);
+            config.mothMovementRadius = parseInt(document.getElementById('moth-movement-radius').value);
+            config.mothSpeed = parseFloat(document.getElementById('moth-speed').value);
+            config.birdSpeed = parseFloat(document.getElementById('bird-speed').value);
+            config.birdHuntDuration = parseInt(document.getElementById('bird-hunt-duration').value);
+            config.maxMothPopulation = parseInt(document.getElementById('max-moth-population').value);
+            config.mothLifespan = parseInt(document.getElementById('moth-lifespan').value);
+            config.fragmentationIndex = parseInt(document.getElementById('fragmentation-index').value);
+
+            stopSimulation();
+            initializeCharts();
+            updatePollutionData();
+            updateHeterogeneityData();
+            updatePollutionTable();
+            updateHeterogeneityTable();
+            initializeSimulation();
+        }
+
+        function initializeSimulation() {
+            clearSimulation();
+            moths = [];
+            birds = [];
+            backgroundPatches = [];
+            isSimulationRunning = false;
+            currentGeneration = 0;
+            document.getElementById('generation-count').textContent = '0';
+
+            document.getElementById('light-count').textContent = config.initialLightMoths;
+            document.getElementById('dark-count').textContent = config.initialDarkMoths;
+
+            populationHistory = {
+                generations: [],
+                lightMoths: [],
+                darkMoths: []
+            };
+
+            initializeCharts();
+            createInitialPopulation();
+            createBackgroundPatches();
+            updatePollutionData();
+            updateHeterogeneityData();
+            updateBackground();
+        }
+
+        function createInitialPopulation() {
+            for (let i = 0; i < config.initialLightMoths; i++) {
+                createMoth("mm");
+            }
+            for (let i = 0; i < config.initialDarkMoths; i++) {
+                createMoth("Mm");
+            }
+            for (let i = 0; i < config.birdCount; i++) {
+                createBird();
+            }
+        }
+
+        function addPollutionPoint() {
+            const generation = parseInt(prompt('Ange generation:', '0'));
+            const level = parseInt(prompt('Ange föroreningsnivå (0-100)%:', '0'));
+            if (!isNaN(generation) && !isNaN(level) && level >= 0 && level <= 100) {
+                pollutionKeyPoints.push({ generation, level });
+                pollutionKeyPoints.sort((a, b) => a.generation - b.generation);
+                updatePollutionTable();
+                updatePollutionData();
+            } else {
+                alert('Ogiltiga inmatningar. Försök igen.');
+            }
+        }
+
+        function updatePollutionTable() {
+            const tbody = document.querySelector('#pollution-table tbody');
+            tbody.innerHTML = '';
+            pollutionKeyPoints.forEach((point, index) => {
+                const row = document.createElement('tr');
+                const genCell = document.createElement('td');
+                genCell.textContent = point.generation;
+                const levelCell = document.createElement('td');
+                levelCell.textContent = point.level;
+                const actionsCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger btn-sm';
+                deleteButton.textContent = 'Ta bort';
+                deleteButton.onclick = () => {
+                    pollutionKeyPoints.splice(index, 1);
+                    updatePollutionTable();
+                    updatePollutionData();
+                };
+                actionsCell.appendChild(deleteButton);
+                row.appendChild(genCell);
+                row.appendChild(levelCell);
+                row.appendChild(actionsCell);
+                tbody.appendChild(row);
+            });
+        }
+
+        function updatePollutionData() {
+            const maxGenerations = config.totalGenerations;
+            pollutionData.labels = Array.from({ length: maxGenerations + 1 }, (_, i) => i);
+            pollutionData.datasets[0].data = [];
+
+            if (pollutionKeyPoints.length === 0) {
+                for (let i = 0; i <= maxGenerations; i++) {
+                    pollutionData.datasets[0].data.push(0);
+                }
+            } else {
+                // Se till att den första punkten är vid generation 0
+                if (pollutionKeyPoints[0].generation > 0) {
+                    pollutionKeyPoints.unshift({ generation: 0, level: pollutionKeyPoints[0].level });
+                }
+                // Se till att den sista punkten täcker hela simuleringen
+                if (pollutionKeyPoints[pollutionKeyPoints.length - 1].generation < maxGenerations) {
+                    pollutionKeyPoints.push({ generation: maxGenerations, level: pollutionKeyPoints[pollutionKeyPoints.length - 1].level });
+                } else {
+                    pollutionKeyPoints = pollutionKeyPoints.filter(p => p.generation <= maxGenerations);
+                }
+
+                let currentIndex = 0;
+                for (let i = 0; i <= maxGenerations; i++) {
+                    if (i > (pollutionKeyPoints[currentIndex + 1]?.generation || maxGenerations)) {
+                        currentIndex++;
+                    }
+                    const start = pollutionKeyPoints[currentIndex];
+                    const end = pollutionKeyPoints[currentIndex + 1];
+                    if (end) {
+                        const t = (i - start.generation) / (end.generation - start.generation);
+                        const level = start.level + t * (end.level - start.level);
+                        pollutionData.datasets[0].data.push(level);
+                    } else {
+                        pollutionData.datasets[0].data.push(start.level);
+                    }
+                }
+            }
+
+            pollutionChart.data.labels = pollutionData.labels;
+            pollutionChart.data.datasets[0].data = pollutionData.datasets[0].data;
+            pollutionChart.update();
+        }
+
+        function addHeterogeneityPoint() {
+            const generation = parseInt(prompt('Ange generation:', '0'));
+            const level = parseInt(prompt('Ange heterogenitet (0-100)%:', '0'));
+            if (!isNaN(generation) && !isNaN(level) && level >= 0 && level <= 100) {
+                heterogeneityKeyPoints.push({ generation, level });
+                heterogeneityKeyPoints.sort((a, b) => a.generation - b.generation);
+                updateHeterogeneityTable();
+                updateHeterogeneityData();
+                updateBackgroundPatches();
+            } else {
+                alert('Ogiltiga inmatningar. Försök igen.');
+            }
+        }
+
+        function updateHeterogeneityTable() {
+            const tbody = document.querySelector('#heterogeneity-table tbody');
+            tbody.innerHTML = '';
+            heterogeneityKeyPoints.forEach((point, index) => {
+                const row = document.createElement('tr');
+                const genCell = document.createElement('td');
+                genCell.textContent = point.generation;
+                const levelCell = document.createElement('td');
+                levelCell.textContent = point.level;
+                const actionsCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger btn-sm';
+                deleteButton.textContent = 'Ta bort';
+                deleteButton.onclick = () => {
+                    heterogeneityKeyPoints.splice(index, 1);
+                    updateHeterogeneityTable();
+                    updateHeterogeneityData();
+                    updateBackgroundPatches();
+                };
+                actionsCell.appendChild(deleteButton);
+                row.appendChild(genCell);
+                row.appendChild(levelCell);
+                row.appendChild(actionsCell);
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateHeterogeneityData() {
+            const maxGenerations = config.totalGenerations;
+            heterogeneityData.labels = Array.from({ length: maxGenerations + 1 }, (_, i) => i);
+            heterogeneityData.datasets[0].data = [];
+
+            if (heterogeneityKeyPoints.length === 0) {
+                for (let i = 0; i <= maxGenerations; i++) {
+                    heterogeneityData.datasets[0].data.push(config.landscapeHeterogeneity);
+                }
+            } else {
+                // Se till att den första punkten är vid generation 0
+                if (heterogeneityKeyPoints[0].generation > 0) {
+                    heterogeneityKeyPoints.unshift({
+                        generation: 0,
+                        level: heterogeneityKeyPoints[0].level
+                    });
+                }
+                // Se till att den sista punkten täcker hela simuleringen
+                if (heterogeneityKeyPoints[heterogeneityKeyPoints.length - 1].generation < maxGenerations) {
+                    heterogeneityKeyPoints.push({
+                        generation: maxGenerations,
+                        level: heterogeneityKeyPoints[heterogeneityKeyPoints.length - 1].level
+                    });
+                } else {
+                    heterogeneityKeyPoints = heterogeneityKeyPoints.filter(p => p.generation <= maxGenerations);
+                }
+
+                let currentIndex = 0;
+                for (let i = 0; i <= maxGenerations; i++) {
+                    if (i > (heterogeneityKeyPoints[currentIndex + 1]?.generation || maxGenerations)) {
+                        currentIndex++;
+                    }
+                    const start = heterogeneityKeyPoints[currentIndex];
+                    const end = heterogeneityKeyPoints[currentIndex + 1];
+                    if (end) {
+                        const t = (i - start.generation) / (end.generation - start.generation);
+                        const level = start.level + t * (end.level - start.level);
+                        heterogeneityData.datasets[0].data.push(level);
+                    } else {
+                        heterogeneityData.datasets[0].data.push(start.level);
+                    }
+                }
+            }
+
+            heterogeneityChart.data.labels = heterogeneityData.labels;
+            heterogeneityChart.data.datasets[0].data = heterogeneityData.datasets[0].data;
+            heterogeneityChart.update();
+        }
+
+        /* =====================================================
+         *   NYA FUNKTIONER FÖR PROFESSIONELLT OVERLAY-DIAGRAM
+         * ===================================================== */
+        let fullscreenChartInstance = null;
+
+        function openFullscreenChart() {
+            const overlay = document.getElementById('fullscreen-overlay');
+            overlay.style.display = 'flex';
+
+            // *** CHANGED: Hämta data ENBART från finalOverlayData
+            document.getElementById('overlay-generation-count').textContent = finalOverlayData.generation;
+            document.getElementById('overlay-light-count').textContent = finalOverlayData.lightCount;
+            document.getElementById('overlay-dark-count').textContent = finalOverlayData.darkCount;
+
+            document.getElementById('overlay-count-MM').textContent = finalOverlayData.genotypeMM;
+            document.getElementById('overlay-count-Mm').textContent = finalOverlayData.genotypeMm;
+            document.getElementById('overlay-count-mm').textContent = finalOverlayData.genotypemm;
+
+            document.getElementById('overlay-phenotype-dark').textContent = finalOverlayData.phenotypeDark;
+            document.getElementById('overlay-phenotype-light').textContent = finalOverlayData.phenotypeLight;
+            // *** Slut CHANGED
+
+            const ctx = document.getElementById('fullscreen-chart').getContext('2d');
+            if (fullscreenChartInstance) {
+                fullscreenChartInstance.destroy();
+            }
+            fullscreenChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    // *** CHANGED: Använd finalOverlayData i stället för populationHistory
+                    labels: finalOverlayData.historyGenerations,
+                    datasets: [
+                        {
+                            label: 'Vita fjärilar',
+                            data: finalOverlayData.historyLight,
+                            borderColor: 'rgba(200, 200, 200, 1)',
+                            backgroundColor: 'rgba(200, 200, 200, 0.2)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Svarta fjärilar',
+                            data: finalOverlayData.historyDark,
+                            borderColor: 'rgba(50, 50, 50, 1)',
+                            backgroundColor: 'rgba(50, 50, 50, 0.2)',
+                            tension: 0.1
+                        }
+                    ]
+                    // *** Slut CHANGED
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Antal Fjärilar' }
+                        },
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Generation' },
+                            ticks: { autoSkip: true, maxTicksLimit: 20 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        }
+
+        function closeFullscreenChart() {
+            const overlay = document.getElementById('fullscreen-overlay');
+            overlay.style.display = 'none';
+
+            if (fullscreenChartInstance) {
+                fullscreenChartInstance.destroy();
+                fullscreenChartInstance = null;
+            }
+        }
+    </script>
+</body>
+</html>
