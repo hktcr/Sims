@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fokustimer 3.0</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .activity-table td:nth-child(1) { min-width: 200px; }
+        .activity-table td:nth-child(5) { min-width: 300px; }
+        .settings-container { 
+            width: 90%;
+            max-width: none!important;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .activity-input { font-size: 1rem; padding: 0.5rem 0.75rem; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const FocusTimer = () => {
+            const initialSettings = {
+                activities: [
+                    {
+                        id: 1,
+                        name: 'Fokus',
+                        duration: 600,
+                        color: '#BFDBFE',
+                        textColor: '#1E3A8A',
+                        messages: ['Dags för fokus!']
+                    },
+                    {
+                        id: 2,
+                        name: 'Paus',
+                        duration: 180,
+                        color: '#D1FAE5',
+                        textColor: '#065F46',
+                        messages: ['Dags för paus!']
+                    }
+                ],
+                transitionTime: 5,
+                fadeTransition: true,
+                autoStart: false,
+                soundEnabled: true,
+                beepCount: 3,
+                completionMessage: 'Alla aktiviteter är klara!',
+                completionColor: '#FFFFFF',
+                completionTextColor: '#000000'
+            };
+
+            const [settings, setSettings] = React.useState(initialSettings);
+            const [currentActivityIndex, setCurrentActivityIndex] = React.useState(0);
+            const [timeLeft, setTimeLeft] = React.useState(initialSettings.activities[0]?.duration || 0);
+            const [isRunning, setIsRunning] = React.useState(false);
+            const [isTransition, setIsTransition] = React.useState(false);
+            const [currentColor, setCurrentColor] = React.useState(initialSettings.activities[0]?.color || '#FFFFFF');
+            const [currentTextColor, setCurrentTextColor] = React.useState(initialSettings.activities[0]?.textColor || '#000000');
+            const [showAdvancedSettings, setShowAdvancedSettings] = React.useState(false);
+            const [showActivities, setShowActivities] = React.useState(false);
+            const [isFullscreen, setIsFullscreen] = React.useState(false);
+            const [showCurrentTime, setShowCurrentTime] = React.useState(false);
+            const [currentTime, setCurrentTime] = React.useState('');
+            const containerRef = React.useRef(null);
+            const animationFrame = React.useRef(null);
+
+            // Beräkna total tid
+            const totalDuration = React.useMemo(() => (
+                settings.activities.reduce((sum, activity) => sum + activity.duration, 0)
+            ), [settings.activities]);
+
+            // Uppdatera aktuell tid
+            React.useEffect(() => {
+                const timer = setInterval(() => {
+                    setCurrentTime(new Date().toLocaleTimeString('sv-SE'));
+                }, 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            const toggleFullscreen = () => {
+                if (!document.fullscreenElement) {
+                    containerRef.current?.requestFullscreen?.();
+                } else {
+                    document.exitFullscreen?.();
+                }
+            };
+
+            React.useEffect(() => {
+                const handler = () => setIsFullscreen(!!document.fullscreenElement);
+                document.addEventListener('fullscreenchange', handler);
+                return () => document.removeEventListener('fullscreenchange', handler);
+            }, []);
+
+            const hexToRgb = hex => ({
+                r: parseInt(hex.slice(1, 3), 16),
+                g: parseInt(hex.slice(3, 5), 16),
+                b: parseInt(hex.slice(5, 7), 16)
+            });
+
+            const animateColor = (startColor, endColor, duration) => {
+                const start = hexToRgb(startColor);
+                const end = hexToRgb(endColor);
+                const startTime = Date.now();
+                
+                const update = () => {
+                    const progress = (Date.now() - startTime) / duration;
+                    if (progress >= 1) {
+                        setCurrentColor(endColor);
+                        return;
+                    }
+                    
+                    const r = Math.round(start.r + (end.r - start.r) * progress);
+                    const g = Math.round(start.g + (end.g - start.g) * progress);
+                    const b = Math.round(start.b + (end.b - start.b) * progress);
+                    setCurrentColor(`rgb(${r}, ${g}, ${b})`);
+                    animationFrame.current = requestAnimationFrame(update);
+                };
+                
+                animationFrame.current = requestAnimationFrame(update);
+            };
+
+            React.useEffect(() => {
+                if (!isRunning || timeLeft <= 0) return;
+
+                const timer = setInterval(() => {
+                    setTimeLeft(prev => prev - 1);
+                }, 1000);
+
+                return () => clearInterval(timer);
+            }, [isRunning, timeLeft]);
+
+            const playSound = () => {
+                if (!settings.soundEnabled) return;
+
+                const playBeep = (count = 0) => {
+                    if (count >= settings.beepCount) return;
+                    
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    oscillator.connect(audioContext.destination);
+                    oscillator.start();
+                    setTimeout(() => {
+                        oscillator.stop();
+                        playBeep(count + 1);
+                    }, 300);
+                };
+
+                playBeep();
+            };
+
+            const proceedToNextActivity = () => {
+                if (currentActivityIndex < settings.activities.length - 1) {
+                    setIsTransition(true);
+                    const currentColor = settings.activities[currentActivityIndex].color;
+                    const nextColor = settings.activities[currentActivityIndex + 1].color;
+                    
+                    if (settings.fadeTransition) {
+                        animateColor(currentColor, nextColor, settings.transitionTime * 1000);
+                    }
+
+                    setTimeout(() => {
+                        setIsTransition(false);
+                        setCurrentActivityIndex(prev => prev + 1);
+                        setTimeLeft(settings.activities[currentActivityIndex + 1].duration);
+                        setCurrentTextColor(settings.activities[currentActivityIndex + 1].textColor);
+                        if (settings.autoStart) setIsRunning(true);
+                    }, settings.transitionTime * 1000);
+                } else {
+                    setIsRunning(false);
+                    setCurrentActivityIndex(-1);
+                    setCurrentColor(settings.completionColor);
+                    setCurrentTextColor(settings.completionTextColor);
+                }
+            };
+
+            React.useEffect(() => {
+                if (timeLeft > 0 || !isRunning) return;
+
+                playSound();
+                proceedToNextActivity();
+            }, [timeLeft]);
+
+            const resetTimer = () => {
+                cancelAnimationFrame(animationFrame.current);
+                setIsRunning(false);
+                setCurrentActivityIndex(0);
+                setIsTransition(false);
+                setTimeLeft(settings.activities[0]?.duration || 0);
+                setCurrentColor(settings.activities[0]?.color || '#FFFFFF');
+                setCurrentTextColor(settings.activities[0]?.textColor || '#000000');
+            };
+
+            const handleSkip = () => {
+                setIsRunning(false);
+                cancelAnimationFrame(animationFrame.current);
+                playSound();
+                proceedToNextActivity();
+            };
+
+            const updateActivity = (index, field, value) => {
+                const newActivities = [...settings.activities];
+                newActivities[index][field] = field === 'duration' ? parseInt(value) : value;
+                setSettings(prev => ({ ...prev, activities: newActivities }));
+            };
+
+            const addActivity = () => {
+                setSettings(prev => ({
+                    ...prev,
+                    activities: [
+                        ...prev.activities,
+                        {
+                            id: Date.now(),
+                            name: 'Ny aktivitet',
+                            duration: 300,
+                            color: '#FFFFFF',
+                            textColor: '#000000',
+                            messages: ['']
+                        }
+                    ]
+                }));
+            };
+
+            const moveActivity = (index, direction) => {
+                const newActivities = [...settings.activities];
+                const temp = newActivities[index];
+                newActivities[index] = newActivities[index + direction];
+                newActivities[index + direction] = temp;
+                setSettings(prev => ({ ...prev, activities: newActivities }));
+            };
+
+            const formatTime = seconds => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const CompletionScreen = ({ message, color, textColor }) => {
+                return (
+                    <div 
+                        className="text-center p-6 rounded-lg transition-colors duration-300 flex flex-col items-center justify-center h-full"
+                        style={{ backgroundColor: color, color: textColor }}
+                    >
+                        <div className="font-mono font-bold text-6xl">
+                            🎉
+                        </div>
+                        <p className="text-lg mt-4">
+                            {message}
+                        </p>
+                    </div>
+                );
+            };
+
+            const activeActivity = settings.activities[currentActivityIndex];
+
+            return (
+                <div ref={containerRef} className={`${isFullscreen ? 'fixed inset-0' : 'min-h-screen'} flex items-center justify-center p-4 bg-gray-50`}>
+                    <div className={`bg-white rounded-xl shadow-lg ${
+                        isFullscreen 
+                            ? 'w-full h-full max-w-none flex flex-col' 
+                            : `w-full ${showAdvancedSettings || showActivities ? 'max-w-none' : 'max-w-md'}`
+                    } ${showAdvancedSettings || showActivities ? 'p-6' : 'p-0'}`}>
+                        
+                        <div className="flex justify-between items-center p-6">
+                            <h1 className={`${isFullscreen ? 'text-4xl' : 'text-2xl'} font-bold text-blue-600`}>Fokustimer</h1>
+                            <div className="flex gap-2">
+                                <button 
+                                    onClick={() => setSettings(prev => ({ ...prev, soundEnabled: !prev.soundEnabled }))}
+                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                >
+                                    {settings.soundEnabled ? '🔊' : '🔇'}
+                                </button>
+                                <button onClick={toggleFullscreen} className="p-2 hover:bg-gray-100 rounded-full">
+                                    {isFullscreen ? '⤢' : '⃞'}
+                                </button>
+                                <button 
+                                    onClick={() => setShowActivities(!showActivities)}
+                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                >
+                                    📋
+                                </button>
+                                <button 
+                                    onClick={() => setShowAdvancedSettings(!showAdvancedSettings)} 
+                                    className="p-2 hover:bg-gray-100 rounded-full"
+                                >
+                                    ⚙️
+                                </button>
+                            </div>
+                        </div>
+
+                        {showActivities && !showAdvancedSettings && (
+                            <div className={`flex flex-col md:flex-row gap-6 h-full ${isFullscreen ? 'p-6' : ''}`}>
+                                <div className={`w-full md:w-64 ${isFullscreen ? 'h-[calc(100vh-100px)]' : ''} p-4 bg-gray-50 rounded-lg overflow-y-auto`}>
+                                    <h2 className="text-xl font-bold mb-4">Aktivitetslista</h2>
+                                    {settings.activities.map((activity, index) => (
+                                        <div 
+                                            key={activity.id}
+                                            className={`p-3 mb-2 rounded-lg transition-all duration-200 ${
+                                                index < currentActivityIndex 
+                                                    ? 'bg-gray-200 opacity-50 line-through' 
+                                                    : index === currentActivityIndex 
+                                                        ? 'border-4 border-blue-500' 
+                                                        : ''
+                                            }`}
+                                            style={{ 
+                                                backgroundColor: index >= currentActivityIndex ? activity.color : undefined,
+                                                color: index >= currentActivityIndex ? activity.textColor : undefined
+                                            }}
+                                        >
+                                            <span className="font-medium">{activity.name}</span>
+                                            <span className="block text-sm">
+                                                {(() => {
+                                                    const minutes = activity.duration / 60;
+                                                    return minutes % 1 === 0 
+                                                        ? `${minutes} min` 
+                                                        : `${minutes.toFixed(1).replace('.', ',')} min`;
+                                                })()}
+                                            </span>
+                                        </div>
+                                    ))}
+                                    <button 
+                                        onClick={resetTimer}
+                                        className="mt-4 w-full bg-gray-200 hover:bg-gray-300 p-2 rounded-lg"
+                                    >
+                                        Återställ alla aktiviteter
+                                    </button>
+                                </div>
+
+                                <div className={`flex-1 ${isFullscreen ? 'h-[calc(100vh-100px)]' : ''} flex flex-col`}>
+                                    {currentActivityIndex === -1 ? (
+                                        <CompletionScreen 
+                                            message={settings.completionMessage} 
+                                            color={settings.completionColor} 
+                                            textColor={settings.completionTextColor}
+                                        />
+                                    ) : (
+                                        <div 
+                                            className={`text-center p-6 rounded-lg transition-colors duration-300 flex flex-col items-center justify-center flex-1`}
+                                            style={{ 
+                                                backgroundColor: currentColor,
+                                                color: currentTextColor
+                                            }}
+                                        >
+                                            <div className={`${isFullscreen ? 'text-3xl' : 'text-xl'} mb-4 font-semibold`}>
+                                                {activeActivity?.name}
+                                            </div>
+                                            <div className={`font-mono font-bold ${
+                                                isFullscreen ? 'text-[15vh] leading-none pb-8' : 'text-6xl'
+                                            }`}>
+                                                {formatTime(timeLeft)}
+                                            </div>
+                                            {activeActivity?.messages?.length > 0 && (
+                                                <div className="text-xl mt-4 italic max-w-2xl mx-auto">
+                                                    {activeActivity.messages[Math.floor(Math.random() * activeActivity.messages.length)]}
+                                                </div>
+                                            )}
+                                            {showCurrentTime && (
+                                                <div className="mt-4 text-xl">
+                                                    {currentTime}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                    
+                                    <div className={`mt-auto pt-6 flex justify-center gap-4 pb-6 flex-wrap ${
+                                        isFullscreen ? 'px-4 md:px-8' : ''
+                                    }`}>
+                                        <button
+                                            onClick={() => setShowCurrentTime(!showCurrentTime)}
+                                            className={`${
+                                                isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                            } rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                                        >
+                                            {showCurrentTime ? 'Dölj klocka' : 'Visa klocka'}
+                                        </button>
+                                        <button
+                                            onClick={() => setIsRunning(!isRunning)}
+                                            className={`${
+                                                isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                            } rounded-full ${
+                                                isRunning ? 'bg-gray-400 hover:bg-gray-500' : 'bg-gray-300 hover:bg-gray-400'
+                                            } text-gray-800`}
+                                        >
+                                            {isRunning ? 'Pausa' : 'Starta'}
+                                        </button>
+                                        <button
+                                            onClick={resetTimer}
+                                            className={`${
+                                                isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                            } rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                                        >
+                                            Återställ
+                                        </button>
+                                        <button
+                                            onClick={handleSkip}
+                                            className={`${
+                                                isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                            } rounded-full bg-gray-300 hover:bg-gray-400 text-gray-800`}
+                                        >
+                                            Hoppa över
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {showAdvancedSettings && (
+                            <div className="settings-container bg-white rounded-lg border border-gray-200">
+                                <div className="flex justify-between items-center p-4 border-b">
+                                    <h2 className="text-2xl font-bold">Schemaplanerare</h2>
+                                    <button
+                                        onClick={() => setShowAdvancedSettings(false)}
+                                        className="text-gray-500 hover:text-gray-700 text-2xl p-2"
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+
+                                <div className="px-4 pb-4 space-y-6">
+                                    <div className="bg-blue-50 p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold mb-2">Total schematid</h3>
+                                        <div className="text-2xl font-mono">
+                                            {Math.floor(totalDuration / 60)} min {totalDuration % 60} sek
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 mt-4">
+                                        <label className="block">
+                                            <span className="text-gray-700 block mb-2">Övergångstid (sekunder)</span>
+                                            <input
+                                                type="number"
+                                                value={settings.transitionTime}
+                                                onChange={e => setSettings(prev => ({ ...prev, transitionTime: parseInt(e.target.value) }))}
+                                                className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                                            />
+                                        </label>
+                                        <label className="block">
+                                            <span className="text-gray-700 block mb-2">Antal signaler vid avslut</span>
+                                            <input
+                                                type="number"
+                                                value={settings.beepCount}
+                                                onChange={e => setSettings(prev => ({ ...prev, beepCount: parseInt(e.target.value) }))}
+                                                className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                                                min="1"
+                                                max="10"
+                                            />
+                                        </label>
+                                        <div className="col-span-2 flex gap-4">
+                                            <label className="block flex-1">
+                                                <span className="text-gray-700 block mb-2">Bakgrundsfärg (avslutning)</span>
+                                                <input
+                                                    type="color"
+                                                    value={settings.completionColor}
+                                                    onChange={e => setSettings(prev => ({ ...prev, completionColor: e.target.value }))}
+                                                    className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                                                />
+                                            </label>
+                                            <label className="block flex-1">
+                                                <span className="text-gray-700 block mb-2">Textfärg (avslutning)</span>
+                                                <input
+                                                    type="color"
+                                                    value={settings.completionTextColor}
+                                                    onChange={e => setSettings(prev => ({ ...prev, completionTextColor: e.target.value }))}
+                                                    className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                                                />
+                                            </label>
+                                        </div>
+                                        <label className="flex items-center gap-2 mt-6">
+                                            <input
+                                                type="checkbox"
+                                                checked={settings.fadeTransition}
+                                                onChange={e => setSettings(prev => ({ ...prev, fadeTransition: e.target.checked }))}
+                                                className="rounded border-gray-300 h-5 w-5"
+                                            />
+                                            <span className="text-lg">Aktivera färgövergångar</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 mt-6">
+                                            <input
+                                                type="checkbox"
+                                                checked={settings.autoStart}
+                                                onChange={e => setSettings(prev => ({ ...prev, autoStart: e.target.checked }))}
+                                                className="rounded border-gray-300 h-5 w-5"
+                                            />
+                                            <span className="text-lg">Autostart nästa aktivitet</span>
+                                        </label>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 mt-4">
+                                        <label className="block">
+                                            <span className="text-gray-700 block mb-2">Avslutningsmeddelande</span>
+                                            <input
+                                                type="text"
+                                                value={settings.completionMessage}
+                                                onChange={e => setSettings(prev => ({ ...prev, completionMessage: e.target.value }))}
+                                                className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <table className="activity-table w-full border-collapse">
+                                        <thead>
+                                            <tr className="bg-gray-50">
+                                                <th className="border p-3 text-left">Aktivitetens namn</th>
+                                                <th className="border p-3 text-left">Tid (min)</th>
+                                                <th className="border p-3 text-left">Bakgrundsfärg</th>
+                                                <th className="border p-3 text-left">Textfärg</th>
+                                                <th className="border p-3 text-left">Meddelanden</th>
+                                                <th className="border p-3 text-left">Hantera</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {settings.activities.map((activity, index) => (
+                                                <tr key={activity.id} className="hover:bg-gray-50">
+                                                    <td className="border p-2">
+                                                        <input
+                                                            value={activity.name}
+                                                            onChange={e => updateActivity(index, 'name', e.target.value)}
+                                                            className="activity-input w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
+                                                            placeholder="Ange aktivitetsnamn"
+                                                        />
+                                                    </td>
+                                                    <td className="border p-2">
+                                                        <input
+                                                            type="text"
+                                                            value={(activity.duration / 60).toString().replace('.', ',')}
+                                                            onChange={e => {
+                                                                const value = e.target.value.replace(',', '.');
+                                                                const minutes = parseFloat(value) || 0;
+                                                                updateActivity(index, 'duration', Math.round(minutes * 60));
+                                                            }}
+                                                            className="activity-input w-full rounded-lg border-gray-300 shadow-sm"
+                                                            placeholder="Minuter"
+                                                        />
+                                                    </td>
+                                                    <td className="border p-2">
+                                                        <input
+                                                            type="color"
+                                                            value={activity.color}
+                                                            onChange={e => updateActivity(index, 'color', e.target.value)}
+                                                            className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                                                        />
+                                                    </td>
+                                                    <td className="border p-2">
+                                                        <input
+                                                            type="color"
+                                                            value={activity.textColor}
+                                                            onChange={e => updateActivity(index, 'textColor', e.target.value)}
+                                                            className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                                                        />
+                                                    </td>
+                                                    <td className="border p-2">
+                                                        <textarea
+                                                            value={activity.messages.join('\n')}
+                                                            onChange={e => updateActivity(index, 'messages', e.target.value.split('\n'))}
+                                                            className="w-full rounded-lg border-gray-300 shadow-sm p-3 h-32 resize-y text-base"
+                                                            placeholder="Skriv ett meddelande per rad..."
+                                                            rows="5"
+                                                        />
+                                                    </td>
+                                                    <td className="border p-2 space-y-2">
+                                                        <div className="flex flex-col gap-2">
+                                                            {index > 0 && (
+                                                                <button 
+                                                                    onClick={() => moveActivity(index, -1)}
+                                                                    className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-lg"
+                                                                >
+                                                                    ↑ Flytta upp
+                                                                </button>
+                                                            )}
+                                                            {index < settings.activities.length - 1 && (
+                                                                <button 
+                                                                    onClick={() => moveActivity(index, 1)}
+                                                                    className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-lg"
+                                                                >
+                                                                    ↓ Flytta ner
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                onClick={() => setSettings(prev => ({
+                                                                    ...prev,
+                                                                    activities: prev.activities.filter((_, i) => i !== index)
+                                                                }))}
+                                                                className="bg-red-100 hover:bg-red-200 p-2 rounded-lg text-red-600 text-lg"
+                                                            >
+                                                                ✗ Ta bort aktivitet
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+
+                                    <div className="flex gap-4">
+                                        <button 
+                                            onClick={addActivity}
+                                            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 text-lg flex-1"
+                                        >
+                                            + Lägg till ny aktivitet
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {!showActivities && !showAdvancedSettings && (
+                            <>
+                                {currentActivityIndex === -1 ? (
+                                    <CompletionScreen 
+                                        message={settings.completionMessage} 
+                                        color={settings.completionColor} 
+                                        textColor={settings.completionTextColor}
+                                    />
+                                ) : (
+                                    <div 
+                                        className={`text-center p-6 rounded-lg transition-colors duration-300 flex flex-col items-center justify-center ${
+                                            isFullscreen ? 'h-full flex-grow' : ''
+                                        }`}
+                                        style={{ 
+                                            backgroundColor: currentColor,
+                                            color: currentTextColor
+                                        }}
+                                    >
+                                        <div className={`${isFullscreen ? 'text-3xl' : 'text-xl'} mb-4 font-semibold`}>
+                                            {activeActivity?.name}
+                                        </div>
+                                        <div className={`font-mono font-bold ${
+                                            isFullscreen ? 'text-[15vh] leading-none pb-8' : 'text-6xl'
+                                        }`}>
+                                            {formatTime(timeLeft)}
+                                        </div>
+                                        {activeActivity?.messages?.length > 0 && (
+                                            <div className="text-xl mt-4 italic max-w-2xl mx-auto">
+                                                {activeActivity.messages[Math.floor(Math.random() * activeActivity.messages.length)]}
+                                            </div>
+                                        )}
+                                        {showCurrentTime && (
+                                            <div className="mt-4 text-xl">
+                                                {currentTime}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className={`flex justify-center gap-4 pb-6 flex-wrap mt-4 ${
+                                    isFullscreen ? 'px-4 md:px-8' : ''
+                                }`}>
+                                    <button
+                                        onClick={() => setShowCurrentTime(!showCurrentTime)}
+                                        className={`${
+                                            isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                        } rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                                    >
+                                        {showCurrentTime ? 'Dölj klocka' : 'Visa klocka'}
+                                    </button>
+                                    <button
+                                        onClick={() => setIsRunning(!isRunning)}
+                                        className={`${
+                                            isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                        } rounded-full ${
+                                            isRunning ? 'bg-gray-400 hover:bg-gray-500' : 'bg-gray-300 hover:bg-gray-400'
+                                        } text-gray-800`}
+                                    >
+                                        {isRunning ? 'Pausa' : 'Starta'}
+                                    </button>
+                                    <button
+                                        onClick={resetTimer}
+                                        className={`${
+                                            isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                        } rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                                    >
+                                        Återställ
+                                    </button>
+                                    <button
+                                        onClick={handleSkip}
+                                        className={`${
+                                            isFullscreen ? 'px-8 py-4 text-xl m-2' : 'px-4 py-2 text-sm'
+                                        } rounded-full bg-gray-300 hover:bg-gray-400 text-gray-800`}
+                                    >
+                                        Hoppa över
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<FocusTimer />, document.getElementById('root'));
+    </script>
+</body>
+</html>
