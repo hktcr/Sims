@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fokustimer – Med Tydlig Avslutningsskärm</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .activity-table td:nth-child(1) {
+        min-width: 200px;
+      }
+      .activity-table td:nth-child(5) {
+        min-width: 300px;
+      }
+      .settings-container {
+        width: 90%;
+        max-width: none !important;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .activity-input {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const FocusTimer = () => {
+        // Pastellfärger i regnbågsordning – börjar med ljust violett (lavendel)
+        const pastelRainbow = [
+          "#E6E6FA",
+          "#D8BFD8",
+          "#B0E0E6",
+          "#98FB98",
+          "#FFFACD",
+          "#FFDAB9",
+          "#FFC0CB",
+        ];
+
+        // Standardaktiviteter med pastellfärger
+        const initialSettings = {
+          activities: [
+            {
+              id: 1,
+              name: "Fokus",
+              duration: 600,
+              color: pastelRainbow[0],
+              textColor: "#000000",
+              messages: ["Dags för fokus!"],
+            },
+            {
+              id: 2,
+              name: "Paus",
+              duration: 180,
+              color: pastelRainbow[1],
+              textColor: "#000000",
+              messages: ["Dags för paus!"],
+            },
+          ],
+          transitionTime: 5,
+          fadeTransition: true,
+          autoStart: true, // autostart aktiverat som standard
+          soundEnabled: true,
+          beepCount: 3,
+          completionMessage: "Alla aktiviteter är klara!",
+          completionColor: "#FFCCCC", // Tydligare avslutningsfärg (ljusröd)
+          completionTextColor: "#000000",
+          timerFontSize: "3.75rem",
+          messageFontSize: "2.5rem",
+          clockFontSize: "2.5rem",
+          // Ny inställning: visa "Tid kvar" i aktivitetslistan
+          showRemainingTimeInList: false,
+        };
+
+        const [settings, setSettings] = React.useState(initialSettings);
+        const [currentActivityId, setCurrentActivityId] = React.useState(
+          initialSettings.activities[0]?.id || null
+        );
+        const [timeLeft, setTimeLeft] = React.useState(
+          initialSettings.activities[0]?.duration || 0
+        );
+        const [isRunning, setIsRunning] = React.useState(false);
+        const [isTransition, setIsTransition] = React.useState(false);
+        const [currentColor, setCurrentColor] = React.useState(
+          initialSettings.activities[0]?.color || "#FFFFFF"
+        );
+        const [currentTextColor, setCurrentTextColor] = React.useState(
+          initialSettings.activities[0]?.textColor || "#000000"
+        );
+        const [showAdvancedSettings, setShowAdvancedSettings] = React.useState(false);
+        const [showActivities, setShowActivities] = React.useState(false);
+        const [isFullscreen, setIsFullscreen] = React.useState(false);
+        const [showCurrentTime, setShowCurrentTime] = React.useState(false);
+        const [currentTime, setCurrentTime] = React.useState("");
+        const [forceUpdate, setForceUpdate] = React.useState(0);
+        const [transitionColors, setTransitionColors] = React.useState(null);
+        // Initiera nextPastelIndex med antalet fördefinierade aktiviteter
+        const [nextPastelIndex, setNextPastelIndex] = React.useState(
+          initialSettings.activities.length
+        );
+        // Ny flagga för att visa avslutningsskärmen
+        const [isComplete, setIsComplete] = React.useState(false);
+        const containerRef = React.useRef(null);
+        const animationFrame = React.useRef(null);
+
+        // Räkna ihop total tid
+        const totalDuration = React.useMemo(
+          () =>
+            settings.activities.reduce(
+              (sum, activity) => sum + activity.duration,
+              0
+            ),
+          [settings.activities]
+        );
+
+        // Uppdatera klockan varje sekund
+        React.useEffect(() => {
+          const timer = setInterval(() => {
+            setCurrentTime(new Date().toLocaleTimeString("sv-SE"));
+          }, 1000);
+          return () => clearInterval(timer);
+        }, []);
+
+        // Om en aktivitet tas bort och currentActivityId inte längre finns, hoppa till första
+        React.useEffect(() => {
+          const currentActivity = settings.activities.find(
+            (a) => a.id === currentActivityId
+          );
+          if (!currentActivity && currentActivityId !== null) {
+            const firstActivity = settings.activities[0];
+            if (firstActivity) {
+              setCurrentActivityId(firstActivity.id);
+              setTimeLeft(firstActivity.duration);
+              setCurrentColor(firstActivity.color);
+              setCurrentTextColor(firstActivity.textColor);
+            }
+          }
+        }, [settings.activities, currentActivityId]);
+
+        // Omvandla hex eller rgb-string till ett objekt {r,g,b}
+        const hexToRgb = (color) => {
+          if (color.startsWith("#")) {
+            return {
+              r: parseInt(color.slice(1, 3), 16),
+              g: parseInt(color.slice(3, 5), 16),
+              b: parseInt(color.slice(5, 7), 16),
+            };
+          } else if (color.startsWith("rgb")) {
+            const nums = color.match(/\d+/g);
+            return {
+              r: parseInt(nums[0]),
+              g: parseInt(nums[1]),
+              b: parseInt(nums[2]),
+            };
+          }
+        };
+
+        // Animation av färg (används för övergångstid)
+        const animateColor = (startColor, endColor, duration) => {
+          const start = hexToRgb(startColor);
+          const end = hexToRgb(endColor);
+          const startTime = Date.now();
+
+          const update = () => {
+            const progress = (Date.now() - startTime) / duration;
+            if (progress >= 1) {
+              setCurrentColor(endColor);
+              return;
+            }
+
+            const r = Math.round(start.r + (end.r - start.r) * progress);
+            const g = Math.round(start.g + (end.g - start.g) * progress);
+            const b = Math.round(start.b + (end.b - start.b) * progress);
+            setCurrentColor(`rgb(${r}, ${g}, ${b})`);
+            animationFrame.current = requestAnimationFrame(update);
+          };
+
+          animationFrame.current = requestAnimationFrame(update);
+        };
+
+        // Färgövergång under pågående aktivitet (om fadeTransition är på)
+        React.useEffect(() => {
+          if (!settings.fadeTransition || !transitionColors) return;
+
+          const progress =
+            (transitionColors.originalDuration - timeLeft) /
+            transitionColors.originalDuration;
+          const start = hexToRgb(transitionColors.start);
+          const end = hexToRgb(transitionColors.end);
+
+          const r = Math.round(start.r + (end.r - start.r) * progress);
+          const g = Math.round(start.g + (end.g - start.g) * progress);
+          const b = Math.round(start.b + (end.b - start.b) * progress);
+
+          setCurrentColor(`rgb(${r}, ${g}, ${b})`);
+        }, [timeLeft, settings.fadeTransition, transitionColors]);
+
+        // Sätt transitionColors när vi byter till ny aktivitet
+        React.useEffect(() => {
+          const currentIndex = settings.activities.findIndex(
+            (a) => a.id === currentActivityId
+          );
+          const nextActivity = settings.activities[currentIndex + 1];
+
+          if (settings.fadeTransition && nextActivity) {
+            setTransitionColors({
+              start: settings.activities[currentIndex].color,
+              end: nextActivity.color,
+              originalDuration: settings.activities[currentIndex].duration,
+            });
+          } else {
+            setTransitionColors(null);
+            setCurrentColor(
+              settings.activities[currentIndex]?.color || settings.completionColor
+            );
+          }
+        }, [currentActivityId, settings.activities, settings.fadeTransition]);
+
+        // Hantering av helskärmsläge
+        const toggleFullscreen = () => {
+          if (!document.fullscreenElement) {
+            containerRef.current?.requestFullscreen?.();
+          } else {
+            document.exitFullscreen?.();
+          }
+        };
+
+        React.useEffect(() => {
+          const handler = () => setIsFullscreen(!!document.fullscreenElement);
+          document.addEventListener("fullscreenchange", handler);
+          return () => document.removeEventListener("fullscreenchange", handler);
+        }, []);
+
+        // Räkna ner tiden om timern är igång
+        React.useEffect(() => {
+          if (!isRunning || timeLeft <= 0) return;
+
+          const timer = setInterval(() => {
+            setTimeLeft((prev) => prev - 1);
+          }, 1000);
+
+          return () => clearInterval(timer);
+        }, [isRunning, timeLeft, forceUpdate]);
+
+        // Spela upp signaler
+        const playSound = () => {
+          if (!settings.soundEnabled) return;
+          const playBeep = (count = 0) => {
+            if (count >= settings.beepCount) return;
+
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            oscillator.connect(audioContext.destination);
+            oscillator.start();
+            setTimeout(() => {
+              oscillator.stop();
+              playBeep(count + 1);
+            }, 300);
+          };
+          playBeep();
+        };
+
+        // Stega vidare till nästa aktivitet, eller avslutningsskärm
+        const proceedToNextActivity = () => {
+          const currentIndex = settings.activities.findIndex(
+            (a) => a.id === currentActivityId
+          );
+          const nextActivity = settings.activities[currentIndex + 1];
+
+          if (settings.fadeTransition && nextActivity) {
+            setTransitionColors({
+              start: settings.activities[currentIndex].color,
+              end: settings.activities[currentIndex + 1].color,
+              originalDuration: settings.activities[currentIndex].duration,
+            });
+          } else {
+            setTransitionColors(null);
+            setCurrentColor(
+              settings.activities[currentIndex]?.color || settings.completionColor
+            );
+          }
+
+          // Finns en aktivitet kvar?
+          if (currentIndex < settings.activities.length - 1) {
+            setIsTransition(true);
+
+            // Färganimering
+            if (settings.fadeTransition) {
+              const nextColor = settings.activities[currentIndex + 1].color;
+              animateColor(
+                currentColor,
+                nextColor,
+                settings.transitionTime * 1000
+              );
+            }
+
+            // Efter övergångstid: gå till nästa aktivitet
+            setTimeout(() => {
+              setIsTransition(false);
+              const nextActivity = settings.activities[currentIndex + 1];
+              setCurrentActivityId(nextActivity.id);
+              setTimeLeft(nextActivity.duration);
+              setCurrentTextColor(nextActivity.textColor);
+              if (settings.autoStart) setIsRunning(true);
+            }, settings.transitionTime * 1000);
+          } else {
+            // Sista aktiviteten: gå till avslutningsskärm
+            setIsRunning(false);
+
+            if (settings.fadeTransition) {
+              animateColor(
+                settings.activities[currentIndex].color,
+                settings.completionColor,
+                settings.transitionTime * 1000
+              );
+            } else {
+              setCurrentColor(settings.completionColor);
+            }
+
+            // Efter övergångstid, sätt flaggan så att avslutningsskärmen visas
+            setTimeout(() => {
+              setIsComplete(true);
+              setCurrentTextColor(settings.completionTextColor);
+            }, settings.transitionTime * 1000);
+          }
+        };
+
+        // useEffect när timeLeft når 0
+        React.useEffect(() => {
+          if (timeLeft > 0) return;
+          // Bara automatiskt gå vidare om autoStart är på.
+          if (settings.autoStart) {
+            playSound();
+            proceedToNextActivity();
+          }
+        }, [timeLeft]);
+
+        // Återställ till första aktivitet
+        const resetTimer = () => {
+          cancelAnimationFrame(animationFrame.current);
+          setIsRunning(false);
+          setTransitionColors(null);
+          setIsComplete(false); // Återställ avslutsflaggan
+          setCurrentActivityId(settings.activities[0]?.id || null);
+          setIsTransition(false);
+          setTimeLeft(settings.activities[0]?.duration || 0);
+          setCurrentColor(settings.activities[0]?.color || "#FFFFFF");
+          setCurrentTextColor(settings.activities[0]?.textColor || "#000000");
+        };
+
+        // Hoppa över aktuell aktivitet
+        const handleSkip = () => {
+          setIsRunning(false);
+          cancelAnimationFrame(animationFrame.current);
+          playSound();
+          proceedToNextActivity();
+        };
+
+        // Start/pause-knapp. Om tid är 0 => gå till nästa istället
+        const handleStartClick = () => {
+          if (timeLeft <= 0) {
+            playSound();
+            proceedToNextActivity();
+          } else {
+            setIsRunning((prev) => !prev);
+          }
+        };
+
+        // Hantera ändringar i en aktivitet
+        const updateActivity = (index, field, value) => {
+          const newActivities = [...settings.activities];
+          const activity = newActivities[index];
+          if (field === "duration") value = parseInt(value) || 0;
+          activity[field] = value;
+
+          setSettings((prev) => ({ ...prev, activities: newActivities }));
+
+          // Om det är aktuell aktivitet som ändras, uppdatera state
+          if (activity.id === currentActivityId) {
+            if (field === "duration") setTimeLeft(value);
+            if (field === "color") setCurrentColor(value);
+            if (field === "textColor") setCurrentTextColor(value);
+          }
+        };
+
+        // Tillämpa ändringar från inställningar
+        const applyChanges = () => {
+          const currentActivity = settings.activities.find(
+            (a) => a.id === currentActivityId
+          );
+          if (currentActivity) {
+            setTimeLeft(currentActivity.duration);
+            setCurrentColor(currentActivity.color);
+            setCurrentTextColor(currentActivity.textColor);
+          }
+          setForceUpdate((prev) => prev + 1);
+        };
+
+        // Lägg till en ny aktivitet med nästa pastellfärg
+        const addActivity = () => {
+          const newColor = pastelRainbow[nextPastelIndex];
+          setNextPastelIndex((prev) => (prev + 1) % pastelRainbow.length);
+          setSettings((prev) => ({
+            ...prev,
+            activities: [
+              ...prev.activities,
+              {
+                id: Date.now(),
+                name: "Ny aktivitet",
+                duration: 300,
+                color: newColor,
+                textColor: "#000000",
+                messages: [""],
+              },
+            ],
+          }));
+        };
+
+        // Flytta aktivitet upp eller ner
+        const moveActivity = (index, direction) => {
+          const newActivities = [...settings.activities];
+          const temp = newActivities[index];
+          newActivities[index] = newActivities[index + direction];
+          newActivities[index + direction] = temp;
+          setSettings((prev) => ({ ...prev, activities: newActivities }));
+        };
+
+        // Formatering av sekunder till mm:ss
+        const formatTime = (seconds) => {
+          const mins = Math.floor(seconds / 60);
+          const secs = seconds % 60;
+          return `${mins}:${secs.toString().padStart(2, "0")}`;
+        };
+
+        // Avslutningsskärmen
+        const CompletionScreen = ({ message, color, textColor }) => {
+          return (
+            <div
+              className="text-center p-6 rounded-lg transition-colors duration-300 flex flex-col items-center justify-center"
+              style={{ backgroundColor: color, color: textColor }}
+            >
+              <div className="font-mono font-bold text-6xl">🎉</div>
+              <p className="text-lg mt-4">{message}</p>
+            </div>
+          );
+        };
+
+        // Om avslutsflaggan är satt: visa avslutningsskärmen
+        if (isComplete) {
+          return (
+            <div
+              ref={containerRef}
+              className={`${isFullscreen ? "fixed inset-0" : "min-h-screen"} flex items-center justify-center p-4 bg-gray-50`}
+            >
+              <div
+                className={`bg-white rounded-xl shadow-lg ${
+                  isFullscreen
+                    ? "w-full h-full max-w-none flex flex-col"
+                    : "w-full max-w-md"
+                } p-6`}
+              >
+                <CompletionScreen
+                  message={settings.completionMessage}
+                  color={settings.completionColor}
+                  textColor={settings.completionTextColor}
+                />
+                <div className="flex justify-center mt-4">
+                  <button
+                    onClick={resetTimer}
+                    className="bg-gray-200 hover:bg-gray-300 p-2 rounded-lg"
+                  >
+                    Återställ
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // Annars visas den aktuella timern
+        const currentActivity = settings.activities.find(
+          (a) => a.id === currentActivityId
+        );
+
+        return (
+          <div
+            ref={containerRef}
+            className={`${isFullscreen ? "fixed inset-0" : "min-h-screen"} flex items-center justify-center p-4 bg-gray-50`}
+          >
+            <div
+              className={`bg-white rounded-xl shadow-lg ${
+                isFullscreen
+                  ? "w-full h-full max-w-none flex flex-col"
+                  : `w-full ${showAdvancedSettings || showActivities ? "max-w-none" : "max-w-md"}`
+              } ${showAdvancedSettings || showActivities ? "p-6" : "p-0"}`}
+            >
+              {/* Översta panelen med knappar */}
+              <div className="flex justify-between items-center p-6">
+                <h1 className={`${isFullscreen ? "text-4xl" : "text-2xl"} font-bold text-blue-600`}>
+                  Fokustimer
+                </h1>
+                <div className="flex gap-2">
+                  {/* Ljud av/på */}
+                  <button
+                    onClick={() =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        soundEnabled: !prev.soundEnabled,
+                      }))
+                    }
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    {settings.soundEnabled ? "🔊" : "🔇"}
+                  </button>
+                  {/* Helskärm */}
+                  <button
+                    onClick={toggleFullscreen}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    {isFullscreen ? "⤢" : "⃞"}
+                  </button>
+                  {/* Visa/göm aktivitetslista */}
+                  <button
+                    onClick={() => setShowActivities(!showActivities)}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    📋
+                  </button>
+                  {/* Visa/göm avancerade inställningar */}
+                  <button
+                    onClick={() =>
+                      setShowAdvancedSettings(!showAdvancedSettings)
+                    }
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    ⚙️
+                  </button>
+                </div>
+              </div>
+
+              {/*
+                ----------------------------------------------------------
+                Del 1: Om man valt att visa aktivitetslistan (showActivities)
+                ----------------------------------------------------------
+              */}
+              {showActivities && !showAdvancedSettings && (
+                <div className={`flex flex-col md:flex-row gap-6 h-full ${isFullscreen ? "p-6" : ""}`}>
+                  <div className={`w-full md:w-64 ${isFullscreen ? "h-[calc(100vh-100px)]" : ""} p-4 bg-gray-50 rounded-lg overflow-y-auto`}>
+                    
+                    {/* Visa total återstående tid om inställningen är på */}
+                    {settings.showRemainingTimeInList &&
+                      (() => {
+                        const currentIndex = settings.activities.findIndex(
+                          (a) => a.id === currentActivityId
+                        );
+                        const remainingTime =
+                          currentIndex >= 0
+                            ? timeLeft +
+                              settings.activities
+                                .slice(currentIndex + 1)
+                                .reduce((acc, act) => acc + act.duration, 0)
+                            : 0;
+                        return (
+                          <div className="mb-4 text-center font-bold text-lg">
+                            Tid kvar: {formatTime(remainingTime)}
+                          </div>
+                        );
+                      })()}
+
+                    <h2 className="text-xl font-bold mb-4">Aktivitetslista</h2>
+                    {settings.activities.map((activity, index) => {
+                      const isCurrent = activity.id === currentActivityId;
+                      // Om index för currentActivityId är större än index => redan avklarad
+                      const isCompleted =
+                        settings.activities.findIndex(
+                          (a) => a.id === currentActivityId
+                        ) > index;
+                      return (
+                        <div
+                          key={activity.id}
+                          className={`p-3 mb-2 rounded-lg transition-all duration-200 ${
+                            isCompleted
+                              ? "bg-gray-200 opacity-50 line-through"
+                              : isCurrent
+                              ? "border-4 border-blue-500"
+                              : ""
+                          }`}
+                          style={{
+                            backgroundColor: !isCompleted ? activity.color : undefined,
+                            color: !isCompleted ? activity.textColor : undefined,
+                          }}
+                        >
+                          <span className="font-medium">{activity.name}</span>
+                          <span className="block text-sm">
+                            {(() => {
+                              const minutes = activity.duration / 60;
+                              return minutes % 1 === 0
+                                ? `${minutes} min`
+                                : `${minutes.toFixed(1).replace(".", ",")} min`;
+                            })()}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    <button
+                      onClick={resetTimer}
+                      className="mt-4 w-full bg-gray-200 hover:bg-gray-300 p-2 rounded-lg"
+                    >
+                      Återställ alla aktiviteter
+                    </button>
+                  </div>
+
+                  {/* Timer-delen när showActivities är true */}
+                  <div className={`flex-1 ${isFullscreen ? "h-[calc(100vh-100px)]" : ""} flex flex-col`}>
+                    <div
+                      className={`text-center p-6 rounded-lg transition-colors duration-300 flex flex-col items-center justify-center flex-1`}
+                      style={{
+                        backgroundColor: currentColor,
+                        color: currentTextColor,
+                      }}
+                    >
+                      <div
+                        className="mb-4 font-semibold"
+                        style={{ fontSize: settings.messageFontSize }}
+                      >
+                        {currentActivity?.name}
+                      </div>
+                      <div
+                        className="font-mono font-bold"
+                        style={{ fontSize: settings.timerFontSize }}
+                      >
+                        {formatTime(timeLeft)}
+                      </div>
+                      {currentActivity?.messages?.length > 0 && (
+                        <div
+                          className="mt-4 italic max-w-2xl mx-auto"
+                          style={{ fontSize: settings.messageFontSize }}
+                        >
+                          {currentActivity.messages[
+                            Math.floor(
+                              Math.random() * currentActivity.messages.length
+                            )
+                          ]}
+                        </div>
+                      )}
+                      {showCurrentTime && (
+                        <div
+                          className="mt-4"
+                          style={{ fontSize: settings.clockFontSize }}
+                        >
+                          {currentTime}
+                        </div>
+                      )}
+                    </div>
+
+                    <div
+                      className={`mt-auto pt-6 flex justify-center gap-4 pb-6 flex-wrap ${
+                        isFullscreen
+                          ? "px-4 md:px-8 sticky bottom-0 bg-white border-t pb-12"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        onClick={() => setShowCurrentTime(!showCurrentTime)}
+                        className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                      >
+                        {showCurrentTime ? "Dölj klocka" : "Visa klocka"}
+                      </button>
+                      <button
+                        onClick={handleStartClick}
+                        className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full ${isRunning ? "bg-gray-400 hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400"} text-gray-800`}
+                      >
+                        {timeLeft <= 0 ? "Starta" : isRunning ? "Pausa" : "Starta"}
+                      </button>
+                      <button
+                        onClick={resetTimer}
+                        className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                      >
+                        Återställ
+                      </button>
+                      <button
+                        onClick={handleSkip}
+                        className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full bg-gray-300 hover:bg-gray-400 text-gray-800`}
+                      >
+                        Hoppa över
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/*
+                ----------------------------------------------------------
+                Del 2: Avancerade inställningar
+                ----------------------------------------------------------
+              */}
+              {showAdvancedSettings && (
+                <div className="settings-container bg-white rounded-lg border border-gray-200">
+                  <div className="flex justify-between items-center p-4 border-b">
+                    <h2 className="text-2xl font-bold">Schemaplanerare</h2>
+                    <button
+                      onClick={() => setShowAdvancedSettings(false)}
+                      className="text-gray-500 hover:text-gray-700 text-2xl p-2"
+                    >
+                      &times;
+                    </button>
+                  </div>
+
+                  <div className="px-4 pb-4 space-y-6">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-semibold mb-2">
+                        Total schematid
+                      </h3>
+                      <div className="text-2xl font-mono">
+                        {Math.floor(totalDuration / 60)} min {totalDuration % 60} sek
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Övergångstid (sekunder)
+                        </span>
+                        <input
+                          type="number"
+                          value={settings.transitionTime}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              transitionTime: parseInt(e.target.value),
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Antal signaler vid avslut
+                        </span>
+                        <input
+                          type="number"
+                          value={settings.beepCount}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              beepCount: parseInt(e.target.value),
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                          min="1"
+                          max="10"
+                        />
+                      </label>
+                      <div className="col-span-2 flex gap-4">
+                        <label className="block flex-1">
+                          <span className="text-gray-700 block mb-2">
+                            Bakgrundsfärg (avslutning)
+                          </span>
+                          <input
+                            type="color"
+                            value={settings.completionColor}
+                            onChange={(e) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                completionColor: e.target.value,
+                              }))
+                            }
+                            className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                          />
+                        </label>
+                        <label className="block flex-1">
+                          <span className="text-gray-700 block mb-2">
+                            Textfärg (avslutning)
+                          </span>
+                          <input
+                            type="color"
+                            value={settings.completionTextColor}
+                            onChange={(e) =>
+                              setSettings((prev) => ({
+                                ...prev,
+                                completionTextColor: e.target.value,
+                              }))
+                            }
+                            className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                          />
+                        </label>
+                      </div>
+                      <label className="flex items-center gap-2 mt-6">
+                        <input
+                          type="checkbox"
+                          checked={settings.fadeTransition}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              fadeTransition: e.target.checked,
+                            }))
+                          }
+                          className="rounded border-gray-300 h-5 w-5"
+                        />
+                        <span className="text-lg">Aktivera färgövergångar</span>
+                      </label>
+                      <label className="flex items-center gap-2 mt-6">
+                        <input
+                          type="checkbox"
+                          checked={settings.autoStart}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              autoStart: e.target.checked,
+                            }))
+                          }
+                          className="rounded border-gray-300 h-5 w-5"
+                        />
+                        <span className="text-lg">Autostart nästa aktivitet</span>
+                      </label>
+                      {/* Ny checkbox för att visa "Tid kvar" i aktivitetslistan */}
+                      <label className="flex items-center gap-2 mt-6">
+                        <input
+                          type="checkbox"
+                          checked={settings.showRemainingTimeInList}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              showRemainingTimeInList: e.target.checked,
+                            }))
+                          }
+                          className="rounded border-gray-300 h-5 w-5"
+                        />
+                        <span className="text-lg">Visa "Tid kvar" i aktivitetslistan</span>
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Avslutningsmeddelande
+                        </span>
+                        <input
+                          type="text"
+                          value={settings.completionMessage}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              completionMessage: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                        />
+                      </label>
+                    </div>
+
+                    {/* Inställningar för teckenstorlekar */}
+                    <div className="grid grid-cols-1 gap-4 mt-4">
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Timer teckenstorlek (t.ex. 3.75rem eller 60px)
+                        </span>
+                        <input
+                          type="text"
+                          value={settings.timerFontSize}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              timerFontSize: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Meddelandetext & aktivitetsnamn (t.ex. 2.5rem eller 40px)
+                        </span>
+                        <input
+                          type="text"
+                          value={settings.messageFontSize}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              messageFontSize: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Klocka teckenstorlek (t.ex. 2.5rem eller 40px)
+                        </span>
+                        <input
+                          type="text"
+                          value={settings.clockFontSize}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              clockFontSize: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                        />
+                      </label>
+                    </div>
+
+                    {/* Tabell över aktiviteter */}
+                    <table className="activity-table w-full border-collapse mt-4">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="border p-3 text-left">Aktivitetens namn</th>
+                          <th className="border p-3 text-left">Tid (min)</th>
+                          <th className="border p-3 text-left">Bakgrundsfärg</th>
+                          <th className="border p-3 text-left">Textfärg</th>
+                          <th className="border p-3 text-left">Meddelanden</th>
+                          <th className="border p-3 text-left">Hantera</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {settings.activities.map((activity, index) => (
+                          <tr key={activity.id} className="hover:bg-gray-50">
+                            <td className="border p-2">
+                              <input
+                                value={activity.name}
+                                onChange={(e) =>
+                                  updateActivity(index, "name", e.target.value)
+                                }
+                                className="activity-input w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
+                                placeholder="Ange aktivitetsnamn"
+                              />
+                            </td>
+                            <td className="border p-2">
+                              <input
+                                type="text"
+                                value={(activity.duration / 60)
+                                  .toString()
+                                  .replace(".", ",")}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(",", ".");
+                                  const minutes = parseFloat(value) || 0;
+                                  updateActivity(
+                                    index,
+                                    "duration",
+                                    Math.round(minutes * 60)
+                                  );
+                                }}
+                                className="activity-input w-full rounded-lg border-gray-300 shadow-sm"
+                                placeholder="Minuter"
+                              />
+                            </td>
+                            <td className="border p-2">
+                              <input
+                                type="color"
+                                value={activity.color}
+                                onChange={(e) =>
+                                  updateActivity(index, "color", e.target.value)
+                                }
+                                className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                              />
+                            </td>
+                            <td className="border p-2">
+                              <input
+                                type="color"
+                                value={activity.textColor}
+                                onChange={(e) =>
+                                  updateActivity(index, "textColor", e.target.value)
+                                }
+                                className="w-full h-10 rounded-lg cursor-pointer border border-gray-300"
+                              />
+                            </td>
+                            <td className="border p-2">
+                              <textarea
+                                value={activity.messages.join("\n")}
+                                onChange={(e) =>
+                                  updateActivity(index, "messages", e.target.value.split("\n"))
+                                }
+                                className="w-full rounded-lg border-gray-300 shadow-sm p-3 h-32 resize-y text-base"
+                                placeholder="Skriv ett meddelande per rad..."
+                                rows="5"
+                              />
+                            </td>
+                            <td className="border p-2 space-y-2">
+                              <div className="flex flex-col gap-2">
+                                {index > 0 && (
+                                  <button
+                                    onClick={() => moveActivity(index, -1)}
+                                    className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-lg"
+                                  >
+                                    ↑ Flytta upp
+                                  </button>
+                                )}
+                                {index < settings.activities.length - 1 && (
+                                  <button
+                                    onClick={() => moveActivity(index, 1)}
+                                    className="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-lg"
+                                  >
+                                    ↓ Flytta ner
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => {
+                                    setSettings((prev) => {
+                                      const newActivities = prev.activities.filter(
+                                        (_, i) => i !== index
+                                      );
+                                      // Om den borttagna aktiviteten är aktuell, uppdatera currentActivityId
+                                      if (prev.activities[index].id === currentActivityId) {
+                                        const firstActivity = newActivities[0];
+                                        if (firstActivity) {
+                                          setCurrentActivityId(firstActivity.id);
+                                          setTimeLeft(firstActivity.duration);
+                                          setCurrentColor(firstActivity.color);
+                                          setCurrentTextColor(firstActivity.textColor);
+                                        } else {
+                                          setCurrentActivityId(null);
+                                        }
+                                      }
+                                      return { ...prev, activities: newActivities };
+                                    });
+                                  }}
+                                  className="bg-red-100 hover:bg-red-200 p-2 rounded-lg text-red-600 text-lg"
+                                >
+                                  ✗ Ta bort
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <div className="flex gap-4 mt-6">
+                      <button
+                        onClick={applyChanges}
+                        className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 text-lg flex-1"
+                      >
+                        ✅ Tillämpa ändringar
+                      </button>
+                      <button
+                        onClick={addActivity}
+                        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 text-lg flex-1"
+                      >
+                        + Lägg till aktivitet
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/*
+                ----------------------------------------------------------
+                Del 3: Huvudvyn (timer) när man INTE visar aktivitetslista 
+                eller avancerade inställningar, men har en aktivitet igång
+                ----------------------------------------------------------
+              */}
+              {!showActivities && !showAdvancedSettings && currentActivityId && (
+                <>
+                  <div
+                    className={`text-center p-6 rounded-lg transition-colors duration-300 flex flex-col items-center justify-center ${isFullscreen ? "h-full flex-grow" : ""}`}
+                    style={{
+                      backgroundColor: currentColor,
+                      color: currentTextColor,
+                    }}
+                  >
+                    <div
+                      className="mb-4 font-semibold"
+                      style={{ fontSize: settings.messageFontSize }}
+                    >
+                      {currentActivity?.name}
+                    </div>
+                    <div
+                      className="font-mono font-bold"
+                      style={{ fontSize: settings.timerFontSize }}
+                    >
+                      {formatTime(timeLeft)}
+                    </div>
+                    {currentActivity?.messages?.length > 0 && (
+                      <div
+                        className="mt-4 italic max-w-2xl mx-auto"
+                        style={{ fontSize: settings.messageFontSize }}
+                      >
+                        {currentActivity.messages[
+                          Math.floor(Math.random() * currentActivity.messages.length)
+                        ]}
+                      </div>
+                    )}
+                    {showCurrentTime && (
+                      <div
+                        className="mt-4"
+                        style={{ fontSize: settings.clockFontSize }}
+                      >
+                        {currentTime}
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    className={`flex justify-center gap-4 pb-6 flex-wrap mt-4 ${
+                      isFullscreen
+                        ? "px-4 md:px-8 sticky bottom-0 bg-white border-t pb-12"
+                        : ""
+                    }`}
+                  >
+                    <button
+                      onClick={() => setShowCurrentTime(!showCurrentTime)}
+                      className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                    >
+                      {showCurrentTime ? "Dölj klocka" : "Visa klocka"}
+                    </button>
+                    <button
+                      onClick={handleStartClick}
+                      className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full ${isRunning ? "bg-gray-400 hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400"} text-gray-800`}
+                    >
+                      {timeLeft <= 0 ? "Starta" : isRunning ? "Pausa" : "Starta"}
+                    </button>
+                    <button
+                      onClick={resetTimer}
+                      className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800`}
+                    >
+                      Återställ
+                    </button>
+                    <button
+                      onClick={handleSkip}
+                      className={`${isFullscreen ? "px-8 py-4 text-xl m-2" : "px-4 py-2 text-sm"} rounded-full bg-gray-300 hover:bg-gray-400 text-gray-800`}
+                    >
+                      Hoppa över
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      ReactDOM.render(<FocusTimer />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
