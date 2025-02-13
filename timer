@@ -74,24 +74,35 @@
           timerFontSize: "3.75rem",
           messageFontSize: "2.5rem",
           clockFontSize: "2.5rem",
+          remainingTimerFontSize: "2rem", // Ny inställning för "Tid Kvar-timern"
           // Ny inställning: visa "Tid kvar" i aktivitetslistan
           showRemainingTimeInList: false,
         };
 
-        const [settings, setSettings] = React.useState(initialSettings);
+        // Läs in sparade inställningar från localStorage om de finns
+        const [settings, setSettings] = React.useState(() => {
+          const savedSettings = localStorage.getItem("focusTimerSettings");
+          return savedSettings ? JSON.parse(savedSettings) : initialSettings;
+        });
+
+        // Spara inställningarna i localStorage när de ändras
+        React.useEffect(() => {
+          localStorage.setItem("focusTimerSettings", JSON.stringify(settings));
+        }, [settings]);
+
         const [currentActivityId, setCurrentActivityId] = React.useState(
-          initialSettings.activities[0]?.id || null
+          settings.activities[0]?.id || null
         );
         const [timeLeft, setTimeLeft] = React.useState(
-          initialSettings.activities[0]?.duration || 0
+          settings.activities[0]?.duration || 0
         );
         const [isRunning, setIsRunning] = React.useState(false);
         const [isTransition, setIsTransition] = React.useState(false);
         const [currentColor, setCurrentColor] = React.useState(
-          initialSettings.activities[0]?.color || "#FFFFFF"
+          settings.activities[0]?.color || "#FFFFFF"
         );
         const [currentTextColor, setCurrentTextColor] = React.useState(
-          initialSettings.activities[0]?.textColor || "#000000"
+          settings.activities[0]?.textColor || "#000000"
         );
         const [showAdvancedSettings, setShowAdvancedSettings] = React.useState(false);
         const [showActivities, setShowActivities] = React.useState(false);
@@ -102,7 +113,7 @@
         const [transitionColors, setTransitionColors] = React.useState(null);
         // Initiera nextPastelIndex med antalet fördefinierade aktiviteter
         const [nextPastelIndex, setNextPastelIndex] = React.useState(
-          initialSettings.activities.length
+          settings.activities.length
         );
         // Ny flagga för att visa avslutningsskärmen
         const [isComplete, setIsComplete] = React.useState(false);
@@ -567,7 +578,10 @@
                                 .reduce((acc, act) => acc + act.duration, 0)
                             : 0;
                         return (
-                          <div className="mb-4 text-center font-bold text-lg">
+                          <div
+                            className="mb-4 text-center font-bold"
+                            style={{ fontSize: settings.remainingTimerFontSize }}
+                          >
                             Tid kvar: {formatTime(remainingTime)}
                           </div>
                         );
@@ -819,7 +833,7 @@
                         />
                         <span className="text-lg">Autostart nästa aktivitet</span>
                       </label>
-                      {/* Ny checkbox för att visa "Tid kvar" i aktivitetslistan */}
+                      {/* Checkbox för att visa "Tid kvar" i aktivitetslistan */}
                       <label className="flex items-center gap-2 mt-6">
                         <input
                           type="checkbox"
@@ -900,6 +914,23 @@
                             setSettings((prev) => ({
                               ...prev,
                               clockFontSize: e.target.value,
+                            }))
+                          }
+                          className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
+                        />
+                      </label>
+                      {/* Ny inställning för "Tid Kvar-timern" */}
+                      <label className="block">
+                        <span className="text-gray-700 block mb-2">
+                          Tid Kvar-timer teckenstorlek (t.ex. 2rem eller 32px)
+                        </span>
+                        <input
+                          type="text"
+                          value={settings.remainingTimerFontSize}
+                          onChange={(e) =>
+                            setSettings((prev) => ({
+                              ...prev,
+                              remainingTimerFontSize: e.target.value,
                             }))
                           }
                           className="w-full rounded-lg border-gray-300 shadow-sm p-2 text-lg"
