@@ -1,0 +1,3711 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173a43">
+<title>Grundämnen · Ett interaktivt kemi­atlas</title>
+<style>
+:root{--paper:#f6f5f0;--surface:#fff;--ink:#17313b;--muted:#53656a;--line:#d8deda;--accent:#176d70;--wash:#e8efeb;--serif:Georgia,'Times New Roman',serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--alkali:#f5d9c5;--alkaline:#efe7bb;--transition:#dbe8eb;--post-transition:#cadfd9;--metalloid:#dce7bf;--nonmetal:#d9e8d0;--halogen:#e2dff1;--noble:#d5e5f2;--lanthanide:#efdce3;--actinide:#e4dce9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 var(--sans)}button,input,select{font:inherit}button,a,input,select,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button{color:inherit}a{color:var(--accent)}[hidden]{display:none!important}:focus-visible{outline:3px solid #a55312;outline-offset:4px}h1,h2,h3,p{margin:0}h1{font:clamp(2.4rem,4.1vw,4.2rem)/1.08 var(--serif);letter-spacing:-.045em}h2{font:1.5rem/1.25 var(--serif)}h3{font-size:1.05rem}p+p{margin-top:.75rem}.heading-period{color:var(--accent)}.masthead{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:24px 3.3vw 20px;border-top:6px solid var(--ink)}.wordmark{display:flex;gap:13px;align-items:center;color:var(--ink);text-decoration:none;font-weight:750;letter-spacing:.1em;font-size:1.2rem}.wordmark small{display:block;font-size:.57rem;letter-spacing:.17em;margin-top:3px}.brand-symbol{border:1.5px solid var(--ink);height:43px;width:43px;display:grid;place-items:center;position:relative;font:29px/1 var(--serif)}.brand-symbol span{position:absolute;top:3px;left:4px;font:9px var(--sans)}.header-tools{display:flex;gap:20px;align-items:center}.mode-switch{display:flex;gap:10px;align-items:center;font-size:.8rem;color:var(--muted)}.mode-switch select{width:auto;background:transparent}.main-nav{display:flex;padding:0 3.3vw;gap:32px;border-bottom:1px solid var(--line)}.main-nav button{border:0;border-bottom:3px solid transparent;background:none;padding:14px 0 13px;font-weight:650;white-space:nowrap}.main-nav button span{font-size:.67rem;font-weight:450;margin-right:7px;color:var(--muted)}.main-nav button.active,.main-nav button[aria-current=page]{border-bottom-color:var(--accent);color:var(--accent)}main{max-width:1920px;padding:42px 3.3vw 60px;margin:auto}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:32px}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.65rem;font-weight:750;color:var(--accent);margin-bottom:11px}.intro{color:var(--muted);margin-top:15px;max-width:65ch}.section-note{font-size:.82rem;color:var(--muted);border-left:1px solid var(--line);padding-left:20px;flex-shrink:0}.toolbar{display:flex;gap:16px;align-items:flex-end;padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:25px}.toolbar label{min-width:160px}.toolbar .search-field{flex:1;max-width:420px}label>span,fieldset legend{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:7px}input,select{border:1px solid #aab9b7;background:var(--surface);padding:10px 12px;min-height:44px;border-radius:3px;color:var(--ink);width:100%;font-size:.85rem}input::placeholder{color:#667676}.quiet-button,.primary-button,.text-button{min-height:44px;border-radius:3px;padding:9px 15px;font-size:.82rem;font-weight:650}.quiet-button{border:1px solid #aab9b7;background:transparent}.quiet-button:hover{background:var(--wash)}.primary-button{border:1px solid var(--accent);background:var(--accent);color:white}.text-button{border:0;background:transparent;color:var(--accent);text-decoration:underline;text-underline-offset:4px}.atlas-layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:25px}.table-caption{display:flex;justify-content:space-between;color:var(--muted);font-size:.68rem;margin-bottom:12px}.table-scroll{overflow-x:auto;padding:3px 3px 9px;margin:-3px}.periodic-table{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:4px;min-width:760px;align-items:stretch}.element,.element-tile{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0;aspect-ratio:.77;border:1px solid #b7c7c5;background:var(--wash);border-radius:2px;padding:3px 1px;transition:background .12s,outline .12s}.element:hover,.element-tile:hover{outline:2px solid var(--accent);outline-offset:0;z-index:1;filter:brightness(.96)}.element.selected,.element-tile.selected,.element[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:0;z-index:2}.element.dimmed,.element-tile.dimmed{opacity:.22}.element .number,.element .atomic-number,.element-tile .number{font-size:.55rem;align-self:flex-start;line-height:1.1;padding-left:3px}.element .symbol,.element-tile .symbol{font-size:clamp(.98rem,1.5vw,1.65rem);font-weight:750;line-height:1.3}.element .name,.element-tile .name{font-size:.43rem;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis}.element .weight,.element .mass{font-size:.42rem;margin-top:3px}.group-number,.group-label,.period-number,.period-label{font-size:.65rem;align-self:center;text-align:center;color:var(--muted)}.table-label{font-size:.65rem;color:var(--muted);align-self:center}.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:17px;font-size:.65rem}.legend-item{display:flex;gap:6px;align-items:center}.legend-swatch,.swatch{width:10px;height:10px;border:1px solid #7e9491;display:inline-block;margin-right:5px}.table-footnote,.small-note{font-size:.75rem;color:var(--muted);margin-top:15px;line-height:1.65}.element-detail{background:#fff;border:1px solid var(--line);border-top:4px solid var(--accent);padding:24px;align-self:start;min-height:410px}.element-detail h2{margin:12px 0}.element-detail p{font-size:.85rem}.empty-symbol{font:5rem/1.2 var(--serif);color:#9bafaa}.reading-key{display:grid;gap:7px;border-top:1px solid var(--line);margin-top:26px;padding-top:20px;font-size:.75rem}.reading-key b{margin-bottom:3px}.detail-symbol,.big-symbol{font-size:5rem;font-weight:700;line-height:1.1}.element-detail dl{margin:20px 0}.element-detail dl>div,.property-row{padding:8px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--line);font-size:.78rem;gap:12px}.element-detail dt{color:var(--muted)}.element-detail dd{margin:0;text-align:right;font-weight:650}.element-detail button{margin-top:10px;width:100%}.compare-tray{margin-top:28px;border-top:1px solid var(--ink);padding-top:19px}.compare-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.compare-heading .eyebrow{margin-bottom:6px}.compare-heading h2{font-size:1.3rem}.muted{color:var(--muted);font-size:.85rem}table{width:100%;border-collapse:collapse;font-size:.85rem}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{font-weight:650}#compare-content{overflow:auto}.model-layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:28px;border-top:1px solid var(--line);padding-top:24px}.model-controls{display:flex;flex-direction:column;gap:18px}.segmented{border:0;padding:0;margin:0;display:flex;gap:0}.segmented legend{margin-bottom:8px}.segmented button{border:1px solid #aab9b7;background:white;padding:10px 18px;min-width:70px}.segmented button[aria-pressed=true]{background:var(--ink);color:white;border-color:var(--ink)}.model-canvas-wrap{border:1px solid var(--line);background:#fff}.model-stage{min-height:440px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}.model-stage svg,.model-stage canvas{max-width:100%;width:100%;height:auto;max-height:620px}.model-caption{padding:20px 26px;border-top:1px solid var(--line);font-size:.9rem}.science-note{margin-top:25px;padding:19px 23px;border-left:3px solid var(--accent);background:var(--wash);font-size:.9rem}.science-note summary{font-weight:650;cursor:pointer}.science-note p{max-width:90ch;margin-top:14px}.practice-layout{display:grid;grid-template-columns:245px 1fr;gap:28px;border-top:1px solid var(--line);padding-top:24px}.practice-sidebar{display:flex;flex-direction:column;gap:18px}.practice-content{background:white;border:1px solid var(--line);padding:clamp(25px,5vw,70px);min-height:350px}.practice-content h2{font-size:2rem;margin-bottom:20px}.practice-content button{padding:14px;min-height:48px;border:1px solid #aab9b7;background:var(--paper);margin:6px;border-radius:3px}.practice-content .correct{background:#d5e8d2}.practice-content .incorrect{background:#f2dfd5}.history-controls{max-width:300px;margin-bottom:35px}.history-timeline{border-left:1px solid #9fafaa;margin-left:70px;padding-left:35px}.history-event,.timeline-item{position:relative;margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid var(--line);max-width:850px}.history-event::before,.timeline-item::before{content:'';position:absolute;width:9px;height:9px;background:var(--accent);border:3px solid var(--paper);outline:1px solid var(--accent);border-radius:50%;left:-43px;top:8px}.history-event h2,.timeline-item h2{margin-bottom:12px}.history-event time,.timeline-date{color:var(--accent);font-weight:700}.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:35px;border-top:1px solid var(--line);padding-top:30px}.teacher-grid article{border-right:1px solid var(--line);padding-right:25px}.teacher-grid article:last-child{border:0}.chapter-number{font:2.5rem var(--serif);color:#7b9c97;display:block;margin-bottom:20px}.teacher-grid h2{margin-bottom:14px}.teacher-grid p{font-size:.9rem}.source-section{margin-top:50px;padding-top:26px;border-top:1px solid var(--ink)}.source-section h2{margin-bottom:20px}.source-section li{margin:10px 0}.site-footer{margin:0 3.3vw;padding:24px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;color:var(--muted);font-size:.66rem;letter-spacing:.06em}.skip-link{position:fixed;top:-80px;left:12px;background:white;padding:15px;z-index:100}.skip-link:focus{top:12px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.projector-mode{font-size:19px}.projector-mode .atlas-layout{grid-template-columns:minmax(0,1fr) 320px}.projector-mode .element .symbol{font-size:1.8rem}.projector-mode .element .name{font-size:.58rem}.projector-mode .element .number{font-size:.7rem}.projector-mode .element-detail p{font-size:1rem}
+@media(min-width:1550px){.atlas-layout{grid-template-columns:minmax(0,1fr) 320px}.element .name{font-size:.57rem}.element .number{font-size:.7rem}.element .weight,.element .mass{font-size:.53rem}}
+@media(max-width:1150px){.atlas-layout{grid-template-columns:1fr}.element-detail{display:block;min-height:0}.periodic-table{min-width:800px}.element .symbol{font-size:1.5rem}.section-note{display:none}.element-detail .empty-symbol{float:left;margin-right:25px}.reading-key{clear:both}.toolbar{flex-wrap:wrap}.toolbar .search-field{flex-basis:100%;max-width:none}.toolbar label{flex:1}.element .name{font-size:.53rem}}
+@media(max-width:650px){.masthead{padding:18px 20px;align-items:flex-start}.wordmark{font-size:.9rem;letter-spacing:.07em}.brand-symbol{width:35px;height:37px;font-size:25px}.wordmark small{font-size:.46rem}.header-tools{gap:8px;flex-direction:column;align-items:flex-end}.mode-switch{font-size:0;gap:0}.mode-switch select{font-size:.7rem;min-height:33px;padding:5px}.header-tools .quiet-button{min-height:30px;padding:3px 8px;font-size:.65rem}.main-nav{gap:23px;padding:0 20px;overflow-x:auto}.main-nav button{font-size:.83rem}.main-nav button span{display:none}main{padding:28px 20px 40px}.section-heading{margin-bottom:25px}.intro{font-size:.9rem}.eyebrow{font-size:.6rem}.toolbar{gap:12px}.toolbar label{min-width:125px}.toolbar .search-field{min-width:100%}.toolbar .quiet-button{width:100%}.table-caption{font-size:.58rem}.periodic-table{min-width:820px}.table-scroll{margin-right:-20px;padding-right:20px}.table-footnote::after{content:' På liten skärm: rulla tabellen i sidled.'}.model-layout,.practice-layout{grid-template-columns:1fr}.model-controls{display:grid;grid-template-columns:1fr 1fr;gap:15px}.model-controls .small-note{grid-column:1/-1}.model-stage{min-height:320px}.model-caption{padding:18px}.teacher-grid{grid-template-columns:1fr;gap:25px}.teacher-grid article{border-right:0;border-bottom:1px solid var(--line);padding-bottom:25px}.chapter-number{float:left;margin:0 20px 0 0;font-size:2rem}.teacher-grid p{clear:both}.history-timeline{margin-left:6px;padding-left:25px}.history-event::before,.timeline-item::before{left:-33px}.site-footer{margin:0 20px;flex-direction:column;gap:8px}.projector-mode .atlas-layout{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media print{.masthead,.main-nav,.toolbar,.site-footer,.header-tools,.compare-tray{display:none!important}body{background:white;color:black}main{padding:0}.atlas-layout{display:block}.element-detail{break-before:page}.periodic-table{min-width:0;gap:2px}.element,.element-tile{print-color-adjust:exact;-webkit-print-color-adjust:exact}.section-heading{margin-bottom:15px}h1{font-size:26pt}.table-scroll{overflow:visible}.element .name{font-size:5pt}.element .symbol{font-size:13pt}.element .number{font-size:6pt}@page{size:A4 landscape;margin:12mm}}
+.table-caption{align-items:center;gap:12px}.table-caption .text-button{min-height:26px;font-size:.68rem;padding:0 4px}.periodic-table.list-mode{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));min-width:0;gap:8px}.list-mode .element,.list-mode .element-tile{grid-column:auto!important;grid-row:auto!important;aspect-ratio:auto;min-height:100px}.list-mode .element .name{font-size:.8rem}.list-mode .group-label,.list-mode .group-number,.list-mode .table-label{display:none}
+/* Atlas application components */
+.periodic-table{grid-template-columns:20px repeat(18,minmax(0,1fr))}.axis-label{font-size:.65rem;line-height:20px;display:flex;align-items:center;justify-content:center;color:var(--muted)}.series-placeholder{font-size:.55rem;border:1px dashed #a6b8b3;display:flex;align-items:center;justify-content:center;color:var(--muted);background:#eef1ed}.element{background:color-mix(in srgb,var(--tile-accent,#176d70) 11%,white);border-color:color-mix(in srgb,var(--tile-accent,#176d70) 38%,white);border-top:3px solid var(--tile-accent,#176d70)}.element.is-filtered{opacity:.16;cursor:default}.element.is-pinned::after{content:'✓';position:absolute;right:3px;top:0;font-size:.65rem;font-weight:800;color:var(--ink)}.legend-item{background:transparent;border:0;min-height:30px;padding:3px 0;cursor:pointer;font:inherit;color:var(--ink)}.legend-item::before{content:'';height:9px;width:9px;background:var(--tile-accent);display:block;border-radius:1px}.legend-item[aria-pressed=true]{text-decoration:underline;text-underline-offset:4px}.detail-top{display:flex;gap:16px;align-items:center}.detail-top .detail-symbol{font-size:3.5rem;color:var(--tile-accent);letter-spacing:-.06em;flex-shrink:0}.detail-top .eyebrow{font-size:.57rem;margin-bottom:3px}.detail-top h2{margin:0 0 3px}.detail-top p:last-child{font-size:.72rem}.property-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;font-size:.72rem;gap:0}.property-grid dt,.property-grid dd{border-bottom:1px solid var(--line);padding:7px 0}.property-grid dd{margin:0;text-align:right;font-weight:600}.element-detail .property-grid{font-size:.68rem}.secondary-button{border:1px solid #9eafaa;background:var(--surface);border-radius:3px;min-height:44px;padding:10px 14px;font:600 .8rem var(--sans)}.secondary-button:hover{background:var(--wash)}.model-note{margin-top:15px;font-size:.75rem;color:var(--muted);border-left:2px solid var(--accent);padding-left:12px}.compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.compare-card{border-left:1px solid var(--line);padding-left:15px}.compare-card:first-child{border:0;padding-left:0}.compare-card h3{margin-bottom:12px}.compare-card button{margin-top:12px}.config-display{padding:35px;width:100%;align-self:stretch}.config-display h2{margin-bottom:25px}.config-formula{font-size:clamp(1.2rem,2vw,2rem);padding:20px 0;line-height:1.7;overflow-wrap:anywhere;border-block:1px solid var(--line)}.orbital-grid{display:flex;flex-wrap:wrap;gap:18px}.orbital-row{display:flex;align-items:center;gap:10px}.orbital-boxes{display:flex;gap:3px}.orbital-box{display:inline-grid;place-items:center;min-width:33px;height:40px;border:1px solid #647e79;font-size:1.3rem}.history-switch{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}.history-switch button,.history-examples button{border:1px solid #aab9b7;border-radius:3px;background:white;min-height:42px;padding:9px 13px;font:600 .8rem var(--sans)}.history-switch button[aria-pressed=true]{background:var(--ink);color:white}.history-examples{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.lesson-card{font-size:.9rem}.lesson-card h2,.lesson-card h3{margin:10px 0 15px}.lesson-card li{margin:8px 0}.practice-choices{display:grid;gap:10px;margin-top:25px}.practice-choices button{text-align:left;margin:0;min-height:50px}.practice-choices button:hover{border-color:var(--accent);background:var(--wash)}.practice-choices button[aria-pressed=true]{border:2px solid var(--accent)}.practice-actions,.process-controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.process-controls button{min-height:40px;padding:8px 12px;border:1px solid #9eafaa;border-radius:3px;background:white}.answer-feedback{margin-top:20px;border-left:3px solid var(--accent);background:var(--wash);padding:16px 20px}.model-stage{padding:20px}.main-nav button:not([aria-current=page]){border-bottom-color:transparent;color:var(--ink)}
+@media(min-width:900px){.projector-mode .masthead{padding-block:10px;border-top-width:4px}.projector-mode .brand-symbol{height:32px;width:32px;font-size:23px}.projector-mode .wordmark{font-size:1rem}.projector-mode .wordmark small{display:none}.projector-mode .main-nav button{padding-block:7px;font-size:.8rem}.projector-mode main{padding-top:17px}.projector-mode .section-heading{margin-bottom:13px}.projector-mode h1{font-size:2.15rem}.projector-mode .section-heading .eyebrow,.projector-mode .section-note{display:none}.projector-mode .intro{margin-top:6px;font-size:.75rem}.projector-mode .toolbar{padding-block:10px;margin-bottom:12px;gap:12px}.projector-mode label>span{font-size:.6rem;margin-bottom:4px}.projector-mode input,.projector-mode select,.projector-mode .quiet-button{min-height:35px;padding:6px 10px;font-size:.75rem}.projector-mode .atlas-layout{grid-template-columns:minmax(0,1fr) 240px;gap:18px}.projector-mode .periodic-table{min-width:0;gap:3px;grid-template-columns:15px repeat(18,minmax(0,1fr))}.projector-mode .element{aspect-ratio:1.08;padding:1px;border-top-width:2px}.projector-mode .element .symbol{font-size:1.14rem;line-height:1.2}.projector-mode .element .number{font-size:.51rem;line-height:1}.projector-mode .element .name{font-size:.39rem}.projector-mode .element .weight{display:none}.projector-mode .axis-label{font-size:.6rem;line-height:15px}.projector-mode .table-caption{margin-bottom:5px}.projector-mode .legend{margin-top:8px;gap:1px 12px;font-size:.56rem}.projector-mode .legend-item{min-height:22px}.projector-mode .table-footnote{margin-top:5px;font-size:.59rem}.projector-mode .element-detail{padding:15px;min-height:0}.projector-mode .detail-top{gap:10px}.projector-mode .detail-top .detail-symbol{font-size:2.8rem}.projector-mode .detail-top h2{font-size:1.25rem}.projector-mode .element-detail .property-grid{margin-block:12px;font-size:.59rem}.projector-mode .property-grid dt,.projector-mode .property-grid dd{padding-block:5px}.projector-mode .element-detail button{font-size:.7rem;min-height:33px;padding:6px}.projector-mode .element-detail p{font-size:.65rem}.projector-mode .compare-tray{margin-top:18px}.projector-mode .table-scroll{padding-bottom:3px}.projector-mode .model-stage{min-height:0}.projector-mode .model-layout{padding-top:12px}.projector-mode .model-stage svg{max-height:340px}}
+@media(max-width:650px){.compare-grid{grid-template-columns:1fr}.compare-card{padding:15px 0 0;border-left:0;border-top:1px solid var(--line)}.config-display{padding:15px}.model-stage{padding:12px}.config-formula{font-size:1.1rem}.property-grid{font-size:.8rem}.teacher-grid{overflow-wrap:anywhere}.table-caption{flex-wrap:wrap}.table-caption .text-button{font-size:.65rem}.periodic-table.list-mode{grid-template-columns:repeat(2,minmax(0,1fr))}.list-mode .axis-label,.list-mode .series-placeholder{display:none}.list-mode .element .name{font-size:.8rem}.list-mode .element .symbol{font-size:1.8rem}.list-mode .element .number{font-size:.7rem}}
+.teacher-grid .lesson-card{border-right:1px solid var(--line);padding-right:25px}.teacher-grid .lesson-card:last-child{border-right:0}.history-examples>p{flex-basis:100%;font-size:.8rem;color:var(--muted)}.model-controls label{min-width:0}.model-controls select{max-width:100%}.config-display,.pm-model{min-width:0}.property-grid dd{overflow-wrap:anywhere;max-width:130px}.practice-content .practice-choices .correct{background:#d5e8d2;border-color:#366b39}.practice-content .practice-choices .incorrect{background:#f2dfd5;border-color:#9c553a}
+@media(max-width:650px){.teacher-grid .lesson-card{border-right:0;border-bottom:1px solid var(--line);padding:0 0 25px}.teacher-grid .lesson-card:last-child{border-bottom:0}.history-controls{max-width:100%}}
+.history-model-panel{margin:18px 0 14px;padding:14px 17px;background:var(--wash);border-left:3px solid var(--accent)}.history-model-graphic svg{display:block;width:min(100%,250px);height:auto;margin:auto}.history-model-panel .small-note{margin-top:4px}.history-type-strip{display:flex;gap:12px;flex-wrap:wrap}.history-element-card{display:grid;min-width:98px;border:1px solid var(--line);padding:8px 12px;background:white}.history-element-card strong{font-size:1.45rem;color:var(--accent)}.history-element-card span{font-size:.76rem}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Hoppa till innehållet</a>
+<header class="masthead">
+  <a class="wordmark" href="#system" aria-label="Grundämnen, startsida"><span class="brand-symbol" aria-hidden="true">H<span>1</span></span><span>GRUNDÄMNEN<small>ETT INTERAKTIVT KEMIATLAS</small></span></a>
+  <div class="header-tools"><label class="mode-switch" for="audience-toggle">Perspektiv <select id="audience-toggle"><option value="student">Elev</option><option value="teacher">Lärare</option></select></label><button id="share-view" class="quiet-button" type="button">Dela vy</button><button id="projector-toggle" class="quiet-button" type="button" aria-pressed="false">Projektor</button></div>
+</header>
+<nav class="main-nav" aria-label="Atlasets delar">
+ <button type="button" data-view="system" class="active" aria-current="page"><span>01</span> Systemet</button>
+ <button type="button" data-view="models"><span>02</span> Modeller</button>
+ <button type="button" data-view="practice"><span>03</span> Öva</button>
+ <button type="button" data-view="history"><span>04</span> Historik</button>
+ <button type="button" data-view="teacher"><span>05</span> Lärarstöd</button>
+</nav>
+<main id="main-content" tabindex="-1">
+<section id="view-system" class="view" aria-labelledby="system-heading">
+ <div class="section-heading"><div><p class="eyebrow">Materia, ordnad efter protoner</p><h1 id="system-heading">Periodiska systemet<span class="heading-period">.</span></h1><p class="intro">118 grundämnen. Mönster som hjälper oss att förstå världen.</p></div><p class="section-note">Välj ett grundämne.<br>Upptäck dess struktur och släktskap.</p></div>
+ <div class="toolbar" role="search"><label class="search-field"><span>Sök grundämne</span><input id="element-search" type="search" autocomplete="off" placeholder="Namn, tecken eller atomnummer" aria-controls="periodic-table"></label><label><span>Visa ämnesgrupp</span><select id="category-filter"><option value="all">Alla grundämnen</option></select></label><label><span>Färglägg efter</span><select id="property-select"><option value="category">Ämnesgrupp</option><option value="electronegativity">Elektronegativitet</option><option value="atomicRadius">Atomradie</option><option value="state">Aggregationstillstånd</option></select></label><button id="reset-filters" type="button" class="quiet-button">Återställ</button></div>
+ <div class="atlas-layout"><div class="table-column"><div class="table-caption"><span><b>Grupper →</b> &nbsp; lodräta kolumner</span><span id="result-count" aria-live="polite">118 grundämnen</span><button id="table-list-toggle" class="text-button" type="button" aria-pressed="false">Visa som lista</button></div><div class="table-scroll" tabindex="0" role="region" aria-label="Periodiska systemet. På liten skärm kan du rulla i sidled."><div id="periodic-table" class="periodic-table" aria-label="Grundämnen ordnade efter atomnummer"></div></div><div id="category-legend" class="legend" aria-label="Färgförklaring"></div><p id="property-note" class="table-footnote">Perioder är vågräta rader. Lantanoider och aktinoider visas under huvudtabellen för att spara plats.</p><section id="compare-tray" class="compare-tray" aria-labelledby="compare-heading"><div class="compare-heading"><div><p class="eyebrow">Se likheter och skillnader</p><h2 id="compare-heading">Jämför grundämnen</h2></div><button id="clear-compare" type="button" class="text-button">Rensa</button></div><div id="compare-content"><p class="muted">Välj ett grundämne och lägg till det i jämförelsen.</p></div></section></div>
+ <aside id="element-detail" class="element-detail" aria-label="Valt grundämne" aria-live="polite"><p class="eyebrow">Börja utforska</p><div class="empty-symbol" aria-hidden="true">?</div><h2>Varje ruta är ett grundämne.</h2><p>Klicka på en ruta för att se atomens uppbyggnad, egenskaper och användning.</p><div class="reading-key"><b>Så läser du en ruta</b><span>Atomnummer = antal protoner</span><span>Kemiskt tecken = ämnets förkortning</span></div></aside></div>
+</section>
+<section id="view-models" class="view" hidden aria-labelledby="models-heading"><div class="section-heading"><div><p class="eyebrow">Från symbol till struktur</p><h1 id="models-heading">Se det osynliga<span class="heading-period">.</span></h1><p class="intro">En modell hjälper oss att tänka. Den är inte en bild av verkligheten.</p></div></div><div class="model-layout"><aside class="model-controls"><label><span>Utforska</span><select id="model-kind"><option value="atom">Atomer</option><option value="ion">Joner</option><option value="molecule">Molekyler</option><option value="process">Processer</option></select></label><label><span>Välj exempel</span><select id="model-preset"></select></label><label><span>Atommodell</span><select id="representation-select"><option value="bohr">Bohrs skalmodell</option><option value="configuration">Elektronkonfiguration</option><option value="orbital">Orbitalmodell</option></select></label><fieldset class="segmented"><legend>Visning</legend><button type="button" data-dimension="2" aria-pressed="true">2D</button><button type="button" data-dimension="3" aria-pressed="false">3D</button></fieldset><button id="model-play" type="button" class="primary-button">Spela / pausa</button><button id="model-reset" type="button" class="quiet-button">Återställ modellen</button><p class="small-note">Bohrs modell är utgångspunkten. Byt perspektiv för att undersöka vad modellen visar och vad den förenklar.</p></aside><div class="model-canvas-wrap"><div id="model-stage" class="model-stage" role="img" aria-label="Interaktiv atommodell"></div><div id="model-caption" class="model-caption" aria-live="polite"></div></div></div><details id="model-nuance" class="science-note"><summary>Gå djupare: vad modellen inte visar</summary><div id="model-nuance-content"><p>Elektroner följer inte bestämda cirkelbanor runt kärnan. Skalen visar tillåtna energinivåer i en förenklad modell. Avstånd, storlekar och färger är inte skalenliga.</p></div></details></section>
+<section id="view-practice" class="view" hidden aria-labelledby="practice-heading"><div class="section-heading"><div><p class="eyebrow">Tänk först. Förklara sedan.</p><h1 id="practice-heading">Pröva din förståelse<span class="heading-period">.</span></h1><p class="intro">Använd mönstren i systemet, inte bara minnet.</p></div></div><div class="practice-layout"><aside class="practice-sidebar"><label><span>Område</span><select id="practice-topic"><option value="structure">Atomens uppbyggnad</option><option value="patterns">Grupper och perioder</option><option value="ions">Joner och elektroner</option><option value="models">Modeller och begränsningar</option></select></label><button id="practice-new" type="button" class="primary-button">Ny fråga</button><p class="small-note">Arbeta enskilt, prata med en kamrat eller diskutera tillsammans i klassen.</p></aside><div id="practice-content" class="practice-content" aria-live="polite"><p class="eyebrow">Undersök en atom</p><h2>Vad berättar atomnumret?</h2><p>Välj ett område för att börja.</p></div></div></section>
+<section id="view-history" class="view" hidden aria-labelledby="history-heading"><div class="section-heading"><div><p class="eyebrow">Vetenskap är ett arbete som fortsätter</p><h1 id="history-heading">Ett system växer fram<span class="heading-period">.</span></h1><p class="intro">Nya observationer förändrar våra modeller av materia.</p></div></div><div class="history-controls"><label><span>Historiskt perspektiv</span><select id="history-era"><option value="all">Hela tidslinjen</option><option value="elements">Grundämnenas ordning</option><option value="models">Atommodeller</option></select></label></div><div id="history-timeline" class="history-timeline"></div><details class="science-note"><summary>Modeller ersätts inte alltid helt</summary><p>En äldre modell kan fortfarande vara användbar för en viss fråga. Vi behöver både förstå vad den hjälper oss att förklara och veta var dess gränser går.</p></details></section>
+<section id="view-teacher" class="view" hidden aria-labelledby="teacher-heading"><div class="section-heading"><div><p class="eyebrow">Undervisa med tydliga perspektiv</p><h1 id="teacher-heading">Lärarstöd<span class="heading-period">.</span></h1><p class="intro">Från gemensam observation till naturvetenskaplig förklaring.</p></div></div><div id="teacher-content" class="teacher-grid"><article><span class="chapter-number">01</span><h2>Börja i systemet</h2><p>Låt eleverna hitta ett ämne de känner igen. Vad visar atomnumret? Vad skiljer två olika grundämnen åt?</p></article><article><span class="chapter-number">02</span><h2>Gör mönstret synligt</h2><p>Jämför ämnen i samma grupp och i samma period. Skilj mellan observation, modell och förklaring.</p></article><article><span class="chapter-number">03</span><h2>Pröva modellens gräns</h2><p>Använd skalmodellen först. Öppna sedan fördjupningen och diskutera varför elektronernas cirklar inte är verkliga banor.</p></article></div><section class="source-section" aria-labelledby="source-heading"><p class="eyebrow">Spårbart innehåll</p><h2 id="source-heading">Källor och vetenskapliga avgränsningar</h2><div id="sources-content"></div></section></section>
+</main><footer class="site-footer"><span>GRUNDÄMNEN <span aria-hidden="true">/</span> Ett interaktivt kemi­atlas</span><span>Upptäck · jämför · förklara</span></footer><div id="status-message" class="sr-only" role="status" aria-live="polite"></div><script>
+// Källgranskade grunddata. Se PERIODIC_SOURCES för villkor, osäkerheter och begränsningar.
+window.PERIODIC_DATA = [
+  {
+    "number": 1,
+    "symbol": "H",
+    "name": "väte",
+    "group": 1,
+    "period": 1,
+    "category": "icke-metall",
+    "block": "s",
+    "state": "gas",
+    "weight": "1.0080",
+    "massNumber": null,
+    "configuration": "1s1",
+    "shells": [
+      1
+    ],
+    "electronegativity": 2.2,
+    "discovered": null
+  },
+  {
+    "number": 2,
+    "symbol": "He",
+    "name": "helium",
+    "group": 18,
+    "period": 1,
+    "category": "ädelgas",
+    "block": "s",
+    "state": "gas",
+    "weight": "4.0026",
+    "massNumber": null,
+    "configuration": "1s2",
+    "shells": [
+      2
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 3,
+    "symbol": "Li",
+    "name": "litium",
+    "group": 1,
+    "period": 2,
+    "category": "alkalimetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "6.94",
+    "massNumber": null,
+    "configuration": "[He] 2s1",
+    "shells": [
+      2,
+      1
+    ],
+    "electronegativity": 0.98,
+    "discovered": null
+  },
+  {
+    "number": 4,
+    "symbol": "Be",
+    "name": "beryllium",
+    "group": 2,
+    "period": 2,
+    "category": "alkalisk jordartsmetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "9.0122",
+    "massNumber": null,
+    "configuration": "[He] 2s2",
+    "shells": [
+      2,
+      2
+    ],
+    "electronegativity": 1.57,
+    "discovered": null
+  },
+  {
+    "number": 5,
+    "symbol": "B",
+    "name": "bor",
+    "group": 13,
+    "period": 2,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": "10.81",
+    "massNumber": null,
+    "configuration": "[He] 2s2 2p1",
+    "shells": [
+      2,
+      3
+    ],
+    "electronegativity": 2.04,
+    "discovered": null
+  },
+  {
+    "number": 6,
+    "symbol": "C",
+    "name": "kol",
+    "group": 14,
+    "period": 2,
+    "category": "icke-metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "12.011",
+    "massNumber": null,
+    "configuration": "[He] 2s2 2p2",
+    "shells": [
+      2,
+      4
+    ],
+    "electronegativity": 2.55,
+    "discovered": null
+  },
+  {
+    "number": 7,
+    "symbol": "N",
+    "name": "kväve",
+    "group": 15,
+    "period": 2,
+    "category": "icke-metall",
+    "block": "p",
+    "state": "gas",
+    "weight": "14.007",
+    "massNumber": null,
+    "configuration": "[He] 2s2 2p3",
+    "shells": [
+      2,
+      5
+    ],
+    "electronegativity": 3.04,
+    "discovered": null
+  },
+  {
+    "number": 8,
+    "symbol": "O",
+    "name": "syre",
+    "group": 16,
+    "period": 2,
+    "category": "icke-metall",
+    "block": "p",
+    "state": "gas",
+    "weight": "15.999",
+    "massNumber": null,
+    "configuration": "[He] 2s2 2p4",
+    "shells": [
+      2,
+      6
+    ],
+    "electronegativity": 3.44,
+    "discovered": null
+  },
+  {
+    "number": 9,
+    "symbol": "F",
+    "name": "fluor",
+    "group": 17,
+    "period": 2,
+    "category": "halogen",
+    "block": "p",
+    "state": "gas",
+    "weight": "18.998",
+    "massNumber": null,
+    "configuration": "[He] 2s2 2p5",
+    "shells": [
+      2,
+      7
+    ],
+    "electronegativity": 3.98,
+    "discovered": null
+  },
+  {
+    "number": 10,
+    "symbol": "Ne",
+    "name": "neon",
+    "group": 18,
+    "period": 2,
+    "category": "ädelgas",
+    "block": "p",
+    "state": "gas",
+    "weight": "20.180",
+    "massNumber": null,
+    "configuration": "[He] 2s2 2p6",
+    "shells": [
+      2,
+      8
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 11,
+    "symbol": "Na",
+    "name": "natrium",
+    "group": 1,
+    "period": 3,
+    "category": "alkalimetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "22.990",
+    "massNumber": null,
+    "configuration": "[Ne] 3s1",
+    "shells": [
+      2,
+      8,
+      1
+    ],
+    "electronegativity": 0.93,
+    "discovered": null
+  },
+  {
+    "number": 12,
+    "symbol": "Mg",
+    "name": "magnesium",
+    "group": 2,
+    "period": 3,
+    "category": "alkalisk jordartsmetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "24.305",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2",
+    "shells": [
+      2,
+      8,
+      2
+    ],
+    "electronegativity": 1.31,
+    "discovered": null
+  },
+  {
+    "number": 13,
+    "symbol": "Al",
+    "name": "aluminium",
+    "group": 13,
+    "period": 3,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "26.982",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2 3p1",
+    "shells": [
+      2,
+      8,
+      3
+    ],
+    "electronegativity": 1.61,
+    "discovered": null
+  },
+  {
+    "number": 14,
+    "symbol": "Si",
+    "name": "kisel",
+    "group": 14,
+    "period": 3,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": "28.085",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2 3p2",
+    "shells": [
+      2,
+      8,
+      4
+    ],
+    "electronegativity": 1.9,
+    "discovered": null
+  },
+  {
+    "number": 15,
+    "symbol": "P",
+    "name": "fosfor",
+    "group": 15,
+    "period": 3,
+    "category": "icke-metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "30.974",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2 3p3",
+    "shells": [
+      2,
+      8,
+      5
+    ],
+    "electronegativity": 2.19,
+    "discovered": null
+  },
+  {
+    "number": 16,
+    "symbol": "S",
+    "name": "svavel",
+    "group": 16,
+    "period": 3,
+    "category": "icke-metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "32.06",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2 3p4",
+    "shells": [
+      2,
+      8,
+      6
+    ],
+    "electronegativity": 2.58,
+    "discovered": null
+  },
+  {
+    "number": 17,
+    "symbol": "Cl",
+    "name": "klor",
+    "group": 17,
+    "period": 3,
+    "category": "halogen",
+    "block": "p",
+    "state": "gas",
+    "weight": "35.45",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2 3p5",
+    "shells": [
+      2,
+      8,
+      7
+    ],
+    "electronegativity": 3.16,
+    "discovered": null
+  },
+  {
+    "number": 18,
+    "symbol": "Ar",
+    "name": "argon",
+    "group": 18,
+    "period": 3,
+    "category": "ädelgas",
+    "block": "p",
+    "state": "gas",
+    "weight": "39.95",
+    "massNumber": null,
+    "configuration": "[Ne] 3s2 3p6",
+    "shells": [
+      2,
+      8,
+      8
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 19,
+    "symbol": "K",
+    "name": "kalium",
+    "group": 1,
+    "period": 4,
+    "category": "alkalimetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "39.098",
+    "massNumber": null,
+    "configuration": "[Ar] 4s1",
+    "shells": [
+      2,
+      8,
+      8,
+      1
+    ],
+    "electronegativity": 0.82,
+    "discovered": null
+  },
+  {
+    "number": 20,
+    "symbol": "Ca",
+    "name": "kalcium",
+    "group": 2,
+    "period": 4,
+    "category": "alkalisk jordartsmetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "40.078",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2",
+    "shells": [
+      2,
+      8,
+      8,
+      2
+    ],
+    "electronegativity": 1,
+    "discovered": null
+  },
+  {
+    "number": 21,
+    "symbol": "Sc",
+    "name": "skandium",
+    "group": 3,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "44.956",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d1",
+    "shells": [
+      2,
+      8,
+      9,
+      2
+    ],
+    "electronegativity": 1.36,
+    "discovered": null
+  },
+  {
+    "number": 22,
+    "symbol": "Ti",
+    "name": "titan",
+    "group": 4,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "47.867",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d2",
+    "shells": [
+      2,
+      8,
+      10,
+      2
+    ],
+    "electronegativity": 1.54,
+    "discovered": null
+  },
+  {
+    "number": 23,
+    "symbol": "V",
+    "name": "vanadin",
+    "group": 5,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "50.942",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d3",
+    "shells": [
+      2,
+      8,
+      11,
+      2
+    ],
+    "electronegativity": 1.63,
+    "discovered": null
+  },
+  {
+    "number": 24,
+    "symbol": "Cr",
+    "name": "krom",
+    "group": 6,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "51.996",
+    "massNumber": null,
+    "configuration": "[Ar] 3d5 4s1",
+    "shells": [
+      2,
+      8,
+      13,
+      1
+    ],
+    "electronegativity": 1.66,
+    "discovered": null
+  },
+  {
+    "number": 25,
+    "symbol": "Mn",
+    "name": "mangan",
+    "group": 7,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "54.938",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d5",
+    "shells": [
+      2,
+      8,
+      13,
+      2
+    ],
+    "electronegativity": 1.55,
+    "discovered": null
+  },
+  {
+    "number": 26,
+    "symbol": "Fe",
+    "name": "järn",
+    "group": 8,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "55.845",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d6",
+    "shells": [
+      2,
+      8,
+      14,
+      2
+    ],
+    "electronegativity": 1.83,
+    "discovered": null
+  },
+  {
+    "number": 27,
+    "symbol": "Co",
+    "name": "kobolt",
+    "group": 9,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "58.933",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d7",
+    "shells": [
+      2,
+      8,
+      15,
+      2
+    ],
+    "electronegativity": 1.88,
+    "discovered": null
+  },
+  {
+    "number": 28,
+    "symbol": "Ni",
+    "name": "nickel",
+    "group": 10,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "58.693",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d8",
+    "shells": [
+      2,
+      8,
+      16,
+      2
+    ],
+    "electronegativity": 1.91,
+    "discovered": null
+  },
+  {
+    "number": 29,
+    "symbol": "Cu",
+    "name": "koppar",
+    "group": 11,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "63.546",
+    "massNumber": null,
+    "configuration": "[Ar] 4s1 3d10",
+    "shells": [
+      2,
+      8,
+      18,
+      1
+    ],
+    "electronegativity": 1.9,
+    "discovered": null
+  },
+  {
+    "number": 30,
+    "symbol": "Zn",
+    "name": "zink",
+    "group": 12,
+    "period": 4,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "65.38",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10",
+    "shells": [
+      2,
+      8,
+      18,
+      2
+    ],
+    "electronegativity": 1.65,
+    "discovered": null
+  },
+  {
+    "number": 31,
+    "symbol": "Ga",
+    "name": "gallium",
+    "group": 13,
+    "period": 4,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "69.723",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10 4p1",
+    "shells": [
+      2,
+      8,
+      18,
+      3
+    ],
+    "electronegativity": 1.81,
+    "discovered": null
+  },
+  {
+    "number": 32,
+    "symbol": "Ge",
+    "name": "germanium",
+    "group": 14,
+    "period": 4,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": "72.630",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10 4p2",
+    "shells": [
+      2,
+      8,
+      18,
+      4
+    ],
+    "electronegativity": 2.01,
+    "discovered": null
+  },
+  {
+    "number": 33,
+    "symbol": "As",
+    "name": "arsenik",
+    "group": 15,
+    "period": 4,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": "74.922",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10 4p3",
+    "shells": [
+      2,
+      8,
+      18,
+      5
+    ],
+    "electronegativity": 2.18,
+    "discovered": null
+  },
+  {
+    "number": 34,
+    "symbol": "Se",
+    "name": "selen",
+    "group": 16,
+    "period": 4,
+    "category": "icke-metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "78.971",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10 4p4",
+    "shells": [
+      2,
+      8,
+      18,
+      6
+    ],
+    "electronegativity": 2.55,
+    "discovered": null
+  },
+  {
+    "number": 35,
+    "symbol": "Br",
+    "name": "brom",
+    "group": 17,
+    "period": 4,
+    "category": "halogen",
+    "block": "p",
+    "state": "flytande",
+    "weight": "79.904",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10 4p5",
+    "shells": [
+      2,
+      8,
+      18,
+      7
+    ],
+    "electronegativity": 2.96,
+    "discovered": null
+  },
+  {
+    "number": 36,
+    "symbol": "Kr",
+    "name": "krypton",
+    "group": 18,
+    "period": 4,
+    "category": "ädelgas",
+    "block": "p",
+    "state": "gas",
+    "weight": "83.798",
+    "massNumber": null,
+    "configuration": "[Ar] 4s2 3d10 4p6",
+    "shells": [
+      2,
+      8,
+      18,
+      8
+    ],
+    "electronegativity": 3,
+    "discovered": null
+  },
+  {
+    "number": 37,
+    "symbol": "Rb",
+    "name": "rubidium",
+    "group": 1,
+    "period": 5,
+    "category": "alkalimetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "85.468",
+    "massNumber": null,
+    "configuration": "[Kr] 5s1",
+    "shells": [
+      2,
+      8,
+      18,
+      8,
+      1
+    ],
+    "electronegativity": 0.82,
+    "discovered": null
+  },
+  {
+    "number": 38,
+    "symbol": "Sr",
+    "name": "strontium",
+    "group": 2,
+    "period": 5,
+    "category": "alkalisk jordartsmetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "87.62",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2",
+    "shells": [
+      2,
+      8,
+      18,
+      8,
+      2
+    ],
+    "electronegativity": 0.95,
+    "discovered": null
+  },
+  {
+    "number": 39,
+    "symbol": "Y",
+    "name": "yttrium",
+    "group": 3,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "88.906",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d1",
+    "shells": [
+      2,
+      8,
+      18,
+      9,
+      2
+    ],
+    "electronegativity": 1.22,
+    "discovered": null
+  },
+  {
+    "number": 40,
+    "symbol": "Zr",
+    "name": "zirkonium",
+    "group": 4,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "91.222",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d2",
+    "shells": [
+      2,
+      8,
+      18,
+      10,
+      2
+    ],
+    "electronegativity": 1.33,
+    "discovered": null
+  },
+  {
+    "number": 41,
+    "symbol": "Nb",
+    "name": "niob",
+    "group": 5,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "92.906",
+    "massNumber": null,
+    "configuration": "[Kr] 5s1 4d4",
+    "shells": [
+      2,
+      8,
+      18,
+      12,
+      1
+    ],
+    "electronegativity": 1.6,
+    "discovered": null
+  },
+  {
+    "number": 42,
+    "symbol": "Mo",
+    "name": "molybden",
+    "group": 6,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "95.95",
+    "massNumber": null,
+    "configuration": "[Kr] 5s1 4d5",
+    "shells": [
+      2,
+      8,
+      18,
+      13,
+      1
+    ],
+    "electronegativity": 2.16,
+    "discovered": null
+  },
+  {
+    "number": 43,
+    "symbol": "Tc",
+    "name": "teknetium",
+    "group": 7,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": null,
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d5",
+    "shells": [
+      2,
+      8,
+      18,
+      13,
+      2
+    ],
+    "electronegativity": 1.9,
+    "discovered": null
+  },
+  {
+    "number": 44,
+    "symbol": "Ru",
+    "name": "rutenium",
+    "group": 8,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "101.07",
+    "massNumber": null,
+    "configuration": "[Kr] 5s1 4d7",
+    "shells": [
+      2,
+      8,
+      18,
+      15,
+      1
+    ],
+    "electronegativity": 2.2,
+    "discovered": null
+  },
+  {
+    "number": 45,
+    "symbol": "Rh",
+    "name": "rodium",
+    "group": 9,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "102.91",
+    "massNumber": null,
+    "configuration": "[Kr] 5s1 4d8",
+    "shells": [
+      2,
+      8,
+      18,
+      16,
+      1
+    ],
+    "electronegativity": 2.28,
+    "discovered": null
+  },
+  {
+    "number": 46,
+    "symbol": "Pd",
+    "name": "palladium",
+    "group": 10,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "106.42",
+    "massNumber": null,
+    "configuration": "[Kr] 4d10",
+    "shells": [
+      2,
+      8,
+      18,
+      18
+    ],
+    "electronegativity": 2.2,
+    "discovered": null
+  },
+  {
+    "number": 47,
+    "symbol": "Ag",
+    "name": "silver",
+    "group": 11,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "107.87",
+    "massNumber": null,
+    "configuration": "[Kr] 5s1 4d10",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      1
+    ],
+    "electronegativity": 1.93,
+    "discovered": null
+  },
+  {
+    "number": 48,
+    "symbol": "Cd",
+    "name": "kadmium",
+    "group": 12,
+    "period": 5,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "112.41",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      2
+    ],
+    "electronegativity": 1.69,
+    "discovered": null
+  },
+  {
+    "number": 49,
+    "symbol": "In",
+    "name": "indium",
+    "group": 13,
+    "period": 5,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "114.82",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10 5p1",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      3
+    ],
+    "electronegativity": 1.78,
+    "discovered": null
+  },
+  {
+    "number": 50,
+    "symbol": "Sn",
+    "name": "tenn",
+    "group": 14,
+    "period": 5,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "118.71",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10 5p2",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      4
+    ],
+    "electronegativity": 1.96,
+    "discovered": null
+  },
+  {
+    "number": 51,
+    "symbol": "Sb",
+    "name": "antimon",
+    "group": 15,
+    "period": 5,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": "121.76",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10 5p3",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      5
+    ],
+    "electronegativity": 2.05,
+    "discovered": null
+  },
+  {
+    "number": 52,
+    "symbol": "Te",
+    "name": "tellur",
+    "group": 16,
+    "period": 5,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": "127.60",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10 5p4",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      6
+    ],
+    "electronegativity": 2.1,
+    "discovered": null
+  },
+  {
+    "number": 53,
+    "symbol": "I",
+    "name": "jod",
+    "group": 17,
+    "period": 5,
+    "category": "halogen",
+    "block": "p",
+    "state": "fast",
+    "weight": "126.90",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10 5p5",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      7
+    ],
+    "electronegativity": 2.66,
+    "discovered": null
+  },
+  {
+    "number": 54,
+    "symbol": "Xe",
+    "name": "xenon",
+    "group": 18,
+    "period": 5,
+    "category": "ädelgas",
+    "block": "p",
+    "state": "gas",
+    "weight": "131.29",
+    "massNumber": null,
+    "configuration": "[Kr] 5s2 4d10 5p6",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      8
+    ],
+    "electronegativity": 2.6,
+    "discovered": null
+  },
+  {
+    "number": 55,
+    "symbol": "Cs",
+    "name": "cesium",
+    "group": 1,
+    "period": 6,
+    "category": "alkalimetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "132.91",
+    "massNumber": null,
+    "configuration": "[Xe] 6s1",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      8,
+      1
+    ],
+    "electronegativity": 0.79,
+    "discovered": null
+  },
+  {
+    "number": 56,
+    "symbol": "Ba",
+    "name": "barium",
+    "group": 2,
+    "period": 6,
+    "category": "alkalisk jordartsmetall",
+    "block": "s",
+    "state": "fast",
+    "weight": "137.33",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      8,
+      2
+    ],
+    "electronegativity": 0.89,
+    "discovered": null
+  },
+  {
+    "number": 57,
+    "symbol": "La",
+    "name": "lantan",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "138.91",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 5d1",
+    "shells": [
+      2,
+      8,
+      18,
+      18,
+      9,
+      2
+    ],
+    "electronegativity": 1.1,
+    "discovered": null
+  },
+  {
+    "number": 58,
+    "symbol": "Ce",
+    "name": "cerium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "140.12",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f1 5d1",
+    "shells": [
+      2,
+      8,
+      18,
+      19,
+      9,
+      2
+    ],
+    "electronegativity": 1.12,
+    "discovered": null
+  },
+  {
+    "number": 59,
+    "symbol": "Pr",
+    "name": "praseodym",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "140.91",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f3",
+    "shells": [
+      2,
+      8,
+      18,
+      21,
+      8,
+      2
+    ],
+    "electronegativity": 1.13,
+    "discovered": null
+  },
+  {
+    "number": 60,
+    "symbol": "Nd",
+    "name": "neodym",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "144.24",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f4",
+    "shells": [
+      2,
+      8,
+      18,
+      22,
+      8,
+      2
+    ],
+    "electronegativity": 1.14,
+    "discovered": null
+  },
+  {
+    "number": 61,
+    "symbol": "Pm",
+    "name": "prometium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 145,
+    "configuration": "[Xe] 6s2 4f5",
+    "shells": [
+      2,
+      8,
+      18,
+      23,
+      8,
+      2
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 62,
+    "symbol": "Sm",
+    "name": "samarium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "150.36",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f6",
+    "shells": [
+      2,
+      8,
+      18,
+      24,
+      8,
+      2
+    ],
+    "electronegativity": 1.17,
+    "discovered": null
+  },
+  {
+    "number": 63,
+    "symbol": "Eu",
+    "name": "europium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "151.96",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f7",
+    "shells": [
+      2,
+      8,
+      18,
+      25,
+      8,
+      2
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 64,
+    "symbol": "Gd",
+    "name": "gadolinium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "157.25",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f7 5d1",
+    "shells": [
+      2,
+      8,
+      18,
+      25,
+      9,
+      2
+    ],
+    "electronegativity": 1.2,
+    "discovered": null
+  },
+  {
+    "number": 65,
+    "symbol": "Tb",
+    "name": "terbium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "158.93",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f9",
+    "shells": [
+      2,
+      8,
+      18,
+      27,
+      8,
+      2
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 66,
+    "symbol": "Dy",
+    "name": "dysprosium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "162.50",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f10",
+    "shells": [
+      2,
+      8,
+      18,
+      28,
+      8,
+      2
+    ],
+    "electronegativity": 1.22,
+    "discovered": null
+  },
+  {
+    "number": 67,
+    "symbol": "Ho",
+    "name": "holmium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "164.93",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f11",
+    "shells": [
+      2,
+      8,
+      18,
+      29,
+      8,
+      2
+    ],
+    "electronegativity": 1.23,
+    "discovered": null
+  },
+  {
+    "number": 68,
+    "symbol": "Er",
+    "name": "erbium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "167.26",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f12",
+    "shells": [
+      2,
+      8,
+      18,
+      30,
+      8,
+      2
+    ],
+    "electronegativity": 1.24,
+    "discovered": null
+  },
+  {
+    "number": 69,
+    "symbol": "Tm",
+    "name": "tulium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "168.93",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f13",
+    "shells": [
+      2,
+      8,
+      18,
+      31,
+      8,
+      2
+    ],
+    "electronegativity": 1.25,
+    "discovered": null
+  },
+  {
+    "number": 70,
+    "symbol": "Yb",
+    "name": "ytterbium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "173.05",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      8,
+      2
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 71,
+    "symbol": "Lu",
+    "name": "lutetium",
+    "group": null,
+    "period": 6,
+    "category": "lantanoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "174.97",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      9,
+      2
+    ],
+    "electronegativity": 1.27,
+    "discovered": null
+  },
+  {
+    "number": 72,
+    "symbol": "Hf",
+    "name": "hafnium",
+    "group": 4,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "178.49",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d2",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      10,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 73,
+    "symbol": "Ta",
+    "name": "tantal",
+    "group": 5,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "180.95",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d3",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      11,
+      2
+    ],
+    "electronegativity": 1.5,
+    "discovered": null
+  },
+  {
+    "number": 74,
+    "symbol": "W",
+    "name": "volfram",
+    "group": 6,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "183.84",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d4",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      12,
+      2
+    ],
+    "electronegativity": 2.36,
+    "discovered": null
+  },
+  {
+    "number": 75,
+    "symbol": "Re",
+    "name": "rhenium",
+    "group": 7,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "186.21",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d5",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      13,
+      2
+    ],
+    "electronegativity": 1.9,
+    "discovered": null
+  },
+  {
+    "number": 76,
+    "symbol": "Os",
+    "name": "osmium",
+    "group": 8,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "190.23",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d6",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      14,
+      2
+    ],
+    "electronegativity": 2.2,
+    "discovered": null
+  },
+  {
+    "number": 77,
+    "symbol": "Ir",
+    "name": "iridium",
+    "group": 9,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "192.22",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d7",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      15,
+      2
+    ],
+    "electronegativity": 2.2,
+    "discovered": null
+  },
+  {
+    "number": 78,
+    "symbol": "Pt",
+    "name": "platina",
+    "group": 10,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "195.08",
+    "massNumber": null,
+    "configuration": "[Xe] 6s1 4f14 5d9",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      17,
+      1
+    ],
+    "electronegativity": 2.28,
+    "discovered": null
+  },
+  {
+    "number": 79,
+    "symbol": "Au",
+    "name": "guld",
+    "group": 11,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "fast",
+    "weight": "196.97",
+    "massNumber": null,
+    "configuration": "[Xe] 6s1 4f14 5d10",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      1
+    ],
+    "electronegativity": 2.54,
+    "discovered": null
+  },
+  {
+    "number": 80,
+    "symbol": "Hg",
+    "name": "kvicksilver",
+    "group": 12,
+    "period": 6,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "flytande",
+    "weight": "200.59",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d10",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      2
+    ],
+    "electronegativity": 2,
+    "discovered": null
+  },
+  {
+    "number": 81,
+    "symbol": "Tl",
+    "name": "tallium",
+    "group": 13,
+    "period": 6,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "204.38",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d10 6p1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      3
+    ],
+    "electronegativity": 1.62,
+    "discovered": null
+  },
+  {
+    "number": 82,
+    "symbol": "Pb",
+    "name": "bly",
+    "group": 14,
+    "period": 6,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "207.2",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d10 6p2",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      4
+    ],
+    "electronegativity": 2.33,
+    "discovered": null
+  },
+  {
+    "number": 83,
+    "symbol": "Bi",
+    "name": "vismut",
+    "group": 15,
+    "period": 6,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "fast",
+    "weight": "208.98",
+    "massNumber": null,
+    "configuration": "[Xe] 6s2 4f14 5d10 6p3",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      5
+    ],
+    "electronegativity": 2.02,
+    "discovered": null
+  },
+  {
+    "number": 84,
+    "symbol": "Po",
+    "name": "polonium",
+    "group": 16,
+    "period": 6,
+    "category": "halvmetall",
+    "block": "p",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 209,
+    "configuration": "[Xe] 6s2 4f14 5d10 6p4",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      6
+    ],
+    "electronegativity": 2,
+    "discovered": null
+  },
+  {
+    "number": 85,
+    "symbol": "At",
+    "name": "astat",
+    "group": 17,
+    "period": 6,
+    "category": "halogen",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 210,
+    "configuration": "[Xe] 6s2 4f14 5d10 6p5",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      7
+    ],
+    "electronegativity": 2.2,
+    "discovered": 1940
+  },
+  {
+    "number": 86,
+    "symbol": "Rn",
+    "name": "radon",
+    "group": 18,
+    "period": 6,
+    "category": "ädelgas",
+    "block": "p",
+    "state": "gas",
+    "weight": null,
+    "massNumber": 222,
+    "configuration": "[Xe] 6s2 4f14 5d10 6p6",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      8
+    ],
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 87,
+    "symbol": "Fr",
+    "name": "francium",
+    "group": 1,
+    "period": 7,
+    "category": "alkalimetall",
+    "block": "s",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 223,
+    "configuration": "[Rn] 7s1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      8,
+      1
+    ],
+    "electronegativity": 0.7,
+    "discovered": 1939
+  },
+  {
+    "number": 88,
+    "symbol": "Ra",
+    "name": "radium",
+    "group": 2,
+    "period": 7,
+    "category": "alkalisk jordartsmetall",
+    "block": "s",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 226,
+    "configuration": "[Rn] 7s2",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      8,
+      2
+    ],
+    "electronegativity": 0.9,
+    "discovered": null
+  },
+  {
+    "number": 89,
+    "symbol": "Ac",
+    "name": "aktinium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 227,
+    "configuration": "[Rn] 7s2 6d1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      9,
+      2
+    ],
+    "electronegativity": 1.1,
+    "discovered": null
+  },
+  {
+    "number": 90,
+    "symbol": "Th",
+    "name": "torium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "232.04",
+    "massNumber": null,
+    "configuration": "[Rn] 7s2 6d2",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      10,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 91,
+    "symbol": "Pa",
+    "name": "protaktinium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "231.04",
+    "massNumber": null,
+    "configuration": "[Rn] 7s2 5f2 6d1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      20,
+      9,
+      2
+    ],
+    "electronegativity": 1.5,
+    "discovered": null
+  },
+  {
+    "number": 92,
+    "symbol": "U",
+    "name": "uran",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": "238.03",
+    "massNumber": null,
+    "configuration": "[Rn] 7s2 5f3 6d1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      21,
+      9,
+      2
+    ],
+    "electronegativity": 1.38,
+    "discovered": null
+  },
+  {
+    "number": 93,
+    "symbol": "Np",
+    "name": "neptunium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 237,
+    "configuration": "[Rn] 7s2 5f4 6d1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      22,
+      9,
+      2
+    ],
+    "electronegativity": 1.36,
+    "discovered": null
+  },
+  {
+    "number": 94,
+    "symbol": "Pu",
+    "name": "plutonium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 244,
+    "configuration": "[Rn] 7s2 5f6",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      24,
+      8,
+      2
+    ],
+    "electronegativity": 1.28,
+    "discovered": null
+  },
+  {
+    "number": 95,
+    "symbol": "Am",
+    "name": "americium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 243,
+    "configuration": "[Rn] 7s2 5f7",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      25,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 96,
+    "symbol": "Cm",
+    "name": "curium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 247,
+    "configuration": "[Rn] 7s2 5f7 6d1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      25,
+      9,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 97,
+    "symbol": "Bk",
+    "name": "berkelium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 247,
+    "configuration": "[Rn] 7s2 5f9",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      27,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 98,
+    "symbol": "Cf",
+    "name": "californium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 251,
+    "configuration": "[Rn] 7s2 5f10",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      28,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 99,
+    "symbol": "Es",
+    "name": "einsteinium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "fast",
+    "weight": null,
+    "massNumber": 252,
+    "configuration": "[Rn] 7s2 5f11",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      29,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 100,
+    "symbol": "Fm",
+    "name": "fermium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 257,
+    "configuration": "[Rn] 5f12 7s2",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      30,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 101,
+    "symbol": "Md",
+    "name": "mendelevium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 258,
+    "configuration": "[Rn] 7s2 5f13",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      31,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 102,
+    "symbol": "No",
+    "name": "nobelium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 259,
+    "configuration": "[Rn] 7s2 5f14",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      8,
+      2
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 103,
+    "symbol": "Lr",
+    "name": "lawrencium",
+    "group": null,
+    "period": 7,
+    "category": "aktinoid",
+    "block": "f",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": "[Rn] 5f14 7s2 7p1",
+    "shells": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      8,
+      3
+    ],
+    "electronegativity": 1.3,
+    "discovered": null
+  },
+  {
+    "number": 104,
+    "symbol": "Rf",
+    "name": "rutherfordium",
+    "group": 4,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 267,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 105,
+    "symbol": "Db",
+    "name": "dubnium",
+    "group": 5,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 268,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 106,
+    "symbol": "Sg",
+    "name": "seaborgium",
+    "group": 6,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 107,
+    "symbol": "Bh",
+    "name": "bohrium",
+    "group": 7,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 108,
+    "symbol": "Hs",
+    "name": "hassium",
+    "group": 8,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 109,
+    "symbol": "Mt",
+    "name": "meitnerium",
+    "group": 9,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 110,
+    "symbol": "Ds",
+    "name": "darmstadtium",
+    "group": 10,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 281,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 111,
+    "symbol": "Rg",
+    "name": "röntgenium",
+    "group": 11,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 282,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 112,
+    "symbol": "Cn",
+    "name": "copernicium",
+    "group": 12,
+    "period": 7,
+    "category": "övergångsmetall",
+    "block": "d",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 285,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 113,
+    "symbol": "Nh",
+    "name": "nihonium",
+    "group": 13,
+    "period": 7,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 114,
+    "symbol": "Fl",
+    "name": "flerovium",
+    "group": 14,
+    "period": 7,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 115,
+    "symbol": "Mc",
+    "name": "moskovium",
+    "group": 15,
+    "period": 7,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 116,
+    "symbol": "Lv",
+    "name": "livermorium",
+    "group": 16,
+    "period": 7,
+    "category": "övrig metall",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": null,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 117,
+    "symbol": "Ts",
+    "name": "tenness",
+    "group": 17,
+    "period": 7,
+    "category": "halogen",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 294,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  },
+  {
+    "number": 118,
+    "symbol": "Og",
+    "name": "oganesson",
+    "group": 18,
+    "period": 7,
+    "category": "ädelgas",
+    "block": "p",
+    "state": "okänt",
+    "weight": null,
+    "massNumber": 294,
+    "configuration": null,
+    "shells": null,
+    "electronegativity": null,
+    "discovered": null
+  }
+];
+
+window.PERIODIC_SOURCES = {
+  "version": "2026-11-18",
+  "schemaVersion": 1,
+  "conditions": {
+    "state": "20 °C (293,15 K), 100 kPa; rena grundämnen. Okänt betyder att makroskopiskt aggregationstillstånd inte är verifierat här, inte att ämnet saknas.",
+    "electronegativity": "Pauling-skalan; null betyder att ett värde inte anges i källdataseten.",
+    "weight": "Avrundad standardatomvikt enligt CIAAW 2024, dimensionslös. Inte en isotopmassa. Osäkerheter finns i weightUncertainties.",
+    "massNumber": "Masstal för isotop enligt CIAAW/NUBASE2020. Inte standardatomvikt eller uppmätt isotopmassa. Null där standardatomvikt finns eller flera alternativ anges.",
+    "configuration": "Källredovisad grundtillståndskonfiguration för neutral atom, inte förenklad påfyllnadsregel. PubChem 1–102, NIST-korrigering för Lr. 104–118 utelämnade eftersom ej verifierade här.",
+    "shells": "Härledda genom att expandera ädelgaskärnan i configuration och summera elektroner per huvudkvanttal. Inte en modell av elektronernas banor.",
+    "discovered": "Endast individuellt källkontrollerat upptäcktsår; null betyder inte att upptäcktsåret är okänt för vetenskapen.",
+    "block": "Pedagogiska tabellblock: båda lossbrutna serierna klassas som f. Detta är en layoutkonvention, inte ett påstående att den sist tillkomna elektronen alltid är en f-elektron.",
+    "category": "Pedagogiska kategorier från PubChem. Gruppfamilj för supertunga ämnen anger tabellplacering, inte uppmätt reaktivitet.",
+    "group": "IUPAC 1–18. Grupp null för hela La–Lu och Ac–Lr i denna lossbrutna layout; period fortfarande 6 respektive 7. Tar inte ställning i grupp-3-frågan."
+  },
+  "references": [
+    {
+      "id": "pubchem",
+      "title": "PubChem Periodic Table, maskinläsbar dataset",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON",
+      "fields": [
+        "number",
+        "symbol",
+        "category",
+        "configuration (1–102)",
+        "electronegativity",
+        "state med försiktighetsundantag"
+      ]
+    },
+    {
+      "id": "ciaaw",
+      "title": "CIAAW Abridged Standard Atomic Weights 2024",
+      "url": "https://ciaaw.org/abridged-atomic-weights.htm",
+      "fields": [
+        "weight",
+        "weightUncertainties"
+      ]
+    },
+    {
+      "id": "ciaaw-full",
+      "title": "CIAAW Standard Atomic Weights 2024, full precision",
+      "url": "https://ciaaw.org/atomic-weights.htm"
+    },
+    {
+      "id": "ciaaw-isotopes",
+      "title": "CIAAW Radioactive Elements, NUBASE2020; uppdaterad 2022-03-29",
+      "url": "https://ciaaw.org/radioactive-elements.htm",
+      "fields": [
+        "massNumber",
+        "massNumberAlternatives"
+      ]
+    },
+    {
+      "id": "swedish",
+      "title": "Svenska Kemisamfundets Nomenklaturutskott: Fickfakta",
+      "url": "https://kemisamfundet.se/fick_app/",
+      "fields": [
+        "name"
+      ]
+    },
+    {
+      "id": "iupac",
+      "title": "IUPAC Periodic Table of Elements",
+      "url": "https://iupac.org/what-we-do/periodic-table-of-elements/",
+      "fields": [
+        "group",
+        "period"
+      ]
+    },
+    {
+      "id": "nist-lr",
+      "title": "NIST Elemental Data Index: Lawrencium",
+      "url": "https://physics.nist.gov/cgi-bin/Elements/elInfo.pl?element=103",
+      "fields": [
+        "configuration (103)"
+      ]
+    },
+    {
+      "id": "rsc-at",
+      "title": "Royal Society of Chemistry: Astatine",
+      "url": "https://periodic-table.rsc.org/element/85/astatine",
+      "fields": [
+        "discovered (85)",
+        "state försiktighetsundantag (85)"
+      ]
+    },
+    {
+      "id": "rsc-fr",
+      "title": "Royal Society of Chemistry: Francium",
+      "url": "https://periodic-table.rsc.org/element/87/francium",
+      "fields": [
+        "discovered (87)"
+      ]
+    }
+  ],
+  "weightUncertainties": {
+    "1": "0.0002",
+    "2": "0.0001",
+    "3": "0.06",
+    "4": "0.0001",
+    "5": "0.02",
+    "6": "0.002",
+    "7": "0.001",
+    "8": "0.001",
+    "9": "0.001",
+    "10": "0.001",
+    "11": "0.001",
+    "12": "0.002",
+    "13": "0.001",
+    "14": "0.001",
+    "15": "0.001",
+    "16": "0.02",
+    "17": "0.01",
+    "18": "0.16",
+    "19": "0.001",
+    "20": "0.004",
+    "21": "0.001",
+    "22": "0.001",
+    "23": "0.001",
+    "24": "0.001",
+    "25": "0.001",
+    "26": "0.002",
+    "27": "0.001",
+    "28": "0.001",
+    "29": "0.003",
+    "30": "0.02",
+    "31": "0.001",
+    "32": "0.008",
+    "33": "0.001",
+    "34": "0.008",
+    "35": "0.003",
+    "36": "0.002",
+    "37": "0.001",
+    "38": "0.01",
+    "39": "0.001",
+    "40": "0.003",
+    "41": "0.001",
+    "42": "0.01",
+    "44": "0.02",
+    "45": "0.01",
+    "46": "0.01",
+    "47": "0.01",
+    "48": "0.01",
+    "49": "0.01",
+    "50": "0.01",
+    "51": "0.01",
+    "52": "0.03",
+    "53": "0.01",
+    "54": "0.01",
+    "55": "0.01",
+    "56": "0.01",
+    "57": "0.01",
+    "58": "0.01",
+    "59": "0.01",
+    "60": "0.01",
+    "62": "0.02",
+    "63": "0.01",
+    "64": "0.01",
+    "65": "0.01",
+    "66": "0.01",
+    "67": "0.01",
+    "68": "0.01",
+    "69": "0.01",
+    "70": "0.02",
+    "71": "0.01",
+    "72": "0.01",
+    "73": "0.01",
+    "74": "0.01",
+    "75": "0.01",
+    "76": "0.03",
+    "77": "0.01",
+    "78": "0.02",
+    "79": "0.01",
+    "80": "0.01",
+    "81": "0.01",
+    "82": "1.1",
+    "83": "0.01",
+    "90": "0.01",
+    "91": "0.01",
+    "92": "0.01"
+  },
+  "massNumberAlternatives": {
+    "43": [
+      97,
+      98
+    ],
+    "103": [
+      262,
+      266
+    ],
+    "106": [
+      269,
+      271
+    ],
+    "107": [
+      270,
+      274
+    ],
+    "108": [
+      269,
+      270
+    ],
+    "109": [
+      277,
+      278
+    ],
+    "113": [
+      285,
+      286
+    ],
+    "114": [
+      289,
+      290
+    ],
+    "115": [
+      288,
+      289,
+      290
+    ],
+    "116": [
+      291,
+      292,
+      293
+    ]
+  },
+  "qualityNotes": [
+    "PubChems AtomicWeight används inte: dess värden blandar standardatomvikter och isotopmassor.",
+    "PubChems Lr-konfiguration med 6d1 ersatt av NIST:s 7p1.",
+    "Upptäcktsår från PubChem importeras inte generellt; flera kontrollerbara avvikelser förekommer.",
+    "Aggregationstillstånd för At, Fr och Z≥100 lämnas okänt i stället för att prognoser presenteras som mätningar.",
+    "Ingen kod eller UI från det äldre periodiska systemet har återanvänts."
+  ]
+};
+
+
+</script><script>
+/* Offline schematic molecular / shell models. No external assets. */
+(function () {
+'use strict';
+const E={H:{name:'väte',color:'#e6ebed',r:13},C:{name:'kol',color:'#526474',r:19},N:{name:'kväve',color:'#426bba',r:19},O:{name:'syre',color:'#d85a4d',r:19},Na:{name:'natrium',color:'#a577ba',r:22},Cl:{name:'klor',color:'#65a276',r:22},Mg:{name:'magnesium',color:'#c2994b',r:22}};
+const atom=(s,x,y,z=0)=>({s,p:[x,y,z]});
+const molecules=[
+{key:'H2O',name:'Vatten',formula:'H₂O',geometry:'Vinklad, cirka 104,5°',note:'Syre drar starkare i bindningselektronerna. Molekylens vinklade form ger en permanent dipol. δ betyder partiell laddning, inte en jon.',atoms:[atom('O',0,0),atom('H',57,44),atom('H',-57,44)],bonds:[[0,1,1],[0,2,1]],partial:['δ−','δ+','δ+']},
+{key:'CO2',name:'Koldioxid',formula:'CO₂',geometry:'Linjär, 180°',note:'C=O-bindningarna är polära, men deras bidrag tar ut varandra i den symmetriska molekylen. CO₂ har ingen permanent dipol.',atoms:[atom('C',0,0),atom('O',-76,0),atom('O',76,0)],bonds:[[0,1,2],[0,2,2]]},
+{key:'O2',name:'Syrgas',formula:'O₂',geometry:'Tvåatomig',note:'En dubbelbindning i Lewis-modellen. Molekylen är opolär. Denna enkla bindningsbild förklarar inte syrgasens magnetiska egenskaper.',atoms:[atom('O',-35,0),atom('O',35,0)],bonds:[[0,1,2]]},
+{key:'N2',name:'Kvävgas',formula:'N₂',geometry:'Tvåatomig',note:'En trippelbindning i Lewis-modellen. Molekylen är opolär.',atoms:[atom('N',-35,0),atom('N',35,0)],bonds:[[0,1,3]]},
+{key:'CH4',name:'Metan',formula:'CH₄',geometry:'Tetraedrisk, cirka 109,5°',note:'Fyra bindningar pekar mot hörnen i en tetraeder. En platt bild är en projektion, inte den verkliga geometrin.',atoms:[atom('C',0,0),atom('H',45,45,45),atom('H',-45,-45,45),atom('H',-45,45,-45),atom('H',45,-45,-45)],bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]]},
+{key:'NH3',name:'Ammoniak',formula:'NH₃',geometry:'Trigonal pyramid, cirka 107°',note:'Kväve har tre N–H-bindningar och ett fritt elektronpar. Elektronparet är inte en fjärde atom och visas inte som en kula.',atoms:[atom('N',0,-23),atom('H',0,5,70),atom('H',60.62,5,-35),atom('H',-60.62,5,-35)],bonds:[[0,1,1],[0,2,1],[0,3,1]]}
+];
+const ions=[
+{key:'Na+',name:'Natriumjon',formula:'Na⁺',symbol:'Na',number:11,shells:[2,8],charge:1,note:'11 protoner och 10 elektroner. En elektron färre än den neutrala atomen.'},
+{key:'Cl-',name:'Kloridjon',formula:'Cl⁻',symbol:'Cl',number:17,shells:[2,8,8],charge:-1,note:'17 protoner och 18 elektroner. En elektron fler än den neutrala atomen.'},
+{key:'Mg2+',name:'Magnesiumjon',formula:'Mg²⁺',symbol:'Mg',number:12,shells:[2,8],charge:2,note:'12 protoner och 10 elektroner. Två elektroner färre än den neutrala atomen.'},
+{key:'O2-',name:'Oxidjon',formula:'O²⁻',symbol:'O',number:8,shells:[2,8],charge:-2,note:'8 protoner och 10 elektroner. Två elektroner fler än den neutrala atomen. O²⁻ är inte syrgasmolekylen O₂.'}
+];
+ions.push({key:'NH4+',name:'Ammoniumjon',formula:'NH₄⁺',symbol:'NH4',charge:1,polyatomic:true,geometry:'Tetraedrisk, cirka 109,5°',atoms:[atom('N',0,0),atom('H',45,45,45),atom('H',-45,-45,45),atom('H',-45,45,-45),atom('H',45,-45,-45)],bonds:[[0,1,1],[0,2,1],[0,3,1],[0,4,1]],note:'Laddningen +1 gäller hela ammoniumjonen, inte bara kväveatomen. Den har totalt 11 protoner och 10 elektroner. Fyra likvärdiga N–H-bindningar ger tetraedrisk geometri. Klammern är en symbol för hela jonen, inte ett fysiskt hölje.'});
+const processes=[
+{key:'nacl',name:'Natriumklorid: elektronbokföring',formula:'2 Na + Cl₂ → 2 NaCl',steps:['Neutrala atomer som bokföringsmodell','Elektroner räknas mellan partiklarna','Jonerna ingår i ett kristallgitter'],note:'Bilderna bokför en Na-atom och en Cl-atom. Det är inte reaktionsmekanismen: klor som grundämne är Cl₂. Fast NaCl består av ett utsträckt jongitter, inte fristående NaCl-molekyler.'},
+{key:'mgo',name:'Magnesiumoxid: elektronbokföring',formula:'2 Mg + O₂ → 2 MgO',steps:['Neutrala atomer som bokföringsmodell','Två elektroner räknas över','Jonerna ingår i ett kristallgitter'],note:'Bilderna bokför en Mg-atom och en O-atom, inte en reaktionsmekanism. Syrgas är O₂. Fast MgO är ett utsträckt jongitter, inte fristående MgO-molekyler.'},
+{key:'water',name:'Vattenbildning: bevarade atomer',formula:'2 H₂ + O₂ → 2 H₂O',steps:['Före: två H₂ och en O₂','Bokföring: 4 H och 2 O bevaras','Efter: två H₂O'],note:'En balanserad reaktionsformel, inte en film av reaktionsmekanismen. Mellanbilden visar bara atomräkning, inte fria atomers verkliga reaktionsväg. Bindningar bryts och bildas; inga atomer byter grundämne.'}
+];
+processes.push(
+{key:'evaporation',name:'Vatten avdunstar',formula:'H₂O(l) → H₂O(g)',steps:['Flytande vatten: molekyler nära varandra','En molekyl lämnar ytan','Vattenånga: samma H₂O-molekyler'],note:'Vid avdunstning lämnar vattenmolekyler vätskans yta. Bindningar mellan molekyler påverkas, men de kovalenta O–H-bindningarna inom H₂O bryts inte. Avdunstning kan ske under kokpunkten. Bilden visar ett fåtal molekyler, inte en skalenlig simulering av deras rörelse.'},
+{key:'spectrum',name:'Väte: energinivåer och ljus',formula:'hν = E(högre) − E(lägre)',steps:['En exciterad väteatom','Övergång till lägre energi: en foton avges','Många atomer ger ett linjespektrum'],note:'Väteatomens elektron kan ha vissa tillåtna energier. När atomens energi minskar kan en foton avges. De fyra visade linjerna är ett urval av det synliga Balmer-spektrumet, avrundade till hela nm, inte hela vätespektrumet. Cirklarna visar Bohrmodellens nivåer schematiskt: varken radier, nivåavstånd eller rörelsebanor är verklighetstrogna. I 3D roteras bara modellsymbolen; ett spektrum är inte en rymdform.',source:'https://science.nasa.gov/mission/webb/science-overview/science-explainers/spectroscopy-101-how-absorption-and-emission-spectra-work/'});
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!=null)n.textContent=text;return n;}
+function html(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
+function render(host,spec={}){
+if(host._periodicDestroy)host._periodicDestroy();host.replaceChildren();
+const kind=spec.kind||'atom',three=spec.dimension==='3d';
+let record=kind==='molecule'?molecules.find(x=>x.key===spec.key):kind==='ion'?ions.find(x=>x.key===spec.key):kind==='process'?processes.find(x=>x.key===spec.key):spec.element;
+if(!record){host.append(html('p','pm-error','Välj en modell att visa.'));return {destroy(){}};}
+if(kind==='atom'&&record.charge){const q=record.charge;const sup=String(Math.abs(q)).replace(/[0-9]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]);record={...record,formula:record.symbol+(Math.abs(q)===1?'':sup)+(q>0?'⁺':'⁻')};}
+const root=html('section','pm-model');root.style.cssText='width:100%;color:inherit;font-family:inherit';
+const title=html('h3','pm-title',(record.name||record.symbol)+(record.formula?' · '+record.formula:''));title.style.cssText='margin:0 0 .4rem;font-size:1.2rem';root.append(title);
+let yaw=three?.42:0,pitch=three?-.22:0,drag=null;
+const stage=html('div','pm-stage');stage.style.cssText='position:relative;border:1px solid #8199a555;border-radius:12px;background:linear-gradient(140deg,#f7fafb,#eaf0f3);color:#172b3a;overflow:hidden';
+const svg=el('svg',{viewBox:'0 0 640 380',width:'100%',role:'img','aria-label':title.textContent});svg.style.cssText='display:block;max-height:440px;touch-action:pan-y';
+const desc=el('desc',{},'Schematisk modell. Avstånd, atomstorlekar och elektronskal är inte skalenliga.');svg.append(desc);stage.append(svg);root.append(stage);
+const label=html('p','pm-caption');label.style.cssText='font-size:.92rem;line-height:1.55;margin:.6rem 0';root.append(label);
+const details=html('details','pm-caveat');const summary=html('summary','','Modellens gränser');details.append(summary,html('p','',kind==='atom'||(kind==='ion'&&!record.polyatomic)?'Skalmodellen visar elektronernas fördelning på huvudskal. Elektroner följer inte ritade cirkelbanor. Kvantmekaniken beskriver tillstånd och sannolikhetsfördelningar; enskilda elektroner har inte färg eller en bestämd position i bilden. Kärnan är en symbol, inte en bild av dess protoner och neutroner.':'Kulor och streck är modeller för atomslag, geometri och bindningar. De visar inte elektronmoln eller verkliga relativa storlekar. Rotation ändrar bara betraktelseriktningen.'));root.append(details);host.append(root);
+function project(p){let[x,y,z]=p;if(three){let xx=x*Math.cos(yaw)+z*Math.sin(yaw),zz=-x*Math.sin(yaw)+z*Math.cos(yaw);x=xx;z=zz;let yy=y*Math.cos(pitch)-z*Math.sin(pitch);z=y*Math.sin(pitch)+z*Math.cos(pitch);y=yy;}const f=three?700/(700-z):1;return {x:320+x*f,y:182+y*f,z,r:f};}
+function line(a,b,attrs={}){svg.append(el('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#647c89','stroke-width':3,...attrs}));}
+function txt(x,y,t,size=15,attrs={}){svg.append(el('text',{x,y,'text-anchor':'middle','font-family':'system-ui,sans-serif','font-size':size,fill:'#172b3a',...attrs},t));}
+function ball(s,p,caption,radius){const q=project(p),e=E[s]||{color:'#759baa',r:19};const r=(radius||e.r)*q.r;svg.append(el('circle',{cx:q.x,cy:q.y,r,fill:e.color,stroke:'#263e50','stroke-width':1.4}));txt(q.x,q.y+5,s,Math.max(12,15*q.r),{fill:s==='H'?'#172b3a':'#fff','font-weight':700});if(caption)txt(q.x,q.y-r-8,caption,13);}
+function molecule(m,offset=[0,0,0],scale=1){const points=m.atoms.map(a=>a.p.map((v,i)=>v*scale+offset[i]));for(const[a,b,n]of m.bonds){const p=project(points[a]),q=project(points[b]);const dx=q.x-p.x,dy=q.y-p.y,l=Math.hypot(dx,dy)||1;for(let i=0;i<n;i++){const d=(i-(n-1)/2)*5;line({x:p.x-dy/l*d,y:p.y+dx/l*d},{x:q.x-dy/l*d,y:q.y+dx/l*d});}}m.atoms.map((a,i)=>({a,i,z:project(points[i]).z})).sort((a,b)=>a.z-b.z).forEach(({a,i})=>ball(a.s,points[i],m.partial?.[i],(E[a.s]?.r||19)*Math.min(scale,1.3)));}
+function shells(a,ox=0,oy=0,scale=1){let sh=Array.isArray(a.shells)?a.shells:[];if(!sh.length){txt(320,180,'Skalfördelning saknas');return;}const max=sh.length;sh.forEach((count,i)=>{const rad=(29+(i+1)*16)*scale;let path='';for(let k=0;k<=100;k++){const angle=k/100*Math.PI*2;const p=project([ox+Math.cos(angle)*rad,oy+Math.sin(angle)*rad,0]);path+=(k?'L':'M')+p.x+','+p.y;}svg.append(el('path',{d:path,fill:'none',stroke:'#8aa1ad','stroke-width':1.2}));if(three){for(let plane=0;plane<2;plane++){let d='';for(let k=0;k<=80;k++){const t=k/80*Math.PI*2;const q=project(plane?[ox,oy+Math.cos(t)*rad,Math.sin(t)*rad]:[ox+Math.cos(t)*rad,oy,Math.sin(t)*rad]);d+=(k?'L':'M')+q.x+','+q.y;}svg.append(el('path',{d,fill:'none',stroke:'#a5b5bd','stroke-width':.8,'stroke-dasharray':'3 4'}));}}for(let j=0;j<count;j++){const t=j/count*Math.PI*2+i*.21;const u=three?(1-2*(j+.5)/count):0;const rr=three?Math.sqrt(1-u*u):1;const angle=three?j*2.3999632297+i*.21:t;const p=project([ox+Math.cos(angle)*rad*rr,oy+(three?u*rad:Math.sin(t)*rad),three?Math.sin(angle)*rad*rr:0]);svg.append(el('circle',{cx:p.x,cy:p.y,r:Math.max(2.1,3.4*scale*p.r),fill:'#126f87'}));}});ball(a.symbol,[ox,oy,0],null,19*scale);const bottom=project([ox,oy+(29+(max+1)*16)*scale,0]);txt(bottom.x,bottom.y+12,a.formula||a.symbol,14);}
+function evaporation(step){
+const positions=step===2?[[-195,-70,0],[0,-60,55],[180,-70,-40],[-100,90,-50],[110,95,35]]:[[-125,70,0],[-45,90,40],[45,60,-30],[125,85,20],[10,step===1?-75:10,0]];
+if(step<2){line({x:105,y:190},{x:535,y:190},{stroke:'#789ca7','stroke-width':1,'stroke-dasharray':'5 5'});txt(565,194,'yta',12);}
+positions.forEach(p=>molecule(molecules[0],p,.52));
+if(step===1){txt(395,125,'↑',28);txt(465,151,'H₂O förblir H₂O',14);}
+txt(320,345,step===2?'Fasändring, inte sönderdelning':'O–H-bindningarna i varje molekyl finns kvar',16);
+}
+function spectrum(step){
+// Bohr-style spatial SYMBOL, not orbit radii or an electron trajectory.
+for(let n=1;n<=3;n++){const r=26+n*22;let d='';for(let k=0;k<=90;k++){const t=k/90*Math.PI*2;const q=project([-130+Math.cos(t)*r,Math.sin(t)*r,0]);d+=(k?'L':'M')+q.x+','+q.y;}svg.append(el('path',{d,fill:'none',stroke:'#8ba2b2','stroke-width':1.4}));const q=project([-130+r,0,0]);txt(q.x+10,q.y-8,'n='+n,12);}
+ball('H',[-130,0,0],null,15);
+const q=project([-130,step===0?-92:-70,0]);svg.append(el('circle',{cx:q.x,cy:q.y,r:5,fill:'#126f87'}));
+if(step===1){txt(360,126,'foton →',18,{fill:'#a34936'});txt(390,157,'energi lämnar atomen',13);}
+const levels=[['högre energi',89],['lägre energi',156]];levels.forEach(([t,y])=>{line({x:415,y},{x:580,y},{stroke:'#496777','stroke-width':2});txt(497,y-10,t,13);});if(step>0)txt(497,133,'↓',26);
+txt(190,300,'Schematisk Bohrbild',13);
+if(step===2){svg.append(el('rect',{x:350,y:220,width:250,height:60,fill:'#172b3a',rx:4}));[[410,'#ac86e7'],[434,'#7197e9'],[486,'#62c9df'],[656,'#f2786b']].forEach(([nm,c],i)=>{const x=365+(nm-400)/280*220;line({x,y:225},{x,y:272},{stroke:c,'stroke-width':3});txt(x,i%2?314:298,String(nm),12);});txt(475,336,'Våglängd (nm) · urval',12);}
+txt(320,357,step===0?'Exciterad betyder högre energi än grundtillståndet':'Fotonens energi = skillnaden mellan nivåerna',14);
+}
+function draw(){while(svg.childNodes.length>1)svg.lastChild.remove();
+if(kind==='ion'&&record.polyatomic){molecule(record,[0,0,0],1.55);svg.append(el('path',{d:'M170 55 H150 V310 H170 M470 55 H490 V310 H470',fill:'none',stroke:'#405a69','stroke-width':2}));txt(510,65,'+',30);txt(320,345,'[NH₄]⁺ · laddningen gäller hela jonen',17);label.textContent=record.geometry+'. '+record.note;}else if(kind==='atom'||kind==='ion'){shells(record);const sh=record.shells||[];label.textContent=(kind==='ion'?record.note:record.number+' protoner och '+sh.reduce((a,b)=>a+b,0)+' elektroner i '+(record.charge?'jonen.':'den neutrala atomen.'))+(kind==='atom'&&Number.isInteger(record.neutrons)?' Vald isotop: '+record.symbol+'-'+(record.number+record.neutrons)+', '+record.neutrons+' neutroner.':'')+' Skalfördelning: '+sh.join(' · ')+'. Skalen och elektronprickarna är schematiska.';}
+if(kind==='molecule'){molecule(record,[0,0,0],1.6);label.textContent=record.geometry+'. '+record.note;}
+if(kind==='process'){const step=Math.max(0,Math.min(2,Number(spec.step)||0));txt(320,27,record.steps[step],17,{'font-weight':600});if(record.key==='evaporation'){evaporation(step);}else if(record.key==='spectrum'){spectrum(step);}else if(record.key==='water'){if(step===0){molecule({atoms:[atom('H',-20,0),atom('H',20,0)],bonds:[[0,1,1]]},[-160,-55,0]);molecule({atoms:[atom('H',-20,0),atom('H',20,0)],bonds:[[0,1,1]]},[-160,65,0]);molecule(molecules[2],[110,0,0]);}else if(step===1){['H','H','H','H','O','O'].forEach((s,i)=>ball(s,[-175+i*70,0,0]));txt(320,285,'4 väteatomer + 2 syreatomer',16);}else{molecule(molecules[0],[-125,0,0]);molecule(molecules[0],[125,0,0]);}txt(320,345,'2 H₂ + O₂ → 2 H₂O',20);}else{const mg=record.key==='mgo';let left={symbol:mg?'Mg':'Na',shells:mg?[2,8,2]:[2,8,1]},right={symbol:mg?'O':'Cl',shells:mg?[2,6]:[2,8,7]};if(step===2){left=ions[mg?2:0];right=ions[mg?3:1];for(let row=0;row<3;row++)for(let col=0;col<6;col++){const a=(row+col)%2?right:left;ball(a.symbol,[(col-2.5)*65,(row-1)*65,0],a.formula,17);}txt(320,320,'Utsnitt av ett gitter, inte en molekyl',16);}else{shells(left,-145,0,.9);shells(right,145,0,.9);if(step===1){txt(320,145,mg?'2 e⁻':'e⁻',21);txt(320,180,'→',34);txt(320,320,mg?'Mg → Mg²⁺ + 2 e⁻     O + 2 e⁻ → O²⁻':'Na → Na⁺ + e⁻     Cl + e⁻ → Cl⁻',16);}}}label.textContent=record.note;}
+}
+if(three){const controls=html('div','pm-rotation');controls.style.cssText='display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.5rem 0';controls.append(html('span','','Dra i modellen eller använd pilknapparna:'));for(const[text,dy,dp]of [['←',-.25,0],['→',.25,0],['↑',0,-.2],['↓',0,.2]]){const b=html('button','',text);b.type='button';b.setAttribute('aria-label',text==='←'?'Rotera åt vänster':text==='→'?'Rotera åt höger':text==='↑'?'Rotera uppåt':'Rotera nedåt');b.style.cssText='min-width:40px;min-height:36px;cursor:pointer';b.onclick=()=>{yaw+=dy;pitch+=dp;draw();};controls.append(b);}const reset=html('button','','Återställ vy');reset.type='button';reset.onclick=()=>{yaw=.42;pitch=-.22;draw();};controls.append(reset);stage.after(controls);svg.setAttribute('tabindex','0');svg.style.touchAction='none';svg.style.cursor='grab';svg.setAttribute('aria-label',title.textContent+'. Roterbar 3D-projektion. Använd piltangenterna.');svg.onpointerdown=e=>{drag=[e.clientX,e.clientY];svg.setPointerCapture?.(e.pointerId);};svg.onpointermove=e=>{if(!drag)return;yaw+=(e.clientX-drag[0])*.01;pitch+=(e.clientY-drag[1])*.01;drag=[e.clientX,e.clientY];draw();};svg.onpointerup=svg.onpointercancel=()=>drag=null;svg.onkeydown=e=>{const d={ArrowLeft:[-.15,0],ArrowRight:[.15,0],ArrowUp:[0,-.15],ArrowDown:[0,.15]}[e.key];if(d){e.preventDefault();yaw+=d[0];pitch+=d[1];draw();}};}
+draw();const handle={destroy(){svg.onpointerdown=svg.onpointermove=svg.onpointerup=svg.onpointercancel=svg.onkeydown=null;root.remove();host._periodicDestroy=null;}};host._periodicDestroy=handle.destroy;return handle;
+}
+window.PeriodicModels={render,molecules,ions,processes};
+})();
+
+</script><script>
+/* Svenska undervisningsdata. Isotopurval: CIAAW Isotopic Compositions 2024, https://www.ciaaw.org/isotopic-abundances.htm . Endast uttryckligt listade naturliga isotoper; ingen avrundning av atomvikter. Historikens årtal avser nedslag, inte hela utvecklingsförloppet. */
+window.PERIODIC_LESSONS = {
+  "history": [
+    {
+      "year": 1808,
+      "type": "atom",
+      "title": "Dalton: atomer i bestämda proportioner",
+      "summary": "Ämnen byggs upp av atomer som kombineras i enkla heltalsförhållanden.",
+      "change": "Kemiska mängdförhållanden får en partikelmodell.",
+      "limit": "Atomen är inte odelbar. Isotoper av samma grundämne har olika massa.",
+      "source": "John Dalton · A New System of Chemical Philosophy (originalverk)",
+      "url": "https://digital.sciencehistory.org/works/ff365590j",
+      "focus": [
+        "H",
+        "O"
+      ]
+    },
+    {
+      "year": 1904,
+      "type": "atom",
+      "title": "Thomson: elektronen får plats",
+      "summary": "Negativa elektroner ingår i en utbredd positiv laddning.",
+      "change": "Atomen har inre delar, inte bara en odelbar kula.",
+      "limit": "Modellen saknar den lilla kärna som senare spridningsförsök gav stöd för.",
+      "source": "J. J. Thomson · Originalartikel 1904",
+      "url": "https://doi.org/10.1080/14786440409463107",
+      "focus": [
+        "H"
+      ]
+    },
+    {
+      "year": 1911,
+      "type": "atom",
+      "title": "Rutherford: en liten kärna",
+      "summary": "Stora avböjningar av alfapartiklar pekar mot koncentrerad laddning i atomens centrum.",
+      "change": "En liten kärna ersätter den utsmetade positiva laddningen.",
+      "limit": "Förklarar inte ensam atomens stabilitet eller dess diskreta spektrallinjer.",
+      "source": "E. Rutherford · Originalartikel 1911",
+      "url": "https://doi.org/10.1080/14786440508637080",
+      "focus": [
+        "Au",
+        "He"
+      ]
+    },
+    {
+      "year": 1913,
+      "type": "atom",
+      "title": "Bohr: bestämda energinivåer",
+      "summary": "Vätets elektron får bara vissa energier. Energi tas upp eller avges när nivån ändras.",
+      "change": "Vätets linjespektrum kopplas till skillnader mellan energinivåer.",
+      "limit": "Skalbilden är användbar men cirkelbanorna är inte dagens beskrivning. Modellen räcker inte för flerelektronatomers spektrum.",
+      "source": "OpenStax · Bohrs modell",
+      "url": "https://openstax.org/books/chemistry-2e/pages/6-2-the-bohr-model",
+      "focus": [
+        "H"
+      ]
+    },
+    {
+      "year": 1926,
+      "type": "atom",
+      "title": "Kvantmekanik: orbitaler",
+      "summary": "Elektronens tillstånd beskrivs med en vågfunktion, inte en bestämd bana.",
+      "change": "Orbitaler ger sannolikhetsfördelningar och en rikare beskrivning av elektronernas tillstånd.",
+      "limit": "En ritad orbitalyta är en vald visualisering, inte en vägg eller ett fotografi av elektronen.",
+      "source": "OpenStax · Kvantteorins utveckling",
+      "url": "https://openstax.org/books/chemistry-2e/pages/6-3-development-of-quantum-theory",
+      "focus": [
+        "H",
+        "C",
+        "O"
+      ]
+    },
+    {
+      "year": 1829,
+      "type": "system",
+      "title": "Döbereiner: familjer om tre",
+      "summary": "Triader samlar tre ämnen med liknande egenskaper.",
+      "change": "Likheter mellan ämnen börjar kopplas till regelbundna mönster.",
+      "limit": "Triaderna organiserade bara delar av de kända ämnena. Markeringarna här använder dagens tabell.",
+      "source": "Royal Society of Chemistry · Tabellens historia",
+      "url": "https://periodic-table.rsc.org/history/about",
+      "focus": [
+        "Li",
+        "Na",
+        "K"
+      ]
+    },
+    {
+      "year": 1869,
+      "type": "system",
+      "title": "Mendelejev: mönster och luckor",
+      "summary": "Ämnen ordnas efter massa och kemiska likheter; luckor lämnas för okända ämnen.",
+      "change": "Systemet kan ge prövbara förutsägelser, inte bara sortera det som redan är känt.",
+      "limit": "En ren massordning fungerar inte överallt. Här visas utvalda ämnen på moderna platser.",
+      "source": "Royal Society of Chemistry · Tabellens historia",
+      "url": "https://periodic-table.rsc.org/history/about",
+      "focus": [
+        "Al",
+        "Ga",
+        "Si",
+        "Ge"
+      ]
+    },
+    {
+      "year": 1913,
+      "type": "system",
+      "title": "Moseley: atomnumret avgör",
+      "summary": "Röntgenspektra gav stöd för atomnummer som ämnenas ordningsprincip.",
+      "change": "Tellur och jod kan ordnas rätt utan att följa stigande atommassa.",
+      "limit": "Detta historiska lager visar en slutsats i dagens tabell, inte en kopia av en tabell från 1913.",
+      "source": "NIST · Moseley och periodiska systemet",
+      "url": "https://www.nist.gov/news-events/news/2024/02/henry-moseley-and-periodic-table-elements",
+      "focus": [
+        "Te",
+        "I"
+      ]
+    },
+    {
+      "year": 2016,
+      "type": "system",
+      "title": "Nutidens tabell: namn till 118",
+      "summary": "IUPAC godkände namnen nihonium, moscovium, tennessine och oganesson den 28 november 2016.",
+      "change": "Alla platser till och med atomnummer 118 fick godkända namn.",
+      "limit": "Ett namn eller en gruppplacering betyder inte att alla ämnets egenskaper är experimentellt uppmätta.",
+      "source": "IUPAC · Namnbeslut 2016",
+      "url": "https://iupac.org/wp-content/uploads/2016/11/Press-Release_Names-Four-New-Elements_30November2016.pdf",
+      "focus": [
+        "Nh",
+        "Mc",
+        "Ts",
+        "Og"
+      ]
+    }
+  ],
+  "practice": [
+    {
+      "title": "Atomnummer",
+      "question": "Vad visar atomnummer 8?",
+      "choices": [
+        "Åtta neutroner",
+        "Åtta protoner",
+        "Åtta skal"
+      ],
+      "answer": 1,
+      "hint": "Vilken partikel bestämmer grundämnet?",
+      "explanation": "Atomnumret är antalet protoner. Det ändras inte när atomen blir en jon."
+    },
+    {
+      "title": "Neutral atom",
+      "question": "En neutral natriumatom har 11 protoner. Hur många elektroner?",
+      "choices": [
+        "10",
+        "11",
+        "12"
+      ],
+      "answer": 1,
+      "hint": "Neutral betyder att laddningarna tar ut varandra.",
+      "explanation": "Elva positiva protonladdningar balanseras av elva negativa elektronladdningar."
+    },
+    {
+      "title": "Isotoper",
+      "question": "Vad skiljer kol-12 från kol-13?",
+      "choices": [
+        "Antalet protoner",
+        "Antalet neutroner",
+        "Grundämnets symbol"
+      ],
+      "answer": 1,
+      "hint": "Båda är kol, med atomnummer 6.",
+      "explanation": "Kol-12 har sex neutroner, kol-13 sju. Båda har sex protoner."
+    },
+    {
+      "title": "Masstal",
+      "question": "Klor-37 har 17 protoner. Hur många neutroner?",
+      "choices": [
+        "20",
+        "37",
+        "54"
+      ],
+      "answer": 0,
+      "hint": "Masstal = protoner + neutroner.",
+      "explanation": "37 − 17 = 20 neutroner. Decimalvärdet för standardatomvikt är inte denna isotops masstal."
+    },
+    {
+      "title": "Positiv jon",
+      "question": "Vad händer när en natriumatom blir Na⁺?",
+      "choices": [
+        "Den tar upp en proton",
+        "Den lämnar en elektron",
+        "Den tar upp en elektron"
+      ],
+      "answer": 1,
+      "hint": "Vilken förändring ger ett överskott av positiv laddning?",
+      "explanation": "Kärnan behålls. Med elva protoner och tio elektroner blir laddningen +1."
+    },
+    {
+      "title": "Negativ jon",
+      "question": "Hur många elektroner har Cl⁻ om atomnumret är 17?",
+      "choices": [
+        "16",
+        "17",
+        "18"
+      ],
+      "answer": 2,
+      "hint": "Minus betyder en extra negativ laddning jämfört med den neutrala atomen.",
+      "explanation": "Kloridjonen har arton elektroner och sjutton protoner."
+    },
+    {
+      "title": "Grupp och period",
+      "question": "Vad kallas en lodrät kolumn?",
+      "choices": [
+        "Grupp",
+        "Period",
+        "Isotop"
+      ],
+      "answer": 0,
+      "hint": "En vågrät rad har det andra namnet.",
+      "explanation": "En lodrät kolumn är en grupp. En vågrät rad är en period."
+    },
+    {
+      "title": "Molekylformel",
+      "question": "Hur många väteatomer finns i 2H₂O?",
+      "choices": [
+        "2",
+        "4",
+        "6"
+      ],
+      "answer": 1,
+      "hint": "Räkna två vattenmolekyler med två väteatomer i varje.",
+      "explanation": "2 × 2 = 4 väteatomer. Dessutom finns två syreatomer."
+    },
+    {
+      "title": "Avdunstning",
+      "question": "Vad händer med vattenmolekylerna när vatten avdunstar?",
+      "choices": [
+        "De blir väte och syre",
+        "De förblir H₂O men lämnar vätskan",
+        "De förlorar alltid elektroner"
+      ],
+      "answer": 1,
+      "hint": "Skilj avstånd mellan molekyler från bindningar inom dem.",
+      "explanation": "Vid avdunstning finns vattenmolekylerna kvar; de sprids i gasfas. Det är ingen sönderdelning till grundämnen."
+    },
+    {
+      "title": "Bild eller verklighet",
+      "question": "Vad betyder ringarna i en skalmodell?",
+      "choices": [
+        "Elektronerna följer alltid dessa exakta cirklar",
+        "En förenklad indelning i elektronskal",
+        "Atomens hårda väggar"
+      ],
+      "answer": 1,
+      "hint": "En modell väljer vad som ska synas.",
+      "explanation": "Skalbilden hjälper oss räkna elektroner per huvudnivå. Dagens atommodell beskriver inte elektroner som små planeter på dessa banor."
+    },
+    {
+      "title": "Väte och ljus",
+      "question": "När kan en exciterad väteatom avge en foton?",
+      "choices": [
+        "När den går till en lägre energinivå",
+        "När atomnumret ökar",
+        "Bara när kärnan delas"
+      ],
+      "answer": 0,
+      "hint": "Energin måste komma någonstans ifrån.",
+      "explanation": "Skillnaden mellan nivåernas energier kan lämna atomen som en foton."
+    },
+    {
+      "title": "Pröva en förutsägelse",
+      "question": "Varför var Mendelejevs luckor vetenskapligt användbara?",
+      "choices": [
+        "De gjorde tabellen symmetrisk",
+        "De gav förutsägelser som senare fynd kunde pröva",
+        "De bevisade att inga fler ämnen fanns"
+      ],
+      "answer": 1,
+      "hint": "Tänk på skillnaden mellan att gissa och att ge ett kontrollerbart förslag.",
+      "explanation": "Egenskaper hos senare upptäckta ämnen kunde jämföras med tidigare nedskrivna förutsägelser."
+    }
+  ],
+  "lessons": [
+    {
+      "title": "En atom, flera bilder",
+      "goal": "Skilja modell från verklighet.",
+      "steps": [
+        "Öppna syre i Bohrvyn och räkna elektronerna.",
+        "Byt mellan 2D och 3D. Vad ändras i bilden och vad är samma atom?",
+        "Visa underskal/orbitalrutor om de finns. Jämför elektronantalet."
+      ],
+      "exit": "Skriv något modellen visar tydligt och något bilden inte ska tolkas bokstavligt."
+    },
+    {
+      "title": "Isotop eller jon?",
+      "goal": "Skilja neutronantal från elektronantal.",
+      "steps": [
+        "Välj klor-35 och sedan klor-37. Anteckna protoner, neutroner och elektroner.",
+        "Välj Cl⁻ utan att byta isotop.",
+        "Förklara de två ändringarna för en kamrat."
+      ],
+      "exit": "Vilket ändrar isotopen: en extra neutron eller en extra elektron? Förklara."
+    },
+    {
+      "title": "Salt utan saltmolekyler",
+      "goal": "Förstå jonladdningar och formelförhållande.",
+      "steps": [
+        "Jämför neutral natrium och klor med Na⁺ och Cl⁻.",
+        "Rita elektronöverföringen och kontrollera summan av laddningarna.",
+        "Undersök ett kristallutsnitt. Förklara varför NaCl anger ett förhållande, inte en avskild molekyl."
+      ],
+      "exit": "Varför behövs lika många Na⁺ som Cl⁻ i natriumklorid?"
+    },
+    {
+      "title": "Familjer som hjälper oss förutsäga",
+      "goal": "Pröva ett mönster i huvudgrupperna.",
+      "steps": [
+        "Jämför litium och natrium: ytterelektroner och antal skal.",
+        "Förutsäg kaliums ytterelektroner innan du öppnar det.",
+        "Kontrollera och skriv både en likhet och en skillnad."
+      ],
+      "exit": "Vad kunde du förutsäga genom gruppen, och vad måste du kontrollera separat?"
+    },
+    {
+      "title": "Mobiltelefonens material",
+      "goal": "Koppla ämnen till material utan att förväxla ämne och förening.",
+      "steps": [
+        "Sök Si, Cu och Li i tabellen. Använd en telefon som exempel, inte som laborationsmaterial.",
+        "Undersök hur halvledare, ledningar och batterimaterial fyller olika funktioner. Alla telefoner har inte identisk materialsammansättning. Källor: https://periodic-table.rsc.org/element/14/silicon ; https://periodic-table.rsc.org/element/29/copper ; https://periodic-table.rsc.org/element/3/lithium",
+        "Skriv ett materialval och vilken egenskap det behöver. Skilj litium i batterimaterial från ren litiummetall."
+      ],
+      "exit": "Varför räcker inte ett grundämnes namn för att beskriva hela materialets egenskaper?"
+    },
+    {
+      "title": "Vatten: samma molekyl, annan fas",
+      "goal": "Skilja fysikalisk förändring från kemisk reaktion.",
+      "steps": [
+        "Visa vatten i 2D och 3D. Identifiera bindningarna inom molekylen.",
+        "Följ avdunstningens förberedda steg. Räkna atomer före och efter.",
+        "Jämför med vattenbildning, där bindningspartners ändras."
+      ],
+      "exit": "Vilka avstånd ändras vid avdunstning, och vad förblir H₂O?"
+    },
+    {
+      "title": "Historien som ett prövningsproblem",
+      "goal": "Koppla modeller till observationer.",
+      "steps": [
+        "Välj två historiska atommodeller.",
+        "Läs vilken förändring den nyare modellen innebär och vad den äldre inte klarar.",
+        "Gör en två-rutors skiss: observation → ändrad modell."
+      ],
+      "exit": "Varför betyder en förbättrad modell inte att varje del av den gamla var oanvändbar?"
+    }
+  ],
+  "isotopes": {
+    "H": [
+      1,
+      2
+    ],
+    "C": [
+      12,
+      13
+    ],
+    "O": [
+      16,
+      17,
+      18
+    ],
+    "Na": [
+      23
+    ],
+    "Mg": [
+      24,
+      25,
+      26
+    ],
+    "Cl": [
+      35,
+      37
+    ],
+    "Cu": [
+      63,
+      65
+    ]
+  }
+};
+
+
+</script><script>
+(() => {
+  'use strict';
+  const data = window.PERIODIC_DATA || [];
+  const C = window.PERIODIC_LESSONS || {history:[],practice:[],lessons:[],isotopes:{}};
+  const M = window.PeriodicModels;
+  const bySymbol = new Map(data.map(e => [e.symbol,e]));
+  const $ = n => document.getElementById(n);
+  const all = sel => Array.from(document.querySelectorAll(sel));
+  const tags = ['a','b','button','div','dl','dt','dd','h2','h3','li','ol','option','p','span','strong','ul'];
+  function el(tag, attrs={}, words='') {
+    if (!tags.includes(tag)) throw new Error(tag);
+    const n = document.createElement(tag);
+    for (const [k,v] of Object.entries(attrs)) {
+      if(v == null) continue;
+      if(k==='class') n.className=v; else if(k.startsWith('data-')||k.startsWith('aria-')||k==='role')n.setAttribute(k,v);else n[k]=v;
+    }
+    if(words!=='') n.textContent=words;
+    return n;
+  }
+  function act(text,cb,attrs={}) {
+    const b=el('button',{type:'button',...attrs},text);b.addEventListener('click',cb);return b;
+  }
+  const flatten = v => String(v??'').toLocaleLowerCase('sv-SE').trim().normalize('NFD').replace(/\p{Diacritic}/gu,'');
+  const val = (v) => v === null || v === '' || v === undefined ? 'Ej verifierat' : String(v).replace(/(?<=\d)\.(?=\d)/g,',');
+  const familyColors = ['#475ac2','#0a7668','#935722','#7d4d95','#a33b56','#2263a1','#5d6e2c','#7c5054','#557686','#6b6776','#3c6378'];
+  const categories = [...new Set(data.map(e=>e.category).filter(Boolean))];
+  const catColor = c => familyColors[categories.indexOf(c)%familyColors.length] || '#6b6776';
+  const supported = ['system','models','practice','history','teacher'];
+  const initial = new URLSearchParams(location.hash.replace(/^#/,''));
+  const kindOK=['atom','molecule','ion','process'];
+  const state = {
+    view:supported.includes(initial.get('vy'))?initial.get('vy'):'system',
+    element:bySymbol.get(initial.get('amne')) || bySymbol.get('C')||data[0],
+    query:'',family:'',trend:'family',list:false,compare:[],history:0,historyType:'system',
+    kind:kindOK.includes(initial.get('typ'))?initial.get('typ'):'atom',key:initial.get('modell')||'',
+    dimension:initial.get('d')==='3'?'3d':'2d',rep:'bohr',step:0,
+    isotope:null,charge:0,question:0,results:new Map(),attempts:new Map(),revealed:false,focus:0,model:null
+  };
+  const status = (v) => { const n=$('status-message'); if(n)n.textContent=v; };
+  function pushHash(){
+    const p=new URLSearchParams({vy:state.view});
+    if(state.element)p.set('amne',state.element.symbol);
+    if(state.view==='models'){
+      p.set('typ',state.kind); if(state.key)p.set('modell',state.key); if(state.dimension==='3d')p.set('d','3');
+      if(state.step)p.set('steg',state.step);if(state.rep!=='bohr')p.set('form',state.rep);
+      if(state.isotope)p.set('isotop',state.isotope);if(state.charge)p.set('laddning',state.charge);
+    }
+    try {history.replaceState(null,'','#'+p.toString());}catch{}
+  }
+  function chooseView(v, moveFocus=false){
+    if(!supported.includes(v))return;
+    state.view=v;
+    supported.forEach(k=>{const n=$('view-'+k);if(n)n.hidden=v!==k;});
+    all('[data-view]').forEach(b=>{b.classList.toggle('is-active',b.dataset.view===v);if(b.dataset.view===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+    if(v==='models')drawModel();
+    if(v==='history')drawHistory();
+    if(v==='practice')drawPractice();
+    if(v==='teacher')drawLessons();
+    if(moveFocus){const h=$('view-'+v)?.querySelector('h1,h2');h?.setAttribute('tabindex','-1');h?.focus({preventScroll:true});}
+    pushHash();
+  }
+  function filterText(e){
+    const words=flatten(state.query).split(/\s+/).filter(Boolean);
+    const search=flatten([e.symbol,e.name,e.number,e.category].join(' '));
+    return (!state.family||state.family===e.category) && (!words.length||words.every(w=> /^\d+$/.test(w)? String(e.number)===w : search.includes(w)));
+  }
+  function position(e){
+    if(e.number>=57&&e.number<=71)return [e.number-54,8];
+    if(e.number>=89&&e.number<=103)return [e.number-86,9];
+    return [e.group,e.period];
+  }
+  function trendNumber(e){
+    if(state.trend==='weight') {
+      if(!e.weight||/[–—]|\d-\d/.test(e.weight))return null;
+      const m=String(e.weight).match(/^[0-9]+(?:[.,][0-9]+)?/);return m?Number(m[0].replace(',','.')):null;
+    }
+    if(state.trend==='electronegativity'||state.trend==='en')return e.electronegativity??null;
+    if(state.trend==='number')return e.number;
+    return null;
+  }
+  const stateColor = {'fast':'#2b6559','vätska':'#215b9b','flytande':'#215b9b','gas':'#9e4c1e','okänt':'#626a74'};
+  function tileValue(e) {
+    if(state.trend==='state'||state.trend==='phase') return e.state??'okänt';
+    if(state.trend==='period') return 'P'+e.period;
+    if(state.trend==='weight') return e.weight ? val(e.weight):'—';
+    if(state.trend==='electronegativity'||state.trend==='en')return e.electronegativity==null?'—':val(e.electronegativity);
+    return '';
+  }
+  function styleColor(e){
+    if(state.trend==='family'||state.trend==='category')return catColor(e.category);
+    if(state.trend==='state'||state.trend==='phase')return stateColor[e.state]||stateColor.okänt;
+    if(state.trend==='period')return familyColors[e.period-1];
+    const n=trendNumber(e); if(n==null)return stateColor.okänt;
+    const max=(state.trend==='weight'?240:state.trend==='number'?118:4);
+    const hue=190-Math.min(n/max,1)*144;
+    return 'hsl('+hue+' 58% 31%)';
+  }
+  function drawTable(){
+    const grid=$('periodic-table');if(!grid)return;
+    grid.replaceChildren();grid.classList.toggle('list-mode',state.list);
+    const pinned = new Set(state.compare);
+    const matching=data.filter(filterText);
+    if(!state.list){
+      for(let i=1;i<=18;i++){const h=el('span',{class:'axis-label','aria-hidden':'true'},i);h.style.gridColumn=String(i+1);h.style.gridRow='1';grid.append(h);}
+      for(let i=1;i<=7;i++){const h=el('span',{class:'axis-label','aria-hidden':'true'},i);h.style.gridColumn='1';h.style.gridRow=String(i+1);grid.append(h);}
+      [[6,'57–71'],[7,'89–103']].forEach(([i,label])=>{const h=el('span',{class:'series-placeholder','aria-hidden':'true'},label);h.style.gridColumn='4';h.style.gridRow=String(i+1);grid.append(h);});
+      [[8,'La–Lu'],[9,'Ac–Lr']].forEach(([i,label])=>{const h=el('span',{class:'axis-label','aria-hidden':'true'},label);h.style.gridColumn='1 / 4';h.style.gridRow=String(i+1);grid.append(h);});
+    }
+    for(const e of data){
+      const show=filterText(e); if(state.list&&!show)continue;
+      const [col,row]=position(e);if(!col||!row)continue;
+      const b=act('',()=>{selectElement(e,true);if(window.matchMedia?.('(max-width: 740px)').matches)$('element-detail')?.scrollIntoView({block:'nearest'});},{class:'element element-tile'+(!show?' is-filtered':'')+(pinned.has(e.symbol)?' is-pinned':''),'aria-label':e.name+', '+e.symbol+', atomnummer '+e.number+', '+e.category,'aria-pressed':String(e.symbol===state.element?.symbol),'data-element':e.symbol});
+      if(!state.list){b.style.gridColumn=String(col+1);b.style.gridRow=String(row+1);}
+      b.style.setProperty('--element-color',styleColor(e));b.style.setProperty('--tile-accent',styleColor(e));
+      b.title=e.name+' · '+e.category+(tileValue(e)?' · '+tileValue(e):'');
+      if(!show){b.tabIndex=-1;b.setAttribute('aria-disabled','true');b.disabled=true;}
+      b.append(el('span',{class:'element-number tile-number number'},e.number),el('strong',{class:'element-symbol tile-symbol symbol'},e.symbol),el('span',{class:'element-name tile-name name'},e.name));
+      if(tileValue(e))b.append(el('span',{class:'element-value tile-value weight'},tileValue(e)));
+      b.addEventListener('keydown',ev=>{
+        const dir={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[ev.key];
+        if(!dir)return;ev.preventDefault();
+        let target;
+        if(state.list){ const i=matching.indexOf(e);target=matching[i+(dir[0]||dir[1])]; }
+        else{const [x,y]=position(e);for(let a=1;a<19;a++){target=matching.find(t=>{const [cx,cy]=position(t);return cx===x+dir[0]*a&&cy===y+dir[1]*a;});if(target)break;}}
+        if(target)grid.querySelector('[data-element="'+target.symbol+'"]')?.focus();
+      });
+      grid.append(b);
+    }
+    const n=$('result-count')||$('match-count');if(n)n.textContent=matching.length+' av '+data.length+' grundämnen';
+    if(!matching.length)status('Ingen träff. Pröva symbol, namn eller atomnummer.');
+    drawLegend();
+  }
+  function drawLegend(){
+    const legend=$('category-legend');if(!legend)return;legend.replaceChildren();
+    if(state.trend==='family'||state.trend==='category') {
+      categories.forEach(c=>{const b=act(c,()=>{state.family=state.family===c?'':c;if($('category-filter'))$('category-filter').value=state.family;drawTable();},{class:'legend-item','aria-pressed':String(state.family===c)});b.style.setProperty('--element-color',catColor(c));b.style.setProperty('--tile-accent',catColor(c));legend.append(b);});
+    } else{
+      const label=state.trend==='weight'?'Standardatomvikt (relativ, utan enhet). Intervall visas som intervall, inte som ett mätvärde i färgskalan.'
+       : ['en','electronegativity'].includes(state.trend)?'Elektronegativitet på Paulingskalan. Ljusare/varmare färg markerar ett högre värde; grått betyder saknat värde.'
+       : ['state','phase'].includes(state.trend)?'Fast, vätska, gas eller okänt enligt datakällans rumsvillkor. Förutsagda tillstånd visas inte som observerade.'
+       :state.trend==='period'?'Perioderna 1–7. De två utfällda raderna hör till period 6 och 7.'
+       :'Atomnummer ordnar grundämnena. Det är antalet protoner.';
+      legend.append(el('p',{class:'legend-explainer'},label));
+    }
+  }
+  function item(dl,k,value){dl.append(el('dt',{},k),el('dd',{},value));}
+  function selectElement(e, preserve=false){
+    state.element=e;state.isotope=null;state.charge=0;state.focus=e.number; 
+    if(state.kind==='atom')state.key=e.symbol;
+    all('[data-element]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.element===e.symbol));});
+    drawDetail();if(state.view==='models')drawModel();pushHash();
+    if(!preserve)status(e.name+' valt');
+  }
+  function drawDetail(){
+    const n=$('element-detail'),e=state.element;if(!n||!e)return;n.replaceChildren();
+    const top=el('div',{class:'detail-top'});
+    const tile=el('span',{class:'detail-symbol'},e.symbol);tile.style.setProperty('--element-color',catColor(e.category));tile.style.setProperty('--tile-accent',catColor(e.category));
+    const box=el('div');box.append(el('p',{class:'eyebrow'},'ATOMNUMMER '+e.number),el('h2',{},e.name),el('p',{},e.category));
+    top.append(tile,box);n.append(top);
+    const dl=el('dl',{class:'property-grid'});
+    item(dl,'Grupp',e.group?String(e.group):'Utfälld serie');
+    item(dl,'Period',String(e.period));
+    item(dl,'Standardatomvikt',e.weight?val(e.weight):'Saknas');
+    if(e.massNumber&&!e.weight)item(dl,'Representativt masstal','['+e.massNumber+']');
+    item(dl,'Aggregation vid 20 °C',e.state??'okänt');
+    item(dl,'Elektronegativitet',val(e.electronegativity));
+    item(dl,'Elektroner, neutral atom',String(e.number));
+    item(dl,'Elektronblock',e.block??'—');
+    n.append(dl);
+    const cmds=el('div',{class:'detail-actions'});
+    cmds.append(act('Visa atommodell',()=>{state.kind='atom';state.key=e.symbol;state.rep='bohr';chooseView('models',true);},{class:'primary-button'}),
+      act(state.compare.includes(e.symbol)?'Ta bort från jämförelse':'Lägg till jämförelse',()=>toggleCompare(e),{class:'secondary-button'}));
+    n.append(cmds);
+    if(e.symbol==='H')n.append(el('p',{class:'model-note'},'Väte står i grupp 1 men är inte en alkalimetall.'));
+    if(e.symbol==='He')n.append(el('p',{class:'model-note'},'Helium står bland ädelgaserna. Dess enda elektronskal är fullt med två elektroner.'));
+    if(!e.shells)n.append(el('p',{class:'model-note'},'En tillräckligt verifierad elektronmodell visas inte för detta grundämne.'));
+  }
+  function toggleCompare(e){
+    if(state.compare.includes(e.symbol))state.compare=state.compare.filter(s=>s!==e.symbol);
+    else if(state.compare.length<3)state.compare.push(e.symbol);else{status('Välj högst tre grundämnen; ta bort ett först.');return;}
+    drawDetail();drawCompare();
+    all('[data-element]').forEach(b=>b.classList.toggle('is-pinned',state.compare.includes(b.dataset.element)));
+  }
+  function drawCompare(){
+    const n=$('compare-content');if(!n)return;n.replaceChildren();
+    if(!state.compare.length){n.append(el('p',{},'Välj två eller tre grundämnen i tabellen. Börja till exempel med litium, natrium och kalium.'));return;}
+    const slots=el('div',{class:'compare-grid'});
+    state.compare.map(s=>bySymbol.get(s)).filter(Boolean).forEach(e=>{
+      const a=el('div',{class:'compare-card'});a.append(el('h3',{},e.symbol+' · '+e.name));const dd=el('dl',{class:'property-grid'});
+      item(dd,'Atomnummer',e.number);item(dd,'Grupp / period',(e.group??'–')+' / '+e.period);item(dd,'Elektronskal',e.shells?.join(' · ')||'Ej verifierat');
+      item(dd,'Standardatomvikt',e.weight?val(e.weight):'Saknas');item(dd,'Aggregation',e.state??'okänt');item(dd,'Elektronegativitet',val(e.electronegativity));
+      a.append(dd,act('Ta bort '+e.symbol,()=>toggleCompare(e),{class:'secondary-button'}));slots.append(a);
+    });n.append(slots);
+  }
+  const listForKind = () => state.kind==='atom'?data.map(e=>({key:e.symbol,name:e.name,formula:e.symbol})):M?.[({molecule:'molecules',ion:'ions',process:'processes'})[state.kind]]||[];
+  function allowedIsotopes(e) {
+    const a=C.isotopes?.[e.symbol];return Array.isArray(a)?a.filter(x=>Number.isInteger(x)&&x>=e.number):[];
+  }
+  const allowedCharges = {H:[1,-1],Li:[1],Na:[1],K:[1],Mg:[2],Ca:[2],Al:[3],F:[-1],Cl:[-1],Br:[-1],I:[-1],O:[-2],S:[-2]};
+  function selectOptions(n,items,selected){
+    if(!n)return;n.replaceChildren(...items.map(({value,label})=>el('option',{value},label)));n.value=selected??''; 
+  }
+  function drawModelControls(){
+    const options=listForKind();
+    if(state.kind==='atom')state.key=state.element?.symbol??'';
+    if(!options.some(x=>x.key===state.key))state.key=options[0]?.key??'';
+    selectOptions($('model-preset'),options.map(x=>({value:x.key,label:x.name+(x.formula&&x.formula!==x.name?' · '+x.formula:'')})),state.key);
+    if($('model-kind'))$('model-kind').value=state.kind;
+    if($('representation-select')){$('representation-select').value=state.rep;$('representation-select').disabled=state.kind!=='atom';}
+    all('[data-dimension]').forEach(b=>b.setAttribute('aria-pressed',String((String(b.dataset.dimension).startsWith('3')?'3d':'2d')===state.dimension)));
+    const e=state.element;
+    const holder=$('model-atom-controls');
+    if(holder&&e){
+      holder.hidden=state.kind!=='atom'; 
+      selectOptions($('isotope-select'),[{value:'',label:'Ingen isotop vald'},...allowedIsotopes(e).map(a=>({value:String(a),label:e.name+'-'+a}))],state.isotope?String(state.isotope):'');
+      selectOptions($('charge-select'),[{value:'0',label:'Neutral'},...(allowedCharges[e.symbol]||[]).map(a=>({value:String(a),label:'Jon '+(a>0?'+':'−')+Math.abs(a)}))],String(state.charge));
+    }
+    if($('model-play'))$('model-play').hidden=state.kind!=='process';
+    const steps=$('process-controls');
+    if(steps)steps.hidden=state.kind!=='process';
+    const process=options.find(o=>o.key===state.key);
+    const stepCount=process?.steps?.length||3;
+    state.step=Math.min(state.step,stepCount-1);
+    if($('process-prev'))$('process-prev').disabled=state.step<=0;
+    if($('process-next'))$('process-next').disabled=state.step>=stepCount-1;
+    if($('process-step'))$('process-step').textContent='Steg '+(state.step+1)+' av '+stepCount;
+  }
+  function configTokens(conf, seen=new Set()){
+    const text=String(conf??'').replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,v=>String('⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(v)));
+    const core=text.match(/\[([A-Z][a-z]?)\]/)?.[1];
+    let out=[];
+    if(core&&!seen.has(core)){seen.add(core);out=configTokens(bySymbol.get(core)?.configuration,seen);}
+    return out.concat(Array.from(text.matchAll(/(\d)([spdfgSPDFG])\s*([0-9]{1,2})/g)).map(m=>({orb:m[1]+m[2].toLowerCase(),kind:m[2].toLowerCase(),count:Number(m[3])})));
+  }
+  function formatConfig(stage,e){
+    stage.replaceChildren();
+    const cf=el('div',{class:'config-display'});stage.append(cf);
+    if(state.charge!==0){cf.append(el('h3',{},'Vyn visar neutrala atomer'),el('p',{},'Välj Neutral för att se den verifierade elektronkonfigurationen. Jonens förenklade skal kan visas i Bohr-vyn.'));return;}
+    if(!e.configuration){cf.append(el('p',{},'Ingen verifierad konfiguration tillgänglig för detta ämne.'));return;}
+    cf.append(el('h3',{},e.name+' · elektronkonfiguration'),el('p',{class:'config-formula'},e.configuration.replace(/([spdf])(\d+)/g,(_,a,b)=>a+Array.from(b,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]).join(''))));
+    if(state.rep==='orbital'){
+      const caps={s:1,p:3,d:5,f:7,g:9};
+      const list=el('div',{class:'orbital-grid'});
+      for(const o of configTokens(e.configuration)){
+        if(!caps[o.kind])continue;
+        const row=el('div',{class:'orbital-row'});row.append(el('strong',{},o.orb));
+        const boxes=el('div',{class:'orbital-boxes','aria-label':o.orb+', '+o.count+' elektroner'});
+        for(let i=0;i<caps[o.kind];i++)boxes.append(el('span',{class:'orbital-box'},(o.count>i?'↑':'')+(o.count>i+caps[o.kind]?'↓':'')));
+        row.append(boxes);list.append(row);
+      } cf.append(list,el('p',{class:'model-note'},'Rutorna visar orbitalers beläggning enligt en modell, inte var enskilda elektroner befinner sig.'));
+    }else{
+      cf.append(el('p',{class:'model-note'},'Talet anger skalnivå. Bokstaven s, p, d eller f anger underskal. Siffran efter bokstaven anger hur många elektroner underskalet innehåller.'));
+    }
+  }
+  function formatModelDetails(e){
+    const host=$('model-caption');if(!host)return;
+    host.replaceChildren();
+    const opt=listForKind().find(o=>o.key===state.key);
+    if(state.kind!=='atom') {if(opt){host.append(el('h3',{},opt.name),el('p',{},opt.note||opt.description||opt.text||opt.explanation||''));}return;}
+    if(!e)return;
+    const neut=state.isotope==null?'Välj isotop för neutronantal':String(state.isotope-e.number);
+    const dl=el('dl',{class:'property-grid'});
+    item(dl,'Protoner',e.number);item(dl,'Elektroner',e.number-state.charge);item(dl,'Neutroner',neut);
+    item(dl,'Masstal',state.isotope??'Ingen isotop vald');item(dl,'Nettoladdning',state.charge===0?'0':(state.charge>0?'+':'−')+Math.abs(state.charge)+' e');
+    host.append(dl,el('p',{class:'model-note'},'Bohrs skalmodell är förenklad. Skal och visade elektronmarkörer är inte verkliga cirkelbanor. Figuren är inte skalenlig.'));
+  }
+  function drawModel(){
+    drawModelControls();
+    const stage=$('model-stage'),e=state.element;if(!stage)return;
+    stage.setAttribute('role','group');stage.setAttribute('aria-label','Interaktiv modell');
+    state.model?.destroy?.();state.model=null;
+    if(state.kind==='atom'&&state.rep!=='bohr')formatConfig(stage,e);
+    else if(state.kind==='atom'&&!e?.shells){stage.replaceChildren(el('p',{class:'model-note'},'Ingen verifierad skalmodell för '+(e?.name||'grundämnet')+'. Atomnumret och övriga källbelagda uppgifter finns i tabellen.'));}
+    else if(M?.render) {
+      stage.replaceChildren();
+      let atom=e?{...e,shells:e.shells?.slice(),neutrons:state.isotope?state.isotope-e.number:null,charge:state.charge}:undefined;
+      if(state.kind==='atom'&&state.charge!==0&&atom?.shells){
+        if(state.charge<0)atom.shells[atom.shells.length-1]+=Math.abs(state.charge);
+        else {
+          let remain=state.charge;
+          for(let i=atom.shells.length-1;i>=0&&remain>0;i--){const remove=Math.min(remain,atom.shells[i]);remain-=remove;atom.shells[i]-=remove;}
+          while(atom.shells.at(-1)===0)atom.shells.pop();
+        }
+        if(!atom.shells.length)atom.shells=[0];
+      }
+      state.model=M.render(stage,{kind:state.kind,key:state.key,element:atom,dimension:state.dimension,step:state.step});
+    } else stage.replaceChildren(el('p',{},'Modellen kunde inte laddas.'));
+    formatModelDetails(e);pushHash();
+  }
+  function historyModel(h){
+    const host=el('div',{class:'history-model-panel'});
+    const shapes={
+      1808:'<circle cx="120" cy="86" r="54" fill="#237679"/>',
+      1904:'<circle cx="120" cy="86" r="54" fill="#b7e2d9" stroke="#237679" stroke-width="2"/><g fill="#b66728"><circle cx="90" cy="67" r="6"/><circle cx="142" cy="78" r="6"/><circle cx="111" cy="112" r="6"/><circle cx="151" cy="105" r="6"/></g>',
+      1911:'<circle cx="120" cy="86" r="53" fill="none" stroke="#93b3ac" stroke-dasharray="3 6"/><circle cx="120" cy="86" r="9" fill="#b66728"/><g fill="#237679"><circle cx="79" cy="64" r="5"/><circle cx="149" cy="121" r="5"/></g>',
+      1913:'<g fill="none" stroke="#237679" stroke-width="1.5"><circle cx="120" cy="86" r="31"/><circle cx="120" cy="86" r="55"/></g><circle cx="120" cy="86" r="10" fill="#b66728"/><g fill="#237679"><circle cx="151" cy="86" r="6"/><circle cx="120" cy="55" r="6"/><circle cx="86" cy="129" r="6"/></g>',
+      1926:'<defs><radialGradient id="history-probability"><stop stop-color="#237679"/><stop offset="1" stop-color="#237679" stop-opacity="0"/></radialGradient></defs><ellipse cx="120" cy="86" rx="79" ry="69" fill="url(#history-probability)"/><circle cx="120" cy="86" r="6" fill="#b66728"/>'
+    };
+    if(h.type==='atom'){
+      const key=Object.keys(shapes).find(k=>String(h.year).startsWith(k))||'1926';
+      const v=el('div',{class:'history-model-graphic'});
+      v.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 172" role="img" aria-label="Förenklad historisk modellbild">'+shapes[key]+'</svg>';
+      host.append(v,el('p',{class:'small-note'},'Schematisk modellbild, inte skalenlig. Färgerna visar delar av modellen, inte verkliga färger.'));
+    } else{
+      const isTriad=String(h.year).startsWith('1829');
+      const a=el('div',{class:'history-type-strip'});
+      (isTriad?['Li','Na','K']:(h.focus||[])).filter(x=>bySymbol.has(x)).forEach(x=>{
+        const e=bySymbol.get(x);const obj=el('div',{class:'history-element-card'});
+        obj.append(el('strong',{},x),el('span',{},isTriad?e.name:e.name+' · Z '+e.number));a.append(obj);
+      });host.append(a,el('p',{class:'small-note'},isTriad?'Exempel på en triad: litium, natrium och kalium.':'Ämnesexempel kopplade till perspektivet. Siffrorna är moderna atomnummer.'));
+    }
+    return host;
+  }
+  function drawHistory(){
+    const n=$('history-timeline');if(!n)return;n.replaceChildren();
+    const v=$('history-era')?.value||'all';
+    const rows=C.history.filter(x=>v==='all'||x.type===(v==='models'?'atom':'system')).slice().sort((a,b)=>parseInt(a.year)-parseInt(b.year));
+    const toolbar=el('div',{class:'history-switch','aria-label':'Välj historiskt lager'});
+    const idx=Math.min(state.history,Math.max(rows.length-1,0));
+    rows.forEach((x,i)=>toolbar.append(act(String(x.year)+' · '+x.title,()=>{state.history=i;drawHistory();n.querySelector('[aria-pressed="true"]')?.focus();},{class:'quiet-button','aria-pressed':String(i===idx)})));
+    n.append(toolbar);const h=rows[idx];if(!h)return;
+    const card=el('div',{class:'history-event'});card.append(el('p',{class:'timeline-date'},String(h.year)),el('h2',{},h.title),el('p',{},h.summary));
+    card.append(historyModel(h));
+    if(h.change)card.append(el('p',{},'Vad förändrades? '+h.change));if(h.limit)card.append(el('p',{class:'model-note'},'Modellens gräns: '+h.limit));
+    if(h.url)card.append(el('a',{href:h.url,target:'_blank',rel:'noopener noreferrer'},h.source||'Källan'));
+    if(h.focus?.length) {
+      const examples=el('div',{class:'history-examples'});
+      examples.append(el('p',{},'Studera i dagens tabell, inte i en historisk exakt återgivning:'));
+      h.focus.filter(s=>bySymbol.has(s)).forEach(s=>examples.append(act(s,()=>{selectElement(bySymbol.get(s));chooseView('system',true);},{class:'quiet-button'})));
+      card.append(examples);
+    }
+    n.append(card);
+  }
+  function practiceTopic(x){
+    if(x.topic)return x.topic;
+    const t=flatten(x.title+' '+x.question);
+    if(/jon|laddning/.test(t))return'ions';
+    if(/grupp|period|metall|mönster|famili/.test(t))return'patterns';
+    if(/modell|bohr|orbital|mende|molekyl|reaktion/.test(t))return'models';
+    return'structure';
+  }
+  function questionSet(){
+    const v=$('practice-topic')?.value||'all';
+    const q=C.practice.filter(x=>v==='all'||practiceTopic(x)===v);
+    return q.length?q:C.practice;
+  }
+  function drawPractice(focus=false){
+    const n=$('practice-content');if(!n)return;n.replaceChildren();
+    const list=questionSet();const q=list[state.question%Math.max(1,list.length)];if(!q)return;
+    const key=C.practice.indexOf(q);
+    const title=el('h2',{},q.question);n.append(el('p',{class:'eyebrow'},q.title+'  /  '+(state.question%list.length+1)+' av '+list.length),title);
+    const chosen=state.attempts.get(key);
+    const opts=el('div',{class:'practice-choices'});
+    q.choices.forEach((label,i)=>{
+      opts.append(act(label,()=>{if(!state.results.has(key))state.results.set(key,i===q.answer);state.attempts.set(key,i);drawPractice(true);},{class:chosen===i?(i===q.answer?'correct':'incorrect'):'','aria-pressed':String(chosen===i),'data-choice':i}));
+    });n.append(opts);
+    if(chosen!==undefined)n.append(el('p',{class:'answer-feedback'},chosen===q.answer?'Rätt. Förklara varför innan du går vidare.':'Prova igen. Ledtråd: '+q.hint));
+    const actions=el('div',{class:'practice-actions'});actions.append(act('Ledtråd',()=>{const t=$('practice-hint');t.hidden=!t.hidden;},{class:'quiet-button'}),act(state.revealed?'Dölj facit':'Visa facit',()=>{state.revealed=!state.revealed;drawPractice();},{class:'quiet-button'}));
+    n.append(actions,el('p',{id:'practice-hint',hidden:true},q.hint));
+    if(state.revealed)n.append(el('p',{class:'answer-feedback'},'Facit: '+q.explanation));
+    const correct=[...state.results.values()].filter(Boolean).length;n.append(el('p',{class:'small-note'},'Första svar i den här sessionen: '+correct+' rätt av '+state.results.size+' besvarade. Omtag ändrar inte det första svaret.'));
+    if(focus)n.querySelector('[data-choice="'+chosen+'"]')?.focus();
+  }
+  function drawLessons(){
+    const n=$('teacher-content');if(n&&!n.dataset.rendered){
+      n.dataset.rendered='true';n.replaceChildren();
+      C.lessons.forEach((x,i)=>{
+        const a=el('div',{class:'lesson-card'});a.append(el('p',{class:'eyebrow'},'Genomgång '+String(i+1).padStart(2,'0')),el('h2',{},x.title),el('p',{},x.goal));
+        const steps=el('ol');(x.steps||[]).forEach(s=>steps.append(el('li',{},s)));
+        a.append(steps,el('p',{class:'model-note'},'Avstämning: '+x.exit));n.append(a);
+      });
+    }
+    const sources=$('sources-content');
+    if(sources&&!sources.dataset.rendered){
+      sources.dataset.rendered='true';const list=el('ul');
+      const items=[['IUPAC · Periodiska systemet','https://iupac.org/what-we-do/periodic-table-of-elements/','Placering och gruppnummer.'],
+      ['CIAAW · Standardatomvikter','https://ciaaw.org/abridged-atomic-weights.htm','Standardatomvikt är ett relativt värde, inte en atoms masstal.'],
+      ['CIAAW · Radioaktiva grundämnen','https://ciaaw.org/radioactive-elements.htm','Hakparenteser visar representativt masstal när ett är utpekat.'],
+      ['PubChem · Periodic Table','https://pubchem.ncbi.nlm.nih.gov/periodic-table/','Elektrondata och kompletterande egenskaper. Saknade värden visas inte som noll.'],
+      ['NIST · Atomic Spectra Database','https://physics.nist.gov/PhysRefData/ASD/ionEnergy.html','Kontroll av grundtillstånd och avvikande konfigurationer.'],
+      ['Svenska Kemisamfundet · Fickfakta','https://kemisamfundet.se/fick_app/','Svenska ämnesnamn.'],
+      ['Skolverket · Kemi åk 7–9','https://www.skolverket.se/undervisning/grundskolan/kursplaner-for-grundskolan/subjects/GRGRKEM01','Partikelmodeller, grundämnen, joner, reaktioner och modellernas utveckling.']];
+      for(const [title,url,context] of items){const li=el('li');li.append(el('a',{href:url,target:'_blank',rel:'noopener noreferrer'},title),el('span',{},' · '+context));list.append(li);}
+      sources.append(list,el('p',{class:'small-note'},'Tabellen använder vald 18-kolumnsvisning med lantanider och aktinider utfällda. Aggregation vid 20 °C och 100 kPa där uppgiften bedöms belagd. Inga konton eller elevuppgifter sparas.'));
+    }
+  }
+  let autoplay = null;
+  function stopAuto(){if(autoplay!==null){clearInterval(autoplay);autoplay=null;}if($('model-play')){$('model-play').textContent='Spela stegen';$('model-play').setAttribute('aria-pressed','false');}}
+  const bind=(id,event,fn)=>$(id)?.addEventListener(event,fn);
+  const custom=()=>{
+    const n=$('model-kind')?.closest('.model-controls');if(!n)return;
+    const fields=document.createElement('div');fields.id='model-atom-controls';fields.className='atom-controls';
+    for(const [id,t] of [['isotope-select','Isotop'],['charge-select','Laddning']]){
+      const lb=document.createElement('label');lb.htmlFor=id;lb.append(el('span',{},t));const s=document.createElement('select');s.id=id;lb.append(s);fields.append(lb);
+    }
+    n.insertBefore(fields,$('model-play'));
+    const v=el('div',{id:'process-controls',class:'process-controls',hidden:true});
+    v.append(act('Föregående',()=>{stopAuto();state.step=Math.max(0,state.step-1);drawModel();},{id:'process-prev',class:'quiet-button'}),el('span',{id:'process-step','aria-live':'polite'}),act('Nästa',()=>{stopAuto();state.step++;drawModel();},{id:'process-next',class:'quiet-button'}));n.insertBefore(v,$('model-play'));
+  };
+  custom();
+  if($('property-select'))selectOptions($('property-select'),[{value:'family',label:'Ämnesfamilj'},{value:'number',label:'Atomnummer'},{value:'period',label:'Period'},{value:'weight',label:'Standardatomvikt'},{value:'electronegativity',label:'Elektronegativitet'},{value:'state',label:'Aggregation vid 20 °C'}],state.trend);
+  if($('category-filter'))selectOptions($('category-filter'),[{value:'',label:'Alla grundämnen'},...categories.map(c=>({value:c,label:c.charAt(0).toUpperCase()+c.slice(1)}))],'');
+  if($('practice-topic'))$('practice-topic').prepend(el('option',{value:'all'},'Alla frågor'));
+  if($('practice-topic'))$('practice-topic').value='all';
+  const anno=$('property-note');if(anno)anno.textContent='Grupper 1–18 läses lodrätt och perioder 1–7 vågrätt. De utfällda serierna hör till period 6 och 7.';
+  bind('element-search','input',e=>{state.query=e.target.value;drawTable();});
+  bind('element-search','keydown',e=>{if(e.key==='Enter'){const found=data.filter(filterText);if(found.length===1){selectElement(found[0]);$('element-detail')?.scrollIntoView({block:'nearest'});}}});
+  bind('category-filter','change',e=>{state.family=e.target.value;drawTable();});
+  bind('property-select','change',e=>{state.trend=e.target.value;drawTable();});
+  bind('reset-filters','click',()=>{state.query='';state.family='';state.trend='family';$('element-search').value='';$('category-filter').value='';$('property-select').value='family';drawTable();$('element-search')?.focus();});
+  bind('table-list-toggle','click',e=>{state.list=!state.list;e.currentTarget.textContent=state.list?'Visa som tabell':'Visa som lista';e.currentTarget.setAttribute('aria-pressed',String(state.list));drawTable();});
+  bind('clear-compare','click',()=>{state.compare=[];drawCompare();drawTable();drawDetail();});
+  bind('audience-toggle','change',e=>{document.body.dataset.audience=e.target.value;if(e.target.value==='teacher')chooseView('teacher',true);else if(state.view==='teacher')chooseView('system',true);});
+  bind('projector-toggle','click',e=>{const enabled=document.body.classList.toggle('projector-mode');e.currentTarget.setAttribute('aria-pressed',String(enabled));e.currentTarget.textContent=enabled?'Avsluta projektor':'Projektor';});
+  bind('share-view','click',async e=>{
+    const p=location.href,button=e.currentTarget;
+    try{await navigator.clipboard.writeText(p);status('Länk kopierad.');button.textContent='Länk kopierad';setTimeout(()=>button.textContent='Dela vy',1600);}
+    catch{window.prompt('Kopiera länken till den här vyn:',p);}
+  });
+  all('[data-view]').forEach(b=>b.addEventListener('click',()=>{stopAuto();chooseView(b.dataset.view,true);}));
+  bind('model-kind','change',e=>{stopAuto();state.kind=e.target.value;state.key='';state.step=0;if(state.kind==='atom')state.rep='bohr';drawModel();});
+  bind('model-preset','change',e=>{stopAuto();state.key=e.target.value;state.step=0;if(state.kind==='atom'&&bySymbol.has(state.key))selectElement(bySymbol.get(state.key));else drawModel();});
+  bind('representation-select','change',e=>{state.rep=e.target.value;drawModel();});
+  bind('isotope-select','change',e=>{state.isotope=e.target.value?Number(e.target.value):null;drawModel();});
+  bind('charge-select','change',e=>{state.charge=Number(e.target.value);drawModel();});
+  all('[data-dimension]').forEach(b=>b.addEventListener('click',()=>{state.dimension=b.dataset.dimension==='3'?'3d':'2d';if(state.rep!=='bohr'&&state.kind==='atom')state.rep='bohr';drawModel();}));
+  bind('model-reset','click',()=>{stopAuto();state.step=0;state.isotope=null;state.charge=0;state.dimension='2d';state.rep='bohr';drawModel();});
+  bind('model-play','click',()=>{
+    if(autoplay!==null){stopAuto();return;}
+    if(state.kind!=='process')return;
+    const max=(listForKind().find(x=>x.key===state.key)?.steps?.length||3)-1;
+    if(state.step>=max)state.step=0;
+    $('model-play').textContent='Pausa';$('model-play').setAttribute('aria-pressed','true');drawModel();
+    autoplay=setInterval(()=>{state.step++;drawModel();if(state.step>=max)stopAuto();},1800);
+  });
+  bind('history-era','change',()=>{state.history=0;drawHistory();});
+  bind('practice-topic','change',()=>{state.question=0;state.revealed=false;drawPractice();});
+  bind('practice-new','click',()=>{state.question++;state.revealed=false;drawPractice();});
+  const rep=initial.get('form');if(['bohr','configuration','orbital'].includes(rep))state.rep=rep;
+  const iso=Number(initial.get('isotop'));if(iso&&state.element&&allowedIsotopes(state.element).includes(iso))state.isotope=iso;
+  const q=Number(initial.get('laddning'));if(state.element&&(allowedCharges[state.element.symbol]||[]).includes(q))state.charge=q;
+  state.step=Math.min(15,Math.max(0,parseInt(initial.get('steg'),10)||0));
+  status('Alla grundämnen laddade.');
+  drawTable();drawDetail();drawCompare();stopAuto();chooseView(state.view);
+})();
+
+</script>
+</body></html>
