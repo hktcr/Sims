@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 860" role="img" aria-labelledby="t d">
+<title id="t">Så bildas en blixt</title><desc id="d">Illustration med handritade linjer som visar laddningsseparation i ett åskmoln, laddningar som påverkar marken, en ledarkanal som kopplas ihop och ljudvågen som hörs som åska.</desc>
+<rect width="1200" height="860" rx="28" fill="#fbf8f0"/>
+<g font-family="system-ui,-apple-system,Segoe UI,sans-serif" fill="#202b35">
+<text x="64" y="78" font-size="18" font-weight="750" letter-spacing="3" fill="#52788a">VÄDER OCH ELEKTRICITET</text><text x="60" y="145" font-size="58" font-weight="800" letter-spacing="-2">Så bildas en blixt</text>
+<text x="64" y="182" font-size="21">Laddningar skiljs åt i ett åskmoln. När en ledande kanal sluts får vi en blixt.</text>
+</g>
+<!-- wind -->
+<g fill="none" stroke="#e87559" stroke-width="5" stroke-linecap="round"><path d="M98 442c-21-44-15-78 7-111"/><path d="M1085 440c23-42 16-82-7-115"/></g>
+<g fill="#202b35"><path d="M95 332l12-17 4 21z"/><path d="M1076 330l-9-18-7 20z"/></g>
+<!-- cloud, ink outline -->
+<path d="M278 299c-49-13-57-74-16-101 9-65 104-86 146-36 35-91 177-89 211 4 60-29 134 4 137 71 56 4 78 87 26 111H298c-44-3-60-33-20-49Z" fill="#fffdf8" stroke="#202b35" stroke-width="9" stroke-linejoin="round"/>
+<path d="M307 291c35 10 77 8 111 1m38 0c46 8 82 6 123 0m29-4c44 8 84 4 122-1" fill="none" stroke="#202b35" stroke-width="3" opacity=".25"/>
+<!-- positive upper / negative lower -->
+<g font-family="system-ui" font-size="37" font-weight="800" text-anchor="middle">
+<g fill="#e87559"><text x="394" y="188">+</text><text x="514" y="147">+</text><text x="642" y="191">+</text><text x="744" y="222">+</text></g>
+<g fill="#4f89a8"><text x="388" y="294">−</text><text x="483" y="314">−</text><text x="590" y="292">−</text><text x="698" y="314">−</text></g></g>
+<g font-family="system-ui" font-size="18" font-weight="700" fill="#202b35"><text x="369" y="115">Positiva laddningar</text><text x="369" y="137">högre upp</text><text x="650" y="357">Negativa laddningar</text><text x="650" y="379">längre ner</text></g>
+<!-- lightning channel -->
+<path d="M550 310l-29 55 39-7-49 77 39-9-43 79 43-12-20 75" fill="none" stroke="#e9b84d" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M550 310l-29 55 39-7-49 77 39-9-43 79 43-12-20 75" fill="none" stroke="#202b35" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M550 310l-29 55 39-7-49 77 39-9-43 79 43-12-20 75" fill="none" stroke="#fff5c9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- upward streamer meeting -->
+<path d="M569 581l12-23-7-19 22-23-13-25" fill="none" stroke="#e9b84d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- ground line and inducted positive -->
+<path d="M125 588q475-33 950 0" fill="none" stroke="#202b35" stroke-width="6" stroke-linecap="round"/>
+<path d="M125 610q475-33 950 0M125 631q475-33 950 0" fill="none" stroke="#5b9b82" stroke-width="2" opacity=".6"/>
+<g fill="#e87559" font-family="system-ui" font-size="27" font-weight="800" text-anchor="middle"><text x="479" y="581">+</text><text x="536" y="578">+</text><text x="594" y="577">+</text><text x="650" y="579">+</text></g>
+<!-- tree -->
+<path d="M570 586v-50m0 0-25 22m25-22 24 20" fill="none" stroke="#202b35" stroke-width="7" stroke-linecap="round"/>
+<!-- numbered circles -->
+<g font-family="system-ui" font-size="21" font-weight="800" text-anchor="middle"><g><circle cx="208" cy="223" r="22" fill="#e87559"/><text x="208" y="231" fill="white">1</text></g><g><circle cx="844" cy="287" r="22" fill="#4f89a8"/><text x="844" y="295" fill="white">2</text></g><g><circle cx="820" cy="467" r="22" fill="#e9b84d"/><text x="820" y="475">3</text></g><g><circle cx="846" cy="583" r="22" fill="#5b9b82"/><text x="846" y="591" fill="white">4</text></g></g>
+<!-- bottom four explanatory cards -->
+<g font-family="system-ui" fill="#202b35">
+<path d="M60 665h258m24 0h258m24 0h258m24 0h234" stroke="#202b35" stroke-width="2" opacity=".22"/>
+<text x="64" y="705" font-size="20" font-weight="800">1  Molnet laddas</text><text x="64" y="735" font-size="16">Kollisioner mellan is och</text><text x="64" y="758" font-size="16">vattendroppar skiljer laddning.</text>
+<text x="356" y="705" font-size="20" font-weight="800">2  Marken påverkas</text><text x="356" y="735" font-size="16">Laddningarna i molnet påverkar</text><text x="356" y="758" font-size="16">laddningarna på marken.</text>
+<text x="648" y="705" font-size="20" font-weight="800">3  Kanalen sluts</text><text x="648" y="735" font-size="16">Ledare växer från moln och mark.</text><text x="648" y="758" font-size="16">När de möts går en stark ström.</text>
+<text x="940" y="705" font-size="20" font-weight="800">4  Luften smäller</text><text x="940" y="735" font-size="16">Blixten hettar luften snabbt.</text><text x="940" y="758" font-size="16">Ljudvågen hörs som åska.</text>
+</g>
+<rect x="60" y="790" width="1080" height="2" fill="#202b35" opacity=".2"/>
+<g font-family="system-ui" font-size="15" fill="#43515b"><text x="64" y="820"><tspan font-weight="800">Kom ihåg:</tspan> Bilden visar en vanlig blixt mellan moln och mark. Blixtar kan också gå mellan moln eller uppåt från marken.</text><text x="64" y="842">De följer inte alltid den kortaste vägen. Åska är ljudet från luften som blixten har hettat upp.</text></g>
+</svg>
