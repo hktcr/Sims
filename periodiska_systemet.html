@@ -21,6 +21,17 @@ body.projecting .hero{padding:13px 0}body.projecting .hero h1{font-size:2rem}bod
 
 .trends summary{font:normal 1.45rem var(--serif)}.trends .model-desc{margin-top:6px}.chart{height:175px;display:flex;padding:10px 8px 0;gap:clamp(4px,2.4vw,25px);margin:14px 0;background:#f2f5ec;border-radius:6px}.bar-col{height:100%;flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}.bar-col>b{padding:5px;font:600 .8rem var(--mono)}.bar-space{flex:1;width:100%;display:flex;align-items:flex-end;border-bottom:1px solid var(--ink)}.bar{position:relative;background:#72aa98;border:1px solid #5a917f;border-radius:3px 3px 0 0;width:100%}.bar small{position:absolute;top:-17px;text-align:center;width:100%;font:.73rem var(--mono)}.dialog-actions{border-top:1px solid var(--line);padding-top:12px;margin-bottom:0}
 @media print{body:has(dialog[open])>*:not(dialog){display:none!important}dialog[open]{display:block!important;position:static;padding:8mm;width:100%;max-height:none;box-shadow:none;border:0}dialog[open]::backdrop{background:white}.dialoghead button,.dialog-actions,.dialogcopy .controls,.dialogcopy details:not([open]){display:none!important}.dialogcopy li{margin-bottom:5mm}.dialogcopy summary{display:none}}
+
+.lab-dialog{width:min(960px,96vw);padding:20px 23px 16px}.lab-dialog .dialoghead{margin-bottom:16px}.lab-dialog .dialoghead h2{font-size:clamp(1.55rem,3vw,2.25rem)}.lab-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(205px,.9fr);gap:17px}.lab-figure{border:1px solid #c8d5c7;border-radius:9px;display:flex;flex-direction:column;min-width:0;background:radial-gradient(ellipse at 50% 50%,#f8faf2,#e9eee3 87%);overflow:hidden}.lab-topline,.lab-figfoot{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 12px}.lab-caption,.studio-picker>label{font-weight:650;font-size:.85rem}.lab-caption{color:#355846}.seg{display:inline-flex;gap:2px;align-items:center;background:#eaeee5;border:1px solid #b9c8b8;border-radius:6px;padding:2px}.seg button{padding:4px 10px;min-height:28px;font-size:.8rem;border-radius:4px;color:#435c4d}.seg button[aria-pressed=true]{background:var(--dark);color:white}.lab-figfoot{border-top:1px solid #d4ddce;font-size:.72rem;color:#405d4d}.camera{display:flex;gap:3px}.camera button{border:1px solid #b9c9b8;background:#fafcf5;border-radius:4px;font-size:1rem;min-width:28px;min-height:27px}.camera button:hover,.time-picks button:hover,.step-track button:hover{background:#dce8d6}.camera button:disabled{opacity:.35}.lab-side{min-width:0}.lab-side label{display:block;font-size:.79rem;font-weight:650;color:#405648;margin-bottom:9px}.lab-side select{display:block;font-weight:500;width:100%;margin-top:4px}.lab-id{display:flex;gap:10px;align-items:baseline;margin-bottom:10px}.lab-id>span:last-child{color:var(--muted);font-size:1.03rem}.lab-id .notation{line-height:1.25}.lab-formula{font:normal clamp(2rem,3.1vw,3.3rem)/1.2 var(--serif);margin:2px 0 13px;letter-spacing:-.045em}.lab-side h3,.lab-section h3,.lab-section h4{font:normal 1.4rem/1.2 var(--serif);letter-spacing:-.025em}.lab-side p,.lab-section p{font-size:.9rem;line-height:1.5}.lab-side h3{margin:14px 0 7px}.lab-side .particle-strip{gap:3px;margin:8px 0}.lab-side .particle-strip div{padding:6px 3px}.lab-side .particle-strip b{font-size:1.45rem}.lab-side .model-desc,.lab-section .model-desc{font-size:.79rem}.lab-note{color:var(--muted);font-size:.81rem;margin:10px 0 0}.lab-section{border-top:1px solid var(--line);margin-top:14px;padding-top:13px}.lab-section p{margin-top:6px}.section-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.shell-chips,.orbital-boxes,.time-picks,.step-track,.step-buttons{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.shell-chips>span{display:flex;align-items:center;gap:8px;border:1px solid #c6d6c3;padding:5px 10px;border-radius:5px;background:#f1f5ea}.shell-chips small{color:var(--muted)}.shell-chips b{font:600 1.1rem var(--mono)}.configuration{display:flex;gap:4px 11px;flex-wrap:wrap;font:1.1rem var(--mono);margin:10px 0}.subshell{display:inline-flex;align-items:center;gap:1px;margin:3px 5px 3px 0}.subshell strong{font:.85rem var(--mono);margin-right:4px}.subshell i{font:1.03rem/1.4 var(--sans);font-style:normal;min-width:1.46rem;height:1.55rem;text-align:center;border:1px solid #889d8c;border-radius:2px;background:#eff4eb;color:#254e3b}.time-picks button,.step-track button{border:1px solid var(--line);border-radius:5px;background:#f7f9f2;text-align:left;padding:6px 9px;font-size:.8rem}.time-picks button{flex:1}.time-picks small{display:block;color:var(--muted);font:.65rem var(--mono);margin-bottom:3px}.time-picks button[aria-pressed=true],.step-track button[aria-pressed=true]{background:#dce9d9;border-color:#74987e;color:#184a38}.history-copy{padding:10px 13px;background:#f1f3eb;border-left:3px solid #92a784;border-radius:4px}.history-copy h4{font-size:1.1rem}.history-copy details{margin-top:7px;font-size:.85rem}.history-copy details p{font-size:.83rem}.step-buttons button{font-size:.8rem}.step-track button span{font:normal .7rem var(--mono);margin-right:6px}.studio-lead{display:flex;align-items:center;gap:20px;justify-content:space-between;padding:20px 24px;background:#e7eee3;border:1px solid #bdceba;border-radius:9px}.studio-lead h2,.gallery-section h2{font:normal 1.75rem var(--serif);letter-spacing:-.035em}.studio-lead h2{margin:5px 0}.studio-lead p{font-size:.91rem;max-width:690px;color:#395444}.studio-picker{flex:0 1 360px}.studio-picker>div{display:flex;gap:7px;margin-top:5px}.studio-picker select{min-width:0;flex:1}.gallery-section{margin:25px 0 16px}.gallery-section h2{margin-bottom:12px}.specimen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:9px}.specimen,.process-card{border:1px solid var(--line);border-radius:8px;background:var(--panel);text-align:left}.specimen:hover,.process-card:hover{border-color:#779a7e;background:#f3f7ee}.specimen{display:flex;align-items:center;min-height:92px;padding:0 10px 0 0;gap:8px;overflow:hidden}.specimen-art{height:90px;width:90px;display:grid;place-items:center;background:#edf2e8;flex-shrink:0}.specimen-art svg{width:100%;height:100%}.specimen-text{display:grid;gap:3px}.specimen-text b,.process-card strong{font:normal 1.3rem var(--serif);color:#193c31}.specimen-text small{font:.86rem var(--mono);color:#496353}.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:9px}.process-card{display:grid;align-content:start;gap:8px;padding:13px 15px}.process-card>span:last-child{font-size:.85rem;line-height:1.45;color:#496353}
+#viewport{position:relative;min-height:140px;display:grid;flex:1;place-items:center;outline-offset:-3px;overflow:hidden}
+#viewport svg{height:clamp(180px,29vh,325px);max-width:100%;width:100%;display:block;user-select:none}
+#viewport.rotatable{touch-action:none;cursor:grab}#viewport.rotatable:active{cursor:grabbing}#viewport:focus-visible{outline:3px solid #005eac}.empty-scene{padding:20px;color:var(--muted)}
+@media(max-width:760px){.top{gap:6px}.navbtn{padding:6px 7px}.studio-lead{align-items:stretch;flex-direction:column}.studio-picker{flex:auto}.lab-dialog{padding:12px}.lab-grid{gap:10px}.lab-figfoot{padding:6px}.camera{gap:2px}.camera button{min-width:25px}.lab-figfoot #gesture{font-size:.7rem}}
+@media(max-width:620px){#nav{overflow-x:auto;justify-content:space-between;max-width:100%}.navbtn{font-size:.74rem;gap:2px;padding:5px 4px}.navbtn .ico{width:.9em}.lab-grid{grid-template-columns:1fr}.lab-dialog .dialoghead{padding-bottom:7px;margin-bottom:8px}#viewport svg{height:190px}.lab-side label{display:inline-block;width:calc(50% - 6px);margin-right:5px;vertical-align:top}.lab-side .lab-id{margin:0 0 5px}.lab-side .particle-strip{margin:2px 0 5px}.lab-note{margin-top:6px}.lab-caption{font-size:.77rem}.lab-topline{padding:7px}.lab-figfoot{padding:5px 7px}.lab-dialog .time-picks button{flex:1 1 27%}.specimen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.specimen{display:block;padding:0 0 8px}.specimen-art{width:100%;height:68px}.specimen-text{padding:7px 8px 0}.specimen-text b{font-size:1.15rem}.studio-lead{padding:14px}.lab-section h3{font-size:1.25rem}}
+@media print{.lab-grid{grid-template-columns:1.5fr 1fr}.lab-figure,.specimen{-webkit-print-color-adjust:exact;print-color-adjust:exact}#viewport svg{height:52mm}.camera,.lab-figfoot,.step-buttons,#playProcess{display:none}}
+#viewport{height:clamp(180px,31vh,330px)}#viewport svg{max-height:clamp(180px,31vh,330px)}.past-panel{margin:10px 0;padding:11px 13px;background:#f3ecdc;border:1px solid #d8caab;border-radius:7px}.past-panel label{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-weight:600;font-size:.83rem}.past-panel p{font-size:.84rem;line-height:1.4;margin-top:5px}.past-panel .model-desc{font-size:.76rem}.past-panel select{max-width:100%}.photon{color:#9a4237;font-weight:bold}
+.energy-diagram{max-width:220px;margin:8px 0;border-left:1px solid #cbd7c7;padding-left:7px}.energy-diagram div{display:flex;align-items:center;height:16px;gap:4px;font:.72rem var(--mono);color:#415b51}.energy-diagram div:last-child{margin-top:10px}.energy-diagram i{display:block;border-top:1px solid #809789;flex:1}.energy-diagram b{color:#206e51}
+.related-lab{margin-top:9px;padding-top:7px;border-top:1px solid var(--line);font-size:.78rem;color:var(--accent)}.related-lab summary{padding:4px 0}.related-lab>div{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.related-lab .chip{font-size:.75rem;min-height:28px}
 </style></head>
 <body>
 <a href="#main" class="skip">Till innehållet</a>
@@ -30,8 +41,9 @@ body.projecting .hero{padding:13px 0}body.projecting .hero h1{font-size:2rem}bod
 <section class="hero"><div><h1 id="heading">Periodiska systemet</h1><p id="intro">Välj ett grundämne och undersök hur atomens byggnad hänger ihop med platsen i tabellen.</p></div><div class="stats" aria-label="Tabellens omfattning"><span><b>118</b>Grundämnen</span><span><b>18</b>Grupper</span><span><b>7</b>Perioder</span></div></section>
 <button id="returnLesson" class="btn returnlesson" hidden></button>
 <section id="explore" class="layout">
-<div class="table-panel panel"><div class="tools"><label class="search"><span data-icon="search"></span><input id="search" type="search" autocomplete="off" aria-label="Sök på namn, symbol eller atomnummer" placeholder="Sök namn, symbol eller nummer"></label><label class="select-label"><span>Färg</span><select id="color"><option value="category">Ämnesfamilj</option><option value="phase">Aggregationsform</option><option value="period">Period</option><option value="plain">Ingen färg</option></select></label><button class="btn iconbtn" id="settings" aria-label="Visningsalternativ" title="Visningsalternativ"><span data-icon="settings"></span></button></div>
+<div class="table-panel panel"><div class="tools"><label class="search"><span data-icon="search"></span><input id="search" type="search" autocomplete="off" aria-label="Sök på namn, symbol eller atomnummer" placeholder="Sök namn, symbol eller nummer"></label><label class="select-label"><span>Färg</span><select id="color"><option value="category">Ämnesfamilj</option><option value="phase">Aggregationsform</option><option value="period">Period</option><option value="history">Vetenskapshistoria</option><option value="plain">Ingen färg</option></select></label><button class="btn iconbtn" id="settings" aria-label="Visningsalternativ" title="Visningsalternativ"><span data-icon="settings"></span></button></div>
 <div id="settingsPanel" class="options" hidden><label><input type="checkbox" id="showMass"> Visa standardatomvikt</label><label><input type="checkbox" id="first"> Första 20 ämnena</label><label>Grupp <select id="group"></select></label><label>Period <select id="period"></select></label><button class="textbtn" id="reset">Återställ urval</button></div>
+<div id="past" class="past-panel" hidden></div>
 <div class="table-scroll" tabindex="0" aria-label="Periodiska systemet. På smal skärm kan tabellen rullas i sidled."><div id="grid" aria-label="Grundämnen ordnade i grupper och perioder"></div></div>
 <div class="legend-area"><div class="legend-title"><span id="legendTitle">Ämnesfamiljer</span><span id="match" role="status"></span></div><div id="legend"></div></div>
 </div>
@@ -165,6 +177,687 @@ window.GRUND = [
   {"z":117,"symbol":"Ts","name":"Tenness","en":"Tennessine","mass":null,"period":7,"group":17,"category":"halogen","phase":"unknown","shells":null},
   {"z":118,"symbol":"Og","name":"Oganesson","en":"Oganesson","mass":null,"period":7,"group":18,"category":"noble","phase":"unknown","shells":null}
 ];
+
+// Neutral atomic ground states indexed by atomic number, in shell order.
+// Each occupied subshell is [principal quantum number, subshell, electron count].
+// NIST H to U: https://math.nist.gov/DFTdata/atomdata/configuration.html
+// Np to Lr: https://pubchem.ncbi.nlm.nih.gov/periodic-table/pdf/Periodic_Table_of_Elements_w_Electron_Configuration_PubChem.pdf
+// Lr's 7p assignment has indirect experimental support from its first ionization potential.
+// Superheavy configurations beyond Lr are omitted because predictions are not differentiated here.
+window.CONFIG = {
+  1: [[1,"s",1]], // H
+  2: [[1,"s",2]], // He
+  3: [[1,"s",2], [2,"s",1]], // Li
+  4: [[1,"s",2], [2,"s",2]], // Be
+  5: [[1,"s",2], [2,"s",2], [2,"p",1]], // B
+  6: [[1,"s",2], [2,"s",2], [2,"p",2]], // C
+  7: [[1,"s",2], [2,"s",2], [2,"p",3]], // N
+  8: [[1,"s",2], [2,"s",2], [2,"p",4]], // O
+  9: [[1,"s",2], [2,"s",2], [2,"p",5]], // F
+  10: [[1,"s",2], [2,"s",2], [2,"p",6]], // Ne
+  11: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",1]], // Na
+  12: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2]], // Mg
+  13: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",1]], // Al
+  14: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",2]], // Si
+  15: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",3]], // P
+  16: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",4]], // S
+  17: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",5]], // Cl
+  18: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6]], // Ar
+  19: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [4,"s",1]], // K
+  20: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [4,"s",2]], // Ca
+  21: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",1], [4,"s",2]], // Sc
+  22: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",2], [4,"s",2]], // Ti
+  23: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",3], [4,"s",2]], // V
+  24: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",5], [4,"s",1]], // Cr
+  25: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",5], [4,"s",2]], // Mn
+  26: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",6], [4,"s",2]], // Fe
+  27: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",7], [4,"s",2]], // Co
+  28: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",8], [4,"s",2]], // Ni
+  29: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",1]], // Cu
+  30: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2]], // Zn
+  31: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",1]], // Ga
+  32: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",2]], // Ge
+  33: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",3]], // As
+  34: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",4]], // Se
+  35: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",5]], // Br
+  36: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6]], // Kr
+  37: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [5,"s",1]], // Rb
+  38: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [5,"s",2]], // Sr
+  39: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",1], [5,"s",2]], // Y
+  40: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",2], [5,"s",2]], // Zr
+  41: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",4], [5,"s",1]], // Nb
+  42: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",5], [5,"s",1]], // Mo
+  43: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",5], [5,"s",2]], // Tc
+  44: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",7], [5,"s",1]], // Ru
+  45: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",8], [5,"s",1]], // Rh
+  46: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10]], // Pd
+  47: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",1]], // Ag
+  48: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2]], // Cd
+  49: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",1]], // In
+  50: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",2]], // Sn
+  51: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",3]], // Sb
+  52: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",4]], // Te
+  53: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",5]], // I
+  54: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",6]], // Xe
+  55: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",6], [6,"s",1]], // Cs
+  56: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",6], [6,"s",2]], // Ba
+  57: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [5,"s",2], [5,"p",6], [5,"d",1], [6,"s",2]], // La
+  58: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",1], [5,"s",2], [5,"p",6], [5,"d",1], [6,"s",2]], // Ce
+  59: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",3], [5,"s",2], [5,"p",6], [6,"s",2]], // Pr
+  60: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",4], [5,"s",2], [5,"p",6], [6,"s",2]], // Nd
+  61: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",5], [5,"s",2], [5,"p",6], [6,"s",2]], // Pm
+  62: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",6], [5,"s",2], [5,"p",6], [6,"s",2]], // Sm
+  63: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",7], [5,"s",2], [5,"p",6], [6,"s",2]], // Eu
+  64: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",7], [5,"s",2], [5,"p",6], [5,"d",1], [6,"s",2]], // Gd
+  65: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",9], [5,"s",2], [5,"p",6], [6,"s",2]], // Tb
+  66: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",10], [5,"s",2], [5,"p",6], [6,"s",2]], // Dy
+  67: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",11], [5,"s",2], [5,"p",6], [6,"s",2]], // Ho
+  68: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",12], [5,"s",2], [5,"p",6], [6,"s",2]], // Er
+  69: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",13], [5,"s",2], [5,"p",6], [6,"s",2]], // Tm
+  70: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [6,"s",2]], // Yb
+  71: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",1], [6,"s",2]], // Lu
+  72: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",2], [6,"s",2]], // Hf
+  73: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",3], [6,"s",2]], // Ta
+  74: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",4], [6,"s",2]], // W
+  75: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",5], [6,"s",2]], // Re
+  76: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",6], [6,"s",2]], // Os
+  77: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",7], [6,"s",2]], // Ir
+  78: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",9], [6,"s",1]], // Pt
+  79: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",1]], // Au
+  80: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2]], // Hg
+  81: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",1]], // Tl
+  82: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",2]], // Pb
+  83: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",3]], // Bi
+  84: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",4]], // Po
+  85: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",5]], // At
+  86: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",6]], // Rn
+  87: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",6], [7,"s",1]], // Fr
+  88: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",6], [7,"s",2]], // Ra
+  89: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",6], [6,"d",1], [7,"s",2]], // Ac
+  90: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [6,"s",2], [6,"p",6], [6,"d",2], [7,"s",2]], // Th
+  91: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",2], [6,"s",2], [6,"p",6], [6,"d",1], [7,"s",2]], // Pa
+  92: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",3], [6,"s",2], [6,"p",6], [6,"d",1], [7,"s",2]], // U
+  93: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",4], [6,"s",2], [6,"p",6], [6,"d",1], [7,"s",2]], // Np
+  94: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",6], [6,"s",2], [6,"p",6], [7,"s",2]], // Pu
+  95: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",7], [6,"s",2], [6,"p",6], [7,"s",2]], // Am
+  96: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",7], [6,"s",2], [6,"p",6], [6,"d",1], [7,"s",2]], // Cm
+  97: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",9], [6,"s",2], [6,"p",6], [7,"s",2]], // Bk
+  98: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",10], [6,"s",2], [6,"p",6], [7,"s",2]], // Cf
+  99: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",11], [6,"s",2], [6,"p",6], [7,"s",2]], // Es
+  100: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",12], [6,"s",2], [6,"p",6], [7,"s",2]], // Fm
+  101: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",13], [6,"s",2], [6,"p",6], [7,"s",2]], // Md
+  102: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",14], [6,"s",2], [6,"p",6], [7,"s",2]], // No
+  103: [[1,"s",2], [2,"s",2], [2,"p",6], [3,"s",2], [3,"p",6], [3,"d",10], [4,"s",2], [4,"p",6], [4,"d",10], [4,"f",14], [5,"s",2], [5,"p",6], [5,"d",10], [5,"f",14], [6,"s",2], [6,"p",6], [7,"s",2], [7,"p",1]], // Lr
+};
+
+window.ATOM_HISTORY = [
+  {
+    id: "dalton",
+    year: 1808,
+    title: "Daltons atomteori",
+    short: "John Dalton beskrev varje atomslag med en egen massa. I en kemisk reaktion kan atomerna sättas ihop på nya sätt.",
+    evidence: "I både kolmonoxid och koldioxid finns kol och syre. För samma massa kol innehåller koldioxid dubbelt så mycket syre. En och två syreatomer per kolatom förklarar det enkla förhållandet.",
+    limit: "Daltons atomer saknade inre delar. Senare upptäckter visade att atomen har en kärna och elektroner, och att atomer av samma grundämne kan ha olika massa.",
+    source: "Science History Institute · Daltons bok",
+    url: "https://digital.sciencehistory.org/works/ff365590j"
+  },
+  {
+    id: "thomson",
+    year: 1904,
+    title: "Thomsons atommodell",
+    short: "J. J. Thomson föreslog att negativa elektroner fanns inuti en kula med jämnt fördelad positiv laddning. Tillsammans kunde laddningarna ge en neutral atom.",
+    evidence: "År 1897 undersökte Thomson hur elektriska och magnetiska fält böjde katodstrålar. Han drog slutsatsen att strålarna bestod av små, negativt laddade partiklar. År 1904 beskrev han sin modell för hela atomen.",
+    limit: "Försöken med katodstrålar visade hur elektroner betedde sig. Fördelningen av positiv laddning i atomen var fortfarande ett antagande.",
+    source: "J. J. Thomson · Originalartikeln från 1904",
+    url: "https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/MathePhysik/Institute/IAP/Forschung/MOettel/Geburt_QM/thomson_PhilMag_7_237_1904.pdf"
+  },
+  {
+    id: "rutherford",
+    year: 1911,
+    title: "Rutherfords kärnmodell",
+    short: "Ernest Rutherford förklarade spridningen av alfapartiklar genom att samla atomens centrala laddning i en mycket liten kärna. Kärnan upptar bara en liten del av atomens volym.",
+    evidence: "Hans Geiger och Ernest Marsden undersökte metallfolie. De flesta alfapartiklar fortsatte nästan rakt fram. År 1909 rapporterade forskarna att några få till och med kom tillbaka på samma sida som de kom ifrån.",
+    limit: "Spridningen gav ledtrådar om atomens centrum. Frågan om varför en atom sänder ut ljus med just vissa våglängder fanns kvar.",
+    source: "American Institute of Physics · Spridningsförsöken",
+    url: "https://history.aip.org/exhibits/rutherford/sections/alpha-particles-atom.html"
+  },
+  {
+    id: "bohr",
+    year: 1913,
+    title: "Bohrs atommodell",
+    short: "Niels Bohr gav elektronen i väte vissa tillåtna banor, var och en med sin energi. När atomen går till en lägre energinivå kan den sända ut ljus.",
+    evidence: "Ljus från väte ger smala linjer vid bestämda våglängder. Bohr kunde beräkna linjernas lägen från skillnaderna mellan energinivåerna.",
+    limit: "Modellen fungerar bäst för atomer eller joner med en enda elektron. Den ger ingen bra beskrivning av spektrumet hos en atom med flera elektroner.",
+    source: "OpenStax · Bohrs modell för väte",
+    url: "https://openstax.org/books/college-physics-2e/pages/30-3-bohrs-theory-of-the-hydrogen-atom"
+  },
+  {
+    id: "quantum",
+    year: 1926,
+    title: "Den kvantmekaniska modellen",
+    short: "Erwin Schrödinger beskrev elektronens tillstånd med en vågfunktion. Max Born gav den en sannolikhetstolkning. Med den kan vi beräkna var en elektron sannolikt påträffas.",
+    evidence: "För väte ger Schrödingers ekvation de energinivåer som behövs för att förklara atomens spektrallinjer. De tillåtna energierna följer ur ekvationen.",
+    limit: "Ett elektronmoln visar en sannolikhetsfördelning. En tätare del betyder större chans att hitta elektronen i en lika stor volym där. En enskild mätning ger bara ett läge.",
+    source: "OpenStax · Kvantmekanikens atommodell",
+    url: "https://openstax.org/books/chemistry/pages/6-3-development-of-quantum-theory"
+  }
+];
+
+window.TABLE_HISTORY = [
+  {
+    id: "gallium",
+    year: 1871,
+    title: "Vad borde finnas under aluminium?",
+    short: "Dmitrij Mendelejev lämnade en lucka under aluminium. År 1871 förutsade han att metallen som saknades skulle ha låg smältpunkt. År 1875 upptäckte Paul-Émile Lecoq de Boisbaudran gallium. Metallen smälter redan vid ungefär 30 °C.",
+    question: "Vad gör en förutsägelse om ett okänt ämnes smältpunkt möjlig att pröva?",
+    z: [13, 31],
+    source: "Royal Society of Chemistry · Förutsägelsen om gallium",
+    url: "https://www.rsc.org/images/23_The_Periodic_Law_tcm18-30005.pdf"
+  },
+  {
+    id: "argon",
+    year: 1894,
+    title: "En oväntad gas i luften",
+    short: "En liter av den gas som Rayleigh trodde var rent kväve från luften vägde lite mer än en liter rent kväve vid samma temperatur och tryck. År 1894 fann Rayleigh och William Ramsay förklaringen. Provet från luften innehöll också argon. Senare hittades fler ädelgaser, bland annat neon och krypton.",
+    question: "Hitta argon, neon och krypton. Var i dagens tabell hamnar de, och vad berättar deras placering?",
+    z: [10, 18, 36],
+    source: "University College London · Upptäckten av argon",
+    url: "https://www.ucl.ac.uk/mathematical-physical-sciences/chemistry/about-us/history-department"
+  },
+  {
+    id: "moseley",
+    year: 1913,
+    title: "Varför kommer tellur före jod?",
+    short: "År 1913 fann Henry Moseley ett mönster i röntgenstrålningen från olika grundämnen. Mätningarna gav stöd för att ordna ämnena efter atomnummer. Tellur har atomnummer 52 och jod har 53, trots att en telluratom i genomsnitt är tyngre än en jodatom.",
+    question: "Vilket ämne skulle komma först om du sorterade efter genomsnittlig atommassa? Jämför med ordningen i dagens tabell.",
+    z: [52, 53],
+    source: "Royal Society of Chemistry · Moseley och atomnumret",
+    url: "https://periodic-table.rsc.org/history/about"
+  },
+  {
+    id: "names",
+    year: 2016,
+    title: "Fyra rutor får sina namn",
+    short: "De fyra grundämnena var redan framställda och upptäckterna hade granskats när kemiunionen IUPAC godkände deras namn och tecken den 28 november 2016. De officiella tecknen blev Nh, Mc, Ts och Og.",
+    question: "Hitta de fyra rutorna. Vilken uppgift i varje ruta hade räckt för att placera ämnet rätt redan innan det fick sitt namn?",
+    z: [113, 115, 117, 118],
+    source: "IUPAC · Beslutet om de fyra namnen",
+    url: "https://iupac.org/iupac-announces-the-names-of-the-elements-113-115-117-and-118/"
+  }
+];
+
+(() => {
+  const chapter = 'https://openstax.org/books/chemistry-2e/pages/';
+  const shapes = chapter + '7-6-molecular-structure-and-polarity';
+  const angles = chapter + '8-2-hybrid-atomic-orbitals';
+  const lewis = chapter + '7-3-lewis-symbols-and-structures';
+  const ionic = 'https://openstax.org/books/chemistry-atoms-first-2e/pages/4-1-ionic-bonding';
+  const shapeSource = 'OpenStax, Chemistry 2e';
+  const ionSource = 'OpenStax, Chemistry: Atoms First 2e';
+
+  // Positions in display units. Rotate rigid groups without changing angles.
+  function pose(atoms, center, yaw = 0, pitch = 0, roll = 0) {
+    return atoms.map(([symbol, x, y, z]) => {
+      const xp = x * Math.cos(yaw) + z * Math.sin(yaw);
+      const zp = -x * Math.sin(yaw) + z * Math.cos(yaw);
+      const yp = y * Math.cos(pitch) - zp * Math.sin(pitch);
+      const zpp = y * Math.sin(pitch) + zp * Math.cos(pitch);
+      return [symbol, center[0] + xp * Math.cos(roll) - yp * Math.sin(roll),
+        center[1] + xp * Math.sin(roll) + yp * Math.cos(roll), center[2] + zpp];
+    });
+  }
+  const waterHalfAngle = 104.5 * Math.PI / 360;
+  const water = [
+    ['O', 0, 0, 0],
+    ['H', Math.sin(waterHalfAngle), Math.cos(waterHalfAngle), 0],
+    ['H', -Math.sin(waterHalfAngle), Math.cos(waterHalfAngle), 0]
+  ];
+  const waterBonds = [[0, 1, 1], [0, 2, 1]];
+  function tetrahedral(symbol) {
+    const d = 1 / Math.sqrt(3);
+    return [[symbol, 0, 0, 0], ['H', d, d, d], ['H', d, -d, -d],
+      ['H', -d, d, -d], ['H', -d, -d, d]];
+  }
+  const fourBonds = [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1]];
+  const pyramidHeight = Math.sqrt((Math.cos(107.3 * Math.PI / 180) + 0.5) / 1.5);
+  const pyramidRadius = Math.sqrt(1 - pyramidHeight * pyramidHeight);
+  const ammonia = [['N', 0, 0, 0]];
+  for (let i = 0; i < 3; i += 1) {
+    const azimuth = i * 2 * Math.PI / 3;
+    ammonia.push(['H', pyramidRadius * Math.cos(azimuth), -pyramidHeight,
+      pyramidRadius * Math.sin(azimuth)]);
+  }
+  const crystal = [];
+  for (let x = -1; x <= 1; x += 1) {
+    for (let y = -1; y <= 1; y += 1) {
+      for (let z = -1; z <= 1; z += 1) {
+        const symbol = (x + y + z) % 2 === 0 ? 'Na' : 'Cl';
+        crystal.push([symbol, x, y, z]);
+      }
+    }
+  }
+  window.SPECIES = {
+    H2O: {
+      name: 'Vatten', formula: 'H₂O', type: 'Molekyl',
+      description: 'En syreatom binder två väteatomer. Molekylen är böjd och vinkeln mellan bindningarna är ungefär 104,5°.',
+      source: shapeSource, url: angles,
+      atoms: pose(water, [0, 0, 0], 0.18, -0.22), bonds: waterBonds
+    },
+    CO2: {
+      name: 'Koldioxid', formula: 'CO₂', type: 'Molekyl',
+      description: 'En kolatom sitter mellan två syreatomer på en rak linje. Varje syreatom har en dubbelbindning till kolatomen.',
+      source: shapeSource, url: shapes,
+      atoms: pose([['C', 0, 0, 0], ['O', -1.2, 0, 0], ['O', 1.2, 0, 0]], [0, 0, 0], 0.22, 0, 0.08),
+      bonds: [[0, 1, 2], [0, 2, 2]]
+    },
+    O2: {
+      name: 'Syrgas', formula: 'O₂', type: 'Molekyl',
+      description: 'Två syreatomer bildar en molekyl. I en enkel bindningsmodell visar två streck en dubbelbindning mellan atomerna.',
+      source: shapeSource, url: lewis,
+      atoms: pose([['O', -0.61, 0, 0], ['O', 0.61, 0, 0]], [0, 0, 0], 0.24, 0, 0.13),
+      bonds: [[0, 1, 2]]
+    },
+    H2: {
+      name: 'Vätgas', formula: 'H₂', type: 'Molekyl',
+      description: 'Två väteatomer delar ett elektronpar. Ett streck mellan atomerna visar denna enkelbindning.',
+      source: shapeSource, url: lewis,
+      atoms: pose([['H', -0.43, 0, 0], ['H', 0.43, 0, 0]], [0, 0, 0], -0.2, 0, -0.12),
+      bonds: [[0, 1, 1]]
+    },
+    CH4: {
+      name: 'Metan', formula: 'CH₄', type: 'Molekyl',
+      description: 'Fyra väteatomer sitter runt kolatomen som hörnen i en tetraeder. Vinkeln mellan två bindningar är ungefär 109,5°.',
+      source: shapeSource, url: shapes,
+      atoms: pose(tetrahedral('C'), [0, 0, 0], 0.32, -0.21), bonds: fourBonds
+    },
+    NH3: {
+      name: 'Ammoniak', formula: 'NH₃', type: 'Molekyl',
+      description: 'Tre väteatomer bildar basen i en låg pyramid. Kväveatomen ligger vid spetsen och har ett fritt elektronpar. Vinkeln mellan två bindningar är ungefär 107°.',
+      source: shapeSource, url: angles,
+      atoms: pose(ammonia, [0, 0, 0], 0.14, -0.21, -0.08),
+      bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1]]
+    },
+    NH4: {
+      name: 'Ammoniumjon', formula: 'NH₄⁺', type: 'Sammansatt jon',
+      description: 'Fyra väteatomer omger en kväveatom i en tetraeder. Plustecknet anger att hela jonen har laddningen +1.',
+      source: shapeSource, url: shapes,
+      atoms: pose(tetrahedral('N'), [0, 0, 0], 0.32, -0.21), bonds: fourBonds
+    },
+    Cl: {
+      name: 'Kloridjon', formula: 'Cl⁻', type: 'Enatomig jon',
+      description: 'En kloridjon har 17 protoner och 18 elektroner. Den extra elektronen ger jonen laddningen −1.',
+      source: ionSource, url: ionic,
+      atoms: [['Cl', 0, 0, 0]], bonds: []
+    },
+    NaCl: {
+      name: 'Natriumklorid', formula: 'NaCl', type: 'Jonkristall',
+      description: 'Natriumjoner (Na⁺) och kloridjoner (Cl⁻) växlar i tre riktningar. Jonen mitt i utsnittet har sex närmaste grannar med motsatt laddning.',
+      source: ionSource, url: ionic,
+      atoms: pose(crystal, [0, 0, 0], 0.36, -0.27), bonds: [],
+      note: 'Kristallen fortsätter utanför bilden. Utsnittet visar 13 Na⁺ och 14 Cl⁻. I kristallen som helhet är förhållandet 1 till 1. NaCl anger detta förhållande.'
+    }
+  };
+
+  const neutralPair = [['Na', -1.35, 0, -0.15], ['Cl', 1.35, 0, 0.15]];
+  const reactants = [
+    ['O', -0.58, -0.72, -0.25], ['O', 0.58, -0.56, -0.1],
+    ['H', -1.85, 0.69, 0.29], ['H', -1.05, 0.88, 0.18],
+    ['H', 1.11, 0.78, 0.3], ['H', 1.89, 0.54, 0.5]
+  ];
+  const leftWater = pose(water, [-1.23, -0.05, -0.27], 0.28, 0.33, 0.43);
+  const rightWater = pose(water, [1.23, 0.05, 0.27], -0.23, 0.35, -0.38);
+  // O, O, H, H, H, H keeps each atom at the same index before and after.
+  const products = [leftWater[0], rightWater[0], leftWater[1], leftWater[2], rightWater[1], rightWater[2]];
+  const productBonds = [[0, 2, 1], [0, 3, 1], [1, 4, 1], [1, 5, 1]];
+
+  function waterScene(poses) {
+    const atoms = [];
+    const bonds = [];
+    for (const [center, yaw, pitch, roll] of poses) {
+      const offset = atoms.length;
+      atoms.push(...pose(water, center, yaw, pitch, roll));
+      bonds.push([offset, offset + 1, 1], [offset, offset + 2, 1]);
+    }
+    return {atoms, bonds};
+  }
+  const liquid = [
+    [[-1.55, -0.95, -0.62], 0.36, 0.44, -0.67],
+    [[0.32, -1.16, 0.62], -0.63, 0.25, 0.48],
+    [[1.62, 0.35, -0.37], 0.54, -0.52, -0.28],
+    [[-0.41, 0.75, -0.45], -0.56, -0.3, 0.56]
+  ];
+  const partVapor = [
+    liquid[0], liquid[1], liquid[2], [[-0.68, 3.38, 0.27], 0.48, -0.48, -0.82]
+  ];
+  const vapor = [
+    [[-3.65, -1.95, -1.36], 0.26, -0.23, -1.12],
+    [[2.62, -2.15, 1.42], -0.72, 0.32, 0.7],
+    [[3.21, 1.95, -1.11], 0.68, -0.4, -0.5],
+    [[-2.36, 2.66, 1.29], -0.56, 0.53, 0.72]
+  ];
+
+  window.PROCESSES = [
+    {
+      id: 'elektronovergang', name: 'Från atomer till joner',
+      description: 'Följ en elektron i en modell med en neutral natriumatom och en neutral kloratom. Jämför antalet elektroner före och efter övergången.',
+      source: ionSource, url: ionic,
+      steps: [
+        {title: 'Två neutrala atomer', text: 'Natrium har 11 protoner och 11 elektroner. Klor har 17 protoner och 17 elektroner. Båda atomerna är neutrala.',
+          atoms: neutralPair, bonds: [], tags: [['11 elektroner', -1.35, 0.9, -0.15], ['17 elektroner', 1.35, 0.9, 0.15]]},
+        {title: 'Vem tar upp elektronen?', text: 'Tänk dig att natriumatomen lämnar en elektron till kloratomen. Förutsäg vilken partikel som då får fler elektroner än protoner.',
+          atoms: neutralPair, bonds: [], tags: [['Na → e⁻ → Cl', 0, 1.05, 0]]},
+        {title: 'Laddningarna tar ut varandra', text: 'Na⁺ har 10 elektroner och Cl⁻ har 18. Båda kärnorna är oförändrade och den sammanlagda laddningen är noll. Modellen bokför en elektronövergång. I fast salt ingår många joner i en kristall.',
+          atoms: neutralPair, bonds: [], tags: [['Na⁺ · 10 elektroner', -1.45, 0.9, -0.15], ['Cl⁻ · 18 elektroner', 1.45, 0.9, 0.15]]}
+      ]
+    },
+    {
+      id: 'vattenbildning', name: 'Samma atomer, nya molekyler',
+      description: 'Läs reaktionsformeln 2H₂ + O₂ → 2H₂O på partikelnivå. Bilderna jämför utgångsämnen och produkter. Reaktionens mellansteg visas inte.',
+      source: 'University of Wisconsin-Milwaukee, kemiundervisning', url: 'https://bpb-us-w2.wpmucdn.com/sites.uwm.edu/dist/8/263/files/2016/08/Chapter3-2l6aewh.pdf',
+      steps: [
+        {title: 'Räkna utgångsämnenas atomer', text: 'Två vätgasmolekyler innehåller fyra väteatomer. Syrgasmolekylen innehåller två syreatomer.',
+          atoms: reactants, bonds: [[0, 1, 2], [2, 3, 1], [4, 5, 1]]},
+        {title: 'Undersök produkten', text: 'Efter reaktionen sitter varje syreatom ihop med två väteatomer. Det har bildats två vattenmolekyler. Följ bindningarna och räkna igen.',
+          atoms: products, bonds: productBonds},
+        {title: 'Kontrollera atomräkningen', text: 'Både före och efter finns fyra väteatomer och två syreatomer. Atomerna har fått nya bindningspartners. Siffran framför H₂O anger antalet vattenmolekyler.',
+          atoms: products, bonds: productBonds, tags: [['H₂O', -1.3, 1.35, -0.27], ['H₂O', 1.3, 1.35, 0.27]]}
+      ]
+    },
+    {
+      id: 'avdunstning', name: 'När vatten avdunstar',
+      description: 'Följ fyra vattenmolekyler när flytande vatten blir vattenånga. Lägg märke till vad som händer med avstånden inom och mellan molekylerna.',
+      source: shapeSource, url: chapter + '10-3-phase-transitions',
+      steps: [
+        {title: 'I vätskan', text: 'I flytande vatten är molekylerna nära varandra. De rör sig och byter grannar. Varje molekyl består av en syreatom och två väteatomer.', ...waterScene(liquid)},
+        {title: 'En molekyl lämnar ytan', text: 'En vattenmolekyl vid ytan kan lämna vätskan. De båda väteatomerna sitter fortfarande ihop med sin syreatom.', ...waterScene(partVapor)},
+        {title: 'I vattenångan', text: 'Nu visas de fyra molekylerna i gasfas. De är längre ifrån varandra och kan röra sig fritt mellan kollisioner. Avstånden i bilden är schematiska.', ...waterScene(vapor)}
+      ]
+    }
+  ];
+})();
+
+// The snapshots use three shell rings throughout so that a level change is visible.
+window.PROCESSES.push({
+  id:'vateljus', name:'När en väteatom sänder ut rött ljus',
+  description:'Följ energin i en väteatom mellan nivåerna n = 2 och n = 3. Här jämförs tillstånd före och efter energiutbytet. Elektronen har ingen utritad färdväg mellan dem.',
+  source:'NIST · Vätets spektrallinjer', url:'https://physics.nist.gov/PhysRefData/Handbook/Tables/hydrogentable2.htm',
+  steps:[
+    {title:'Börja på nivå 2',text:'Vi börjar med en väteatom som redan är exciterad. Den har en elektron på nivå 2. Nivå 1 är grundtillståndet och är tom här.',atomScene:{symbol:'H',z:1,charge:0,kind:'bohr',shells:[0,1,0]}},
+    {title:'Atomen tar upp energi',text:'En foton med rätt energi, ungefär 1,89 eV, kan lyfta atomen från nivå 2 till nivå 3. Antalet elektroner är fortfarande ett.',atomScene:{symbol:'H',z:1,charge:0,kind:'bohr',shells:[0,0,1]}},
+    {title:'Rött ljus lämnar atomen',text:'Vid en övergång från nivå 3 till nivå 2 avges en foton. Energin motsvarar rött ljus med våglängden ungefär 656 nm, en av linjerna i vätets spektrum.',atomScene:{symbol:'H',z:1,charge:0,kind:'bohr',shells:[0,1,0]}}
+  ]
+});
+
+/* Orthographic projections of the same teaching model. Position units and
+   apparent radii are illustrative. No trajectory or orbital calculation is implied. */
+window.LabScene = (() => {
+  'use strict';
+  const tau = 2 * Math.PI, gold = Math.PI * (3 - Math.sqrt(5));
+  const width = 440, height = 315, cx = width / 2, cy = height / 2;
+  const ink = '#173b34', shellInk = '#548675';
+  const palette = {
+    H: ['#f7f6ec','#213b37',0.25], C: ['#4a5854','#fff',0.36],
+    O: ['#b84b3d','#fff',0.34], N: ['#396ca9','#fff',0.35],
+    Na: ['#705e9d','#fff',0.40], Cl: ['#27755b','#fff',0.42],
+    S: ['#e4bd54','#353226',0.39], P: ['#c67e37','#241d16',0.37],
+    F: ['#79b39b','#152f23',0.31], Cu: ['#be7749','#241d16',0.39],
+    e: ['#166652','#fff',0.13], 'e⁻': ['#166652','#fff',0.13]
+  };
+  const neutral = ['#b9cfc1','#223e34',0.34];
+  const escaped = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const finite = (v, fallback) => Number.isFinite(Number(v)) ? Number(v) : fallback;
+  const number = value => Number(value.toFixed(2));
+  const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+  const distance = a => Math.hypot(...a);
+  const asPoint = record => record.slice(1,4).map(v=>finite(v,0));
+  const sub = (a,b) => a.map((x,i)=>x-b[i]);
+  const plus = (a,b) => a.map((x,i)=>x+b[i]);
+  const times = (a,n) => a.map(x=>x*n);
+  const dot = (a,b) => a.reduce((sum,x,i)=>sum+x*b[i],0);
+  const cross = (a,b) => [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const unit = a => times(a,1/(distance(a)||1));
+  function turn(p, yaw, pitch) {
+    const c = Math.cos(yaw), s = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const x = c*p[0]+s*p[2], z = -s*p[0]+c*p[2];
+    return [x, cp*p[1]-sp*z, sp*p[1]+cp*z];
+  }
+  function blend(rgb,target,amount){
+    const n=parseInt(rgb.slice(1),16);
+    return '#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.round(v+(target-v)*amount).toString(16).padStart(2,'0')).join('');
+  }
+  function spherePoint(i,n){
+    const y=1-2*(i+.5)/n, r=Math.sqrt(Math.max(0,1-y*y)), a=i*gold;
+    return [r*Math.cos(a),y,r*Math.sin(a)];
+  }
+  const angularFunctions = {s:()=>1,p:([x])=>x,d:([x,y])=>2*x*y,f:([x,y,z])=>Math.sqrt(27)*x*y*z};
+  const orbitalNames = {s:'s',p:'pₓ',d:'dₓᵧ',f:'fₓᵧ𝓏'};
+  const orbitalGeometry = new Map();
+  function makeOrbital(type) {
+    if (!angularFunctions[type]) return null;
+    if (orbitalGeometry.has(type)) return orbitalGeometry.get(type);
+    const fn=angularFunctions[type], faces=[];
+    const steps=32, bands=18;
+    function point(i,j){
+      const az=tau*i/steps, incl=Math.PI*j/bands, sin=Math.sin(incl);
+      const direction=[sin*Math.cos(az),sin*Math.sin(az),Math.cos(incl)];
+      return times(direction,Math.abs(fn(direction)));
+    }
+    for(let j=0;j<bands;j++)for(let i=0;i<steps;i++){
+      const corners=[point(i,j),point(i+1,j),point(i+1,j+1),point(i,j+1)];
+      const center=times(corners.reduce(plus),.25);
+      if(distance(center)<.008)continue;
+      const normal=unit(cross(sub(corners[2],corners[0]),sub(corners[3],corners[1])));
+      faces.push({corners,center,normal:dot(normal,center)<0?times(normal,-1):normal,positive:fn(center)>=0});
+    }
+    orbitalGeometry.set(type,faces);return faces;
+  }
+  function atom({symbol,z,charge=0,shells,kind='bohr',orbital='s'}) {
+    const count=Math.max(0,Math.round(finite(z,0)-finite(charge,0)));
+    const type=String(orbital||'').toLowerCase();
+    const scene={type:'atom',kind,symbol:String(symbol||''),count,shells:Array.isArray(shells)?shells:null,orbital:type,dots:[]};
+    if(kind==='quantum'){scene.faces=makeOrbital(type);return scene}
+    if(kind==='bohr' && scene.shells){
+      const rows=scene.shells.length;
+      scene.shells.forEach((n,k)=>{
+        const radius=.19+.81*(k+1)/Math.max(rows,1);
+        for(let i=0;i<n;i++){
+          const a=tau*(i/Math.max(1,n)+k*.133)-Math.PI/2;
+          const flat=times([Math.cos(a),Math.sin(a),0],radius);
+          const unit3=turn(spherePoint(i,n),k*.56+.32,k*.43+.16);
+          scene.dots.push({flat,space:times(unit3,radius)});
+        }
+      });
+    }else if(kind==='thomson'||kind==='rutherford'){
+      for(let i=0;i<count;i++){
+        const f=((i*.61803398875+.36)%1);
+        const radius=kind==='thomson'?.82*Math.cbrt(.07+.93*f):.42+.57*f;
+        const a=i*gold+.45;
+        scene.dots.push({flat:[Math.cos(a)*radius,Math.sin(a)*radius,0],space:times(spherePoint(i,count),radius)});
+      }
+    }
+    return scene;
+  }
+  function planarProjection(points) {
+    if(points.length<2)return p=>p;
+    const p0=points[0], vectors=points.map(p=>sub(p,p0));
+    const v1=vectors.reduce((a,b)=>distance(a)>distance(b)?a:b);
+    if(distance(v1)<.0001)return p=>p;
+    const normal=vectors.map(v=>cross(v1,v)).reduce((a,b)=>distance(a)>distance(b)?a:b);
+    if(distance(normal)<.0001){
+      // Retain the input orientation for linear molecules that lie in the page.
+      if(Math.abs(v1[2])/distance(v1)<.03)return p=>p;
+      const u=unit(v1);return p=>[dot(p,u),0,0];
+    }
+    const w=unit(normal);
+    if(vectors.every(v=>Math.abs(dot(v,w))<.002)){
+      // An undistorted orthographic front view retains the planar bond angles.
+      if(Math.abs(w[2])>.995)return p=>p;
+      const ref=Math.abs(w[0])<.9?[1,0,0]:[0,1,0];
+      const u=unit(sub(ref,times(w,dot(w,ref)))), v=cross(w,u);
+      return p=>[dot(p,u),dot(p,v),dot(p,w)];
+    }
+    // A fixed oblique view separates depth layers in tetrahedra and lattices.
+    // Select among a few views to reduce pairwise eclipsing of atom labels.
+    let best=null, bestScore=-Infinity;
+    for(const [yaw,pitch] of [[-.42,.22],[.31,.45],[-.67,.36],[.59,-.32],[0,0]]){
+      const projected=points.map(p=>turn(p,yaw,pitch));let score=Infinity;
+      for(let i=0;i<points.length;i++)for(let j=0;j<i;j++){
+        const delta=sub(projected[i],projected[j]);score=Math.min(score,Math.hypot(delta[0],delta[1]));
+      }
+      if(score>bestScore){bestScore=score;best=[yaw,pitch]}
+    }
+    return p=>turn(p,best[0],best[1]);
+  }
+  function substance(data,options={}){
+    const atoms=data.atoms||[],tags=data.tags||[],bounds=options.frame?.length?options.frame:[...atoms,...tags];
+    const points=bounds.map(asPoint);
+    const low=[0,1,2].map(k=>Math.min(...points.map(p=>p[k]))), high=[0,1,2].map(k=>Math.max(...points.map(p=>p[k])));
+    const origin=points.length?times(plus(low,high),.5):[0,0,0];
+    const relative=p=>sub(asPoint(p),origin);
+    const frame=points.map(p=>sub(p,origin)),flat=planarProjection(frame);
+    const r=Math.max(.75,...frame.map(distance));
+    const plane=frame.map(flat);
+    const flatX=Math.max(.45,...plane.map(p=>Math.abs(p[0]))), flatY=Math.max(.45,...plane.map(p=>Math.abs(p[1])));
+    return {type:'substance',label:options.label||data.name||data.title||'Partikelmodell',
+      atoms:atoms.map(row=>({symbol:String(row[0]),p:relative(row)})), bonds:data.bonds||[],
+      tags:tags.map(row=>({text:String(row[0]),p:relative(row)})), flat,
+      scale2D:Math.min(170/(flatX+.43),123/(flatY+.43),96),scale3D:Math.min(126/(r+.36),88)};
+  }
+  let svgCount=0;
+  function render(scene,options={}){
+    const is3=options.dimension==='3d', yaw=finite(options.yaw,-.35),pitch=finite(options.pitch,.22);
+    const zoom=clamp(finite(options.zoom,1),.35,3), uid='ls'+(++svgCount);
+    const defs=[],back=[],items=[],front=[];
+    const gradientMap=new Map();
+    const project = p=> is3?turn(p,yaw,pitch):scene.type==='substance'?scene.flat(p):p;
+    function screen(p,scale){return [cx+p[0]*scale,cy-p[1]*scale,p[2]]}
+    function ball(p,r,color,label='',textColor='#fff',stroke=ink,strokeWidth=1){
+      let fill=color;
+      if(is3){
+        if(!gradientMap.has(color)){
+          const id=uid+'g'+gradientMap.size;gradientMap.set(color,id);
+          defs.push('<radialGradient id="'+id+'" cx="35%" cy="25%" r="82%"><stop stop-color="'+blend(color,255,.33)+'"/><stop offset=".52" stop-color="'+color+'"/><stop offset="1" stop-color="'+blend(color,0,.20)+'"/></radialGradient>');
+        }
+        fill='url(#'+gradientMap.get(color)+')';
+      }
+      const [x,y]=p;
+      let s='<circle cx="'+number(x)+'" cy="'+number(y)+'" r="'+number(r)+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+number(strokeWidth)+'"/>';
+      if(label){
+        const fs=Math.max(6,Math.min(r*(label.length>1?.83:1.1),22));
+        s+='<text x="'+number(x)+'" y="'+number(y)+'" dy=".34em" text-anchor="middle" font-size="'+number(fs)+'" font-weight="650" fill="'+textColor+'">'+escaped(label)+'</text>';
+      }
+      return s;
+    }
+    function line(p,q,color,thickness,dash=''){
+      return '<line x1="'+number(p[0])+'" y1="'+number(p[1])+'" x2="'+number(q[0])+'" y2="'+number(q[1])+'" stroke="'+color+'" stroke-width="'+number(thickness)+'" stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';
+    }
+    function axis(p,scale,name){
+      const q=screen(p,scale);
+      back.push(line([cx,cy],q,'#91a89b',1,'3 4'));
+      back.push('<text x="'+number(q[0]+4)+'" y="'+number(q[1]-4)+'" font-size="11" fill="#416658">'+name+'</text>');
+    }
+    function ring(p,r,opts=''){
+      return '<circle cx="'+number(p[0])+'" cy="'+number(p[1])+'" r="'+number(r)+'" '+opts+'/>';
+    }
+    function message(t){front.push('<text x="'+cx+'" y="'+(cy+7)+'" text-anchor="middle" font-size="15" fill="'+ink+'">'+escaped(t)+'</text>')}
+    if(scene.type==='substance'){
+      const scale=(is3?scene.scale3D:scene.scale2D)*zoom;
+      const small=scene.atoms.length>14;
+      const nodes=scene.atoms.map(a=>{
+        const pos=screen(project(a.p),scale), style=palette[a.symbol]||neutral;
+        return {a,pos,style,r:Math.max(4.5,Math.min(28*zoom,style[2]*scale*(small?.87:1)))};
+      });
+      for(const [ia,ib,order=1] of scene.bonds){
+        const a=nodes[ia],b=nodes[ib];if(!a||!b)continue;
+        const v=sub(b.pos,a.pos),d=Math.hypot(v[0],v[1]);if(d<=a.r+b.r-1)continue;
+        const ux=v[0]/d,uy=v[1]/d;const n=clamp(Math.round(order),1,3),gap=Math.min(5*zoom,Math.min(a.r,b.r)*.43);
+        let s='';
+        for(let i=0;i<n;i++){
+          const shift=(i-(n-1)/2)*gap;
+          const ra=Math.sqrt(Math.max(0,a.r*a.r-shift*shift))-.45,rb=Math.sqrt(Math.max(0,b.r*b.r-shift*shift))-.45;
+          const start=[a.pos[0]+ux*ra-uy*shift,a.pos[1]+uy*ra+ux*shift],end=[b.pos[0]-ux*rb-uy*shift,b.pos[1]-uy*rb+ux*shift];
+          s+=line(start,end,'#526960',n===1?3.4:2.4);
+        }
+        items.push({z:(a.pos[2]+b.pos[2])*.5-.003,s});
+      }
+      for(const {a,pos,r,style} of nodes)items.push({z:pos[2],s:ball(pos,r,style[0],a.symbol,style[1],blend(style[0],0,.36),1.2)});
+      for(const t of scene.tags){
+        const p=screen(project(t.p),scale), tagW=Math.max(25,Math.min(295,11+t.text.length*7));
+        const x=clamp(p[0],tagW/2+4,width-tagW/2-4),y=clamp(p[1],15,height-15);
+        front.push('<g><rect x="'+number(x-tagW/2)+'" y="'+number(y-10)+'" width="'+number(tagW)+'" height="21" rx="7" fill="#fbfcf6" stroke="#abc3b0"/><text x="'+number(x)+'" y="'+number(y+4)+'" text-anchor="middle" font-size="12" fill="'+ink+'">'+escaped(t.text)+'</text></g>');
+      }
+      if(!nodes.length)message('Koordinater saknas för denna modell.');
+    }else{
+      const scale=112*zoom, middle=[cx,cy,0], kind=scene.kind;
+      if(kind==='quantum'){
+        if(!scene.faces){message('Välj en orbital för att visa dess vinkelform.')}
+        else{
+          const transform = p=>is3?turn(p,yaw,pitch):scene.orbital==='f'?turn(p,-.37,.23):p;
+          for(const [v,name] of [[[1.13,0,0],'x'],[[0,1.13,0],'y'],[[0,0,1.13],'z']]){
+            const rotated=transform(v);if(Math.hypot(rotated[0],rotated[1])>.13)axis(rotated,scale,name);
+          }
+          for(const face of scene.faces){
+            const c=transform(face.center), normal=transform(face.normal);
+            if(normal[2]<-.04)continue;
+            const pts=face.corners.map(v=>screen(transform(v),scale));
+            const light=clamp(dot(normal,[-.36,.50,.79]),-1,1);
+            const base=face.positive?'#4c9380':'#cd914a';
+            const fill=light>0?blend(base,255,.30*light):blend(base,0,-.27*light);
+            const poly=pts.map(v=>number(v[0])+','+number(v[1])).join(' ');
+            items.push({z:c[2],s:'<polygon points="'+poly+'" fill="'+fill+'" stroke="'+fill+'" stroke-width=".65" stroke-linejoin="round"/>'});
+          }
+        }
+      }else if(kind==='dalton'){items.push({z:0,s:ball(middle,scale*.83,'#648e78','','',ink,1.6)})}
+      else{
+        const isBohr=kind==='bohr', isThomson=kind==='thomson';
+        if(isBohr&&!scene.shells){message('Skalfördelning saknas i underlaget.')}
+        else{
+          if(isBohr){
+            const levels=scene.shells.length;
+            for(let k=0;k<levels;k++){
+              const radius=.19+.81*(k+1)/Math.max(levels,1);
+              back.push(ring(middle,radius*scale,'fill="none" stroke="'+shellInk+'" stroke-width="1.1" opacity=".78"'));
+              if(is3){
+                // A projected equator helps distinguish a spherical energy level
+                // from a flat orbit. The surrounding circle is its silhouette.
+                const pts=[];
+                for(let i=0;i<=64;i++){
+                  const a=tau*i/64,p=turn([radius*Math.cos(a),0,radius*Math.sin(a)],yaw+.3,pitch+.34);
+                  const v=screen(p,scale);pts.push(number(v[0])+','+number(v[1]));
+                }
+                back.push('<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+shellInk+'" stroke-width=".8" stroke-dasharray="2 4" opacity=".49"/>');
+              }
+            }
+          }else if(isThomson){
+            back.push(ring(middle,scale*.94,'fill="#f0d4ad" fill-opacity=".83" stroke="#ab7f4b" stroke-width="1.6"'));
+            for(const p of [[.36,.55,-.3],[-.5,.23,.2],[.12,-.49,.4],[-.29,-.48,-.3],[.55,-.16,-.4]]){
+              const pt=screen(project(p),scale);
+              back.push('<text x="'+number(pt[0])+'" y="'+number(pt[1])+'" text-anchor="middle" font-size="18" fill="#865e32">+</text>');
+            }
+          }
+          if(!isThomson){
+            const r=(isBohr&&scene.shells?.length>4?7:12)*zoom;
+            items.push({z:0,s:ball(middle,r,'#d99c53','+','#352d20','#795731',1.3)});
+          }
+          const rad=(scene.count>75?3.1:scene.count>32?4.1:scene.count>12?5:6.2)*zoom;
+          for(const particle of scene.dots){
+            const v=is3?project(particle.space):particle.flat,pt=screen(v,scale);
+            items.push({z:v[2],s:ball(pt,rad,is3&&v[2]<-.15?'#70998b':'#246d5d',rad>=5.5?'−':'','#fff','#f3f5ea',.8)});
+          }
+        }
+      }
+    }
+    items.sort((a,b)=>a.z-b.z);
+    const dim=is3?'Rumslig vy':'Plan vy';
+    const kindNames={bohr:'Bohrs skalmodell',dalton:'Daltons modell',thomson:'Thomsons modell',rutherford:'Rutherfords kärnmodell',quantum:'Orbitalens vinkelform'};
+    const title=scene.type==='substance'?scene.label:
+      kindNames[scene.kind]+' för '+scene.symbol+(scene.kind==='quantum'&&orbitalNames[scene.orbital]?', formexempel '+orbitalNames[scene.orbital]:'');
+    const description=scene.type==='substance'?scene.atoms.map(a=>a.symbol).join(', '):
+      scene.kind==='bohr'&&scene.shells?'Antal elektroner per skal: '+(scene.shells.join(', ')||'inga elektroner'):'Schematisk vetenskaplig modell.';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+width+' '+height+'" role="img" aria-labelledby="'+uid+'t '+uid+'d" style="display:block;width:100%;height:100%;font-family:Arial,sans-serif"><title id="'+uid+'t">'+escaped(title)+'. '+dim+'.</title><desc id="'+uid+'d">'+escaped(description)+'</desc><defs>'+defs.join('')+'</defs>'+back.join('')+items.map(x=>x.s).join('')+front.join('')+'</svg>';
+  }
+  return {atom,substance,render};
+})();
 </script><script>// Fristående elevuppdrag. Atomnumren länkar till de grundämnen som används.
 window.LESSONS = [
   {
@@ -410,13 +1103,14 @@ const icons={
 };
 const icon = name => '<svg class="ico" aria-hidden="true" viewBox="0 0 20 20">'+icons[name]+'</svg>';
 document.querySelectorAll('[data-icon]').forEach(n=>n.innerHTML=icon(n.dataset.icon));
-const modes={explore:['Utforska','grid','Periodiska systemet','Välj ett grundämne och undersök hur atomens byggnad hänger ihop med platsen i tabellen.'],compare:['Jämför','compare','Jämför grundämnen','Ställ två grundämnen bredvid varandra. Vilka egenskaper återkommer och vilka förändras?'],quiz:['Öva','quiz','Öva på kemin','Pröva ditt resonemang. Efter varje svar får du en förklaring och kan öva vidare på samma begrepp.'],lessons:['Lektionsidéer','lessons','Undersök tillsammans','Korta undersökningar för genomgång, pararbete och avslutande samtal.']};
+const modes={explore:['Utforska','grid','Periodiska systemet','Välj ett grundämne och undersök hur atomens byggnad hänger ihop med platsen i tabellen.'],models:['Modeller','atom','Modellverkstaden','Vrid molekyler, byt atommodell och följ hur partiklar förändras under en process.'],compare:['Jämför','compare','Jämför grundämnen','Ställ två grundämnen bredvid varandra. Vilka egenskaper återkommer och vilka förändras?'],quiz:['Öva','quiz','Öva på kemin','Pröva ditt resonemang. Efter varje svar får du en förklaring och kan öva vidare på samma begrepp.'],lessons:['Lektionsidéer','lessons','Undersök tillsammans','Korta undersökningar för genomgång, pararbete och avslutande samtal.']};
 const state={mode:'explore',z:6,a:11,b:17,color:'category',filter:'',group:0,period:0,first:false,mass:false,query:'',board:false,lesson:null};
 const norm = s => String(s).trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const fmt = n => n==null?'Saknas':String(n).replace('.',',');
 const shellText = shells => shells?.join(' · ') || 'Uppgift saknas';
 const sourceURL = e => 'https://periodic-table.rsc.org/element/'+e.z+'/'+({Cs:'caesium',Al:'aluminium',S:'sulfur'}[e.symbol]||e.en.toLowerCase());
-const sw = e => state.color==='phase'?phases[e.phase]:state.color==='period'?['Period '+e.period,periodColors[e.period-1]]:state.color==='plain'?['','#e8eddf']:families[e.category];
+const historyEvent=()=>window.TABLE_HISTORY.find(h=>h.id===state.history)||window.TABLE_HISTORY[0];
+const sw = e => state.color==='history'?['',historyEvent().z.includes(e.z)?'#e2bc75':'#e6eae1']:state.color==='phase'?phases[e.phase]:state.color==='period'?['Period '+e.period,periodColors[e.period-1]]:state.color==='plain'?['','#e8eddf']:families[e.category];
 const matches = e => (!state.group||e.group===state.group)&&(!state.period||e.period===state.period)&&(!state.first||e.z<=20)&&(!state.filter||String(state.color==='phase'?e.phase:state.color==='period'?e.period:e.category)===state.filter)&&(!state.query||( /^\d+$/.test(state.query)?String(e.z)===state.query:[e.name,e.en,e.symbol].some(s=>norm(s).includes(state.query))));
 const isFiltered=()=>!!(state.first||state.group||state.period||state.filter||state.query);
 const selectOptions = selected => D.map(e=>'<option value="'+e.z+'" '+(e.z===selected?'selected':'')+'>'+e.z+' · '+e.name+' ('+e.symbol+')</option>').join('');
@@ -449,8 +1143,15 @@ function refreshGrid(){
  $('grid').innerHTML=html;
  let entries=state.color==='category'?Object.entries(families):state.color==='phase'?Object.entries(phases):state.color==='period'?periodColors.map((c,i)=>[String(i+1),['Period '+(i+1),c]]):[];
  if(state.color==='category')entries=entries.filter(([k])=>D.some(e=>e.category===k));
- $('legendTitle').textContent={category:'Ämnesfamiljer',phase:'Aggregationsform vid 20 °C och 1 atm',period:'Perioder',plain:'Utan färgindelning'}[state.color];
+ $('past').hidden=state.color!=='history';
+ if(state.color==='history'){
+   const h=historyEvent();
+   $('past').innerHTML='<label>Historiskt nedslag<select id="pastEvent">'+window.TABLE_HISTORY.map(item=>'<option value="'+item.id+'" '+(item.id===h.id?'selected':'')+'>'+item.year+' · '+item.title+'</option>').join('')+'</select></label><p>'+h.short+'</p><p><b>Undersök</b> · '+h.question+'</p><p class="model-desc">Markeringarna visar utvalda ämnen på deras moderna platser. <a href="'+h.url+'" target="_blank" rel="noopener">'+h.source+'</a></p>';
+   $('pastEvent').onchange=e=>{state.history=e.target.value;refreshGrid();syncUrl();$('pastEvent').focus()};
+ }
+ $('legendTitle').textContent={category:'Ämnesfamiljer',phase:'Aggregationsform vid 20 °C och 1 atm',period:'Perioder',history:'Grundämnen i det historiska exemplet',plain:'Utan färgindelning'}[state.color];
  $('legend').innerHTML=entries.map(([k,[name,color]])=>'<button type="button" class="legend-btn" data-filter="'+k+'" aria-pressed="'+(state.filter===k)+'"><span class="swatch" style="--sw:'+color+'"></span>'+name+'</button>').join('');
+ if(state.color==='history')$('legend').innerHTML=historyEvent().z.map(z=>'<button class="legend-btn" data-past-z="'+z+'">'+byZ(z).symbol+' · '+byZ(z).name+'</button>').join('');
  $('match').innerHTML=isFiltered()?hits.length+' av 118 ämnen <button class="textbtn" data-clear>Rensa</button>':'';
 }
 function model(e,shells,mini=false){
@@ -466,7 +1167,7 @@ function model(e,shells,mini=false){
 }
 function inspect(){
  const e=byZ(state.z);
- $('inspector').innerHTML='<div class="inspect-hero" style="--sw:'+families[e.category][1]+'"><div class="micro">Valt grundämne · '+e.z+'</div><div class="idline"><strong class="big-symbol">'+e.symbol+'</strong>'+model(e,e.shells,true)+'</div><div class="name-row"><div><h2>'+e.name+'</h2><div class="eng" lang="en">'+e.en+'</div></div><div class="pager"><button data-step="-1" aria-label="Föregående grundämne" '+(e.z===1?'disabled':'')+'>'+icon('left')+'</button> <button data-step="1" aria-label="Nästa grundämne" '+(e.z===118?'disabled':'')+'>'+icon('right')+'</button></div></div></div><div class="inspect-body"><dl class="facts">'+fact('Grupp · period',(e.group??'Se serien')+' · '+e.period)+fact('Ämnesfamilj',families[e.category][0])+fact('Form vid 20 °C',phases[e.phase][0])+fact('Standardatomvikt',fmt(e.mass))+fact('Elektroner per skal',shellText(e.shells))+'</dl><p>'+elementExample(e)+'</p><button class="btn primary" data-workshop>'+icon('atom')+' Öppna atommodellen</button><div class="detail-links"><button class="textbtn" data-compare>'+icon('compare')+' Jämför ämnet</button><a target="_blank" rel="noopener" href="'+sourceURL(e)+'">Fakta hos RSC '+icon('external')+'</a></div><button class="textbtn back-table" data-back>Till tabellen ↑</button></div>';
+ $('inspector').innerHTML='<div class="inspect-hero" style="--sw:'+families[e.category][1]+'"><div class="micro">Valt grundämne · '+e.z+'</div><div class="idline"><strong class="big-symbol">'+e.symbol+'</strong>'+model(e,e.shells,true)+'</div><div class="name-row"><div><h2>'+e.name+'</h2><div class="eng" lang="en">'+e.en+'</div></div><div class="pager"><button data-step="-1" aria-label="Föregående grundämne" '+(e.z===1?'disabled':'')+'>'+icon('left')+'</button> <button data-step="1" aria-label="Nästa grundämne" '+(e.z===118?'disabled':'')+'>'+icon('right')+'</button></div></div></div><div class="inspect-body"><dl class="facts">'+fact('Grupp · period',(e.group??'Se serien')+' · '+e.period)+fact('Ämnesfamilj',families[e.category][0])+fact('Form vid 20 °C',phases[e.phase][0])+fact('Standardatomvikt',fmt(e.mass))+fact('Elektroner per skal',shellText(e.shells))+'</dl><p>'+elementExample(e)+'</p><button class="btn primary" data-workshop>'+icon('atom')+' Öppna atommodellen</button><div class="detail-links"><button class="textbtn" data-compare>'+icon('compare')+' Jämför ämnet</button><a target="_blank" rel="noopener" href="'+sourceURL(e)+'">Fakta hos RSC '+icon('external')+'</a></div><button class="textbtn back-table" data-back>Till tabellen ↑</button>'+Models.related(e.symbol)+'</div>';
 }
 function selectElement(z,move=false){
  state.z=z;refreshGrid();inspect();syncUrl();$('announce').textContent=byZ(z).name+' valt.';
@@ -481,8 +1182,8 @@ $('grid').onkeydown=ev=>{
  else {const [c,r]=position(byZ(z)),dir=ev.key==='ArrowUp'?-1:1;target=active.filter(e=>{let [col,row]=position(e);return col===c&&(row-r)*dir>0}).sort((a,b)=>Math.abs(position(a)[1]-r)-Math.abs(position(b)[1]-r))[0]}
  if(target){const next=$('grid').querySelector('[data-z="'+target.z+'"]');b.tabIndex=-1;next.tabIndex=0;next.focus()}
 };
-$('inspector').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;if(b.hasAttribute('data-workshop'))workshop(state.z);if(b.hasAttribute('data-compare')){state.a=state.z;if(state.b===state.a)state.b=state.a===17?11:17;setMode('compare')}if(b.hasAttribute('data-back')){$('search').focus();$('grid').scrollIntoView({block:'center'})}if(b.dataset.step){clearFilters();selectElement(state.z+Number(b.dataset.step));$('inspector').querySelector('[data-step="'+b.dataset.step+'"]:not(:disabled)')?.focus({preventScroll:true})}};
-$('legend').onclick=ev=>{let b=ev.target.closest('[data-filter]');if(b){const k=b.dataset.filter;state.filter=state.filter===k?'':k;refreshGrid();$('legend').querySelector('[data-filter="'+k+'"]').focus({preventScroll:true})}};
+$('inspector').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;if(Models.relatedClick(b))return;if(b.hasAttribute('data-workshop'))workshop(state.z);if(b.hasAttribute('data-compare')){state.a=state.z;if(state.b===state.a)state.b=state.a===17?11:17;setMode('compare')}if(b.hasAttribute('data-back')){$('search').focus();$('grid').scrollIntoView({block:'center'})}if(b.dataset.step){clearFilters();selectElement(state.z+Number(b.dataset.step));$('inspector').querySelector('[data-step="'+b.dataset.step+'"]:not(:disabled)')?.focus({preventScroll:true})}};
+$('legend').onclick=ev=>{const previous=ev.target.closest('[data-past-z]');if(previous){clearFilters();selectElement(Number(previous.dataset.pastZ),true);return}let b=ev.target.closest('[data-filter]');if(b){const k=b.dataset.filter;state.filter=state.filter===k?'':k;refreshGrid();$('legend').querySelector('[data-filter="'+k+'"]').focus({preventScroll:true})}};
 $('match').onclick=()=>{clearFilters();refreshGrid();$('search').focus()};
 $('search').oninput=()=>{state.query=norm($('search').value);refreshGrid()};
 $('search').onkeydown=ev=>{if(ev.key!=='Enter')return;const hits=D.filter(matches),e=hits.find(x=>[x.symbol,x.name,x.en].some(s=>norm(s)===state.query))||hits[0];if(e)selectElement(e.z,true)};
@@ -533,7 +1234,7 @@ function elementExample(e){
  return 'En neutral atom av '+e.name.toLowerCase()+' har '+e.z+' protoner och lika många elektroner. Undersök hur elektronfördelningen skiljer sig från grannämnenas.';
 }
 const isotopes={1:[1,2,3],2:[4,3],3:[7,6],4:[9],5:[11,10],6:[12,13,14],7:[14,15],8:[16,17,18],9:[19],10:[20,21,22],11:[23],12:[24,25,26],13:[27],14:[28,29,30],15:[31],16:[32,33,34,36],17:[35,37],18:[40,36,38],19:[39,40,41],20:[40,44],26:[56,54,57],29:[63,65],35:[79,81],53:[127]};
-const charges={1:[0,1,-1],3:[0,1],4:[0,2],8:[0,-2],9:[0,-1],11:[0,1],12:[0,2],13:[0,3],16:[0,-2],17:[0,-1],19:[0,1],20:[0,2]};
+const charges={1:[0,1,-1],3:[0,1],4:[0,2],8:[0,-2],9:[0,-1],11:[0,1],12:[0,2],13:[0,3],16:[0,-2],17:[0,-1],19:[0,1],20:[0,2],26:[0,2,3],29:[0,1,2],30:[0,2],35:[0,-1],53:[0,-1]};
 const qStr = n=>n===0?'':(Math.abs(n)===1?'':Math.abs(n))+(n>0?'+':'−');
 const chargeLabel=n=>n===0?'Neutral atom':(n>0?'Positiv jon':'Negativ jon')+' ('+(n>0?'+':'−')+Math.abs(n)+')';
 function openDialog(title,html){
@@ -541,19 +1242,7 @@ function openDialog(title,html){
 }
 $('close').onclick=()=>$('dialog').close();
 $('dialog').addEventListener('click',ev=>{if(ev.target!==$('dialog'))return;const r=ev.target.getBoundingClientRect();if(ev.clientX<r.left||ev.clientX>r.right||ev.clientY<r.top||ev.clientY>r.bottom)$('dialog').close()});
-function workshop(z,initialMass=null,initialCharge=null){
- const e=byZ(z),iso=isotopes[z],cs=charges[z]||[0];let mass=iso?.includes(Number(initialMass))?Number(initialMass):iso?.[0],charge=cs.includes(Number(initialCharge))?Number(initialCharge):0;
- openDialog('Atommodellen · '+e.name,'<div class="atom-work"><div id="model" class="large-model"></div><div><div class="micro">Partiklar i modellen</div>'+(iso?'<label>Isotop<select id="isotope">'+iso.map(a=>'<option value="'+a+'">'+e.name+'-'+a+'</option>').join('')+'</select></label>':'<p class="model-desc">Här visas den neutrala atomens elektroner. Välj exempelvis väte, kol eller klor för att byta isotop.</p>')+(cs.length>1?'<label>Atom eller jon<select id="charge">'+cs.map(n=>'<option value="'+n+'">'+chargeLabel(n)+'</option>').join('')+'</select></label>':'')+'<div id="notation" class="notation"></div></div></div><div id="modelReport" aria-live="polite"></div><p class="model-desc">Ringarna visar hur elektroner fördelas mellan skal i atomens eller jonens grundtillstånd. Avstånden och prickarnas lägen är schematiska.</p>');
- const refreshLink=addDialogLink({vy:'explore',z,atom:1});
- if($('isotope'))$('isotope').value=mass;if($('charge'))$('charge').value=charge;
- function draw(){
-  refreshLink?.({vy:'explore',z,atom:1,...(mass!==undefined?{masstal:mass}:{}),...(charge?{jon:charge}:{})});
-  let shells=charge===0?e.shells:(z-charge===0?[]:byZ(z-charge).shells);
-  $('model').innerHTML=model(e,shells);$('notation').innerHTML='<sup>'+(mass??'')+'</sup>'+e.symbol+'<sup>'+qStr(charge)+'</sup>';
-  $('modelReport').innerHTML='<div class="particle-strip"><div><b>'+z+'</b>protoner</div><div><b>'+(mass===undefined?'?':mass-z)+'</b>neutroner</div><div><b>'+(z-charge)+'</b>elektroner</div></div><p><b>Elektroner per skal</b> '+(Array.isArray(shells)&&!shells.length?'0':shellText(shells))+'.</p><p class="model-desc">'+(mass===undefined?'Antalet neutroner kräver ett känt masstal.':'Masstalet '+mass+' är summan av '+z+' protoner och '+(mass-z)+' neutroner.')+' '+(charge===0?'Laddningen är noll.':'Skillnaden mellan antal protoner och elektroner ger laddningen '+(charge>0?'+':'−')+Math.abs(charge)+'.')+'</p>';
- }
- if($('isotope'))$('isotope').onchange=()=>{mass=+$('isotope').value;draw()};if($('charge'))$('charge').onchange=()=>{charge=+$('charge').value;draw()};draw();
-}
+function workshop(z,mass=null,charge=null,p=null){Models.openAtom(z,mass,charge,p)}
 const comparisonPairs=[[3,11],[11,17],[17,35],[29,13],[18,19]];
 const trendEnergy=[13.60,24.59,5.39,9.32,8.30,11.26,14.53,13.62,17.42,21.56,5.14,7.65,5.99,8.15,10.49,10.36,12.97,15.76,4.34,6.11];
 let trendPeriod=3;
@@ -600,7 +1289,7 @@ function answerQuiz(k){
 function refreshTrend(){if($('trendBody'))$('trendBody').innerHTML=trend()}
 $('other').onchange=ev=>{if(ev.target.id==='trendPeriod'){trendPeriod=+ev.target.value;refreshTrend();$('trendPeriod').focus()}};
 function showSources(){
- openDialog('Källor och modeller','<div class="dialogcopy"><h3>Så läser du tabellen</h3><p>Varje ruta står för ett grundämne. Atomnumret är antalet protoner i kärnan. De vågräta raderna kallas perioder, de lodräta kolumnerna grupper. Ämnen i samma huvudgrupp har ofta liknande kemiska egenskaper. Väte står i grupp 1 och är en icke-metall. Heliums första skal är fullt med två elektroner.</p><h3>Atomvikt och masstal</h3><p>Standardatomvikten är en relativ, enhetslös storhet som speglar isotopernas massor och förekomst i vanliga jordiska material. Tabellen visar CIAAW:s förkortade värden. Masstalet gäller en bestämd isotop och är summan av antalet protoner och neutroner. I atommodellen kan du byta mellan utvalda isotoper.</p><h3>Vad färgerna visar</h3><p>Ämnesfamiljerna är en undervisningsindelning. Gränserna för halvmetaller kan variera. Här ligger grupp 12 bland övriga metaller. För tenness och oganesson anger familjen platsen i tabellen. De två utdragna serierna tillhör period 6 och 7.</p><p>Aggregationsformen gäller det rena ämnet vid 20 °C och ungefär normalt lufttryck. För flera mycket sällsynta eller kortlivade ämnen saknas tillräckliga mätdata. De har markerats som osäkra.</p><h3>Atommodellen</h3><p>Skalen visar antalet elektroner på varje huvudnivå. För joner erbjuds ett urval vanliga laddningar hos lätta ämnen. Jämför exempelvis natrium med natriumjonen. Skaldata visas för atomnummer 1 till 103. För vissa av de tyngre ämnena bygger fördelningen på beräkningar.</p><h3>Faktakällor</h3><ul><li><a href="https://ciaaw.org/abridged-atomic-weights.htm">CIAAW · förkortade standardatomvikter</a> och <a href="https://ciaaw.org/isotopic-abundances.htm">isotopsammansättning</a></li><li><a href="https://kemisamfundet.se/wp-content/uploads/2020/05/Skrivregler-S%C3%A4rtryck-Kemisk-Tidskrift.pdf">Svenska Kemisamfundet · svenska grundämnesnamn</a></li><li><a href="https://math.nist.gov/DFTdata/atomdata/configuration.html">NIST · elektronkonfigurationer</a> och <a href="https://pubchem.ncbi.nlm.nih.gov/periodic-table/">PubChem · egenskaper och kompletterande data</a></li><li><a href="https://periodic-table.rsc.org/">Royal Society of Chemistry · egenskaper, historia och användning</a>. Varje ämneskort länkar till sin faktasida.</li></ul><h3>Undervisning i kemi, årskurs 7 till 9</h3><p>Uppdragen knyter an till grundämnen, joner, molekyler, partikelmodeller och modellernas historiska framväxt. Jämförelserna ger eleverna tillfälle att förutsäga, söka belägg och förklara ett resultat.</p><ul><li><a href="https://www.skolverket.se/undervisning/grundskolan/kursplaner-for-grundskolan/subjects/GRGRKEM01">Skolverket · kursplan i kemi</a></li><li><a href="https://www.skolverket.se/download/18.1cf74b4f183ff5ed375d77/1668517948917/pdf9872.pdf">Skolverket · kommentarmaterial till kursplanen</a></li></ul></div>');
+ openDialog('Källor och modeller','<div class="dialogcopy"><h3>Så läser du tabellen</h3><p>Varje ruta står för ett grundämne. Atomnumret är antalet protoner i kärnan. De vågräta raderna kallas perioder, de lodräta kolumnerna grupper. Ämnen i samma huvudgrupp har ofta liknande kemiska egenskaper. Väte står i grupp 1 och är en icke-metall. Heliums första skal är fullt med två elektroner.</p><h3>Atomvikt och masstal</h3><p>Standardatomvikten är en relativ, enhetslös storhet som speglar isotopernas massor och förekomst i vanliga jordiska material. Tabellen visar CIAAW:s förkortade värden. Masstalet gäller en bestämd isotop och är summan av antalet protoner och neutroner. I atommodellen kan du byta mellan utvalda isotoper.</p><h3>Vad färgerna visar</h3><p>Ämnesfamiljerna är en undervisningsindelning. Gränserna för halvmetaller kan variera. Här ligger grupp 12 bland övriga metaller. För tenness och oganesson anger familjen platsen i tabellen. De två utdragna serierna tillhör period 6 och 7.</p><p>Aggregationsformen gäller det rena ämnet vid 20 °C och ungefär normalt lufttryck. För flera mycket sällsynta eller kortlivade ämnen saknas tillräckliga mätdata. De har markerats som osäkra.</p><h3>Atommodellen</h3><p>Skalen visar antalet elektroner på varje huvudnivå. För joner visas ett urval laddningar, bland annat hos natrium, klor, järn och koppar. Växla mellan Bohrs skalmodell, orbitalformer och historiska modeller i Modellverkstaden. Jämför exempelvis natrium med natriumjonen. Skaldata visas för atomnummer 1 till 103. För vissa av de tyngre ämnena bygger fördelningen på beräkningar.</p><h3>Faktakällor</h3><ul><li><a href="https://ciaaw.org/abridged-atomic-weights.htm">CIAAW · förkortade standardatomvikter</a> och <a href="https://ciaaw.org/isotopic-abundances.htm">isotopsammansättning</a></li><li><a href="https://kemisamfundet.se/wp-content/uploads/2020/05/Skrivregler-S%C3%A4rtryck-Kemisk-Tidskrift.pdf">Svenska Kemisamfundet · svenska grundämnesnamn</a></li><li><a href="https://math.nist.gov/DFTdata/atomdata/configuration.html">NIST · elektronkonfigurationer</a> och <a href="https://pubchem.ncbi.nlm.nih.gov/periodic-table/">PubChem · egenskaper och kompletterande data</a></li><li><a href="https://periodic-table.rsc.org/">Royal Society of Chemistry · egenskaper, historia och användning</a>. Varje ämneskort länkar till sin faktasida.</li></ul><h3>Undervisning i kemi, årskurs 7 till 9</h3><p>Uppdragen knyter an till grundämnen, joner, molekyler, partikelmodeller och modellernas historiska framväxt. Jämförelserna ger eleverna tillfälle att förutsäga, söka belägg och förklara ett resultat.</p><ul><li><a href="https://www.skolverket.se/undervisning/grundskolan/kursplaner-for-grundskolan/subjects/GRGRKEM01">Skolverket · kursplan i kemi</a></li><li><a href="https://www.skolverket.se/download/18.1cf74b4f183ff5ed375d77/1668517948917/pdf9872.pdf">Skolverket · kommentarmaterial till kursplanen</a></li></ul></div>');
  $('dialogBody').querySelectorAll('a').forEach(a=>{a.target='_blank';a.rel='noopener'});
 }
 function addDialogLink(params,printable=false){
@@ -616,7 +1305,7 @@ function addDialogLink(params,printable=false){
  $('dialogBody').append(row);return refresh;
 }
 function syncUrl(){
- const p=new URLSearchParams();p.set('vy',state.mode);if(state.mode==='explore'){p.set('z',state.z);if(state.color!=='category')p.set('farg',state.color)}if(state.mode==='compare'){p.set('a',state.a);p.set('b',state.b)}
+ const p=new URLSearchParams();p.set('vy',state.mode);if(state.color==='history')p.set('historia',historyEvent().id);if(state.mode==='explore'){p.set('z',state.z);if(state.color!=='category')p.set('farg',state.color)}if(state.mode==='compare'){p.set('a',state.a);p.set('b',state.b)}
  try{history.replaceState(null,'','#'+p)}catch{}
 }
 function boardView(){
@@ -627,11 +1316,12 @@ function setMode(name,scroll=false){
  document.querySelector('.hero').classList.toggle('other-hero',name!=='explore');
  $('explore').hidden=name!=='explore';$('other').hidden=name==='explore';
  $('nav').innerHTML=Object.entries(modes).map(([key,[label,ic]])=>'<button class="navbtn" data-mode="'+key+'" '+(name===key?'aria-current="page"':'')+'>'+icon(ic)+label+'</button>').join('');
- if(name==='explore'){refreshGrid();inspect()}else if(name==='compare')compareView();else if(name==='quiz')quizView();else lessonList();
+ if(name==='explore'){refreshGrid();inspect()}else if(name==='compare')compareView();else if(name==='quiz')quizView();else if(name==='models')Models.gallery();else lessonList();
  syncUrl();if(scroll)window.scrollTo({top:0,behavior:'instant'});
 }
 $('other').onclick=ev=>{
  const b=ev.target.closest('button');if(!b)return;
+ if(state.mode==='models'&&Models.galleryClick(b))return;
  if(b.dataset.pair){[state.a,state.b]=b.dataset.pair.split(',').map(Number);compareView();syncUrl();$('other').querySelector('[data-pair="'+b.dataset.pair+'"]').focus({preventScroll:true})}
  else if(b.dataset.model)workshop(+b.dataset.model);
  else if(b.hasAttribute('data-lesson'))lessonDialog(+b.dataset.lesson);
@@ -654,10 +1344,314 @@ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&state.board&&!$('
 $('sources').onclick=showSources;$('print').onclick=()=>window.print();
 function restore(){
  const p=new URLSearchParams(location.hash.slice(1));for(const k of ['z','a','b']){const n=Number(p.get(k));if(Number.isInteger(n)&&n>=1&&n<=118)state[k]=n}
- if(['category','phase','plain','period'].includes(p.get('farg')))state.color=p.get('farg');
+ if(['category','phase','plain','period','history'].includes(p.get('farg')))state.color=p.get('farg');
+ if(p.get('historia')&&window.TABLE_HISTORY.some(h=>h.id===p.get('historia')))state.history=p.get('historia');
  $('color').value=state.color;boardView();setMode(Object.hasOwn(modes,p.get('vy'))?p.get('vy'):'explore');
- if(state.mode==='explore'&&p.get('atom')==='1')workshop(state.z,p.get('masstal'),p.get('jon'));
+ if(state.mode==='explore'&&p.get('atom')==='1')workshop(state.z,p.get('masstal'),p.get('jon'),p);
+ if(state.mode==='models')Models.restoreLink(p);
  const lesson=Number(p.get('uppdrag'));if(state.mode==='lessons'&&Number.isInteger(lesson)&&lesson>=1&&lesson<=lessons.length)lessonDialog(lesson-1);
 }
-restore();window.addEventListener('hashchange',restore);
-</script></body></html>
+
+
+'use strict';
+const Models = (() => {
+  const history = window.ATOM_HISTORY;
+  const species = window.SPECIES;
+  const processes = window.PROCESSES;
+  const initialCamera = {yaw:-0.35, pitch:0.22, zoom:1};
+  const scriptSource = 'https://openstax.org/books/chemistry-2e/pages/6-4-electronic-structure-of-atoms-electron-configurations';
+  let current = null;
+  let timer = 0;
+  let drag = null;
+  let updateLink;
+  let scene;
+
+  function stop() {
+    clearInterval(timer);
+    timer = 0;
+    if ($('playProcess')) $('playProcess').textContent = 'Spela stegen';
+  }
+  $('dialog').addEventListener('close', () => {
+    if ($('dialog').open) return;
+    if (current) syncUrl();
+    stop();
+    drag = null;
+    current = null;
+    $('dialog').classList.remove('lab-dialog');
+  });
+
+  function source(label, url) {
+    return '<a href="'+url+'" target="_blank" rel="noopener">'+label+' '+icon('external')+'</a>';
+  }
+  function opt(value, label, selected) {
+    return '<option value="'+value+'"'+(value===selected?' selected':'')+'>'+label+'</option>';
+  }
+  function linkedState() {
+    const v = current;
+    if (!v) return {};
+    const p = {vy:v.kind==='atom'?'explore':'models', dim:v.dimension};
+    if (v.kind==='atom') {
+      Object.assign(p,{z:v.z,atom:1,modell:v.layer,visning:v.display});
+      if (v.mass) p.masstal=v.mass;
+      if (v.charge) p.jon=v.charge;
+      if (v.orbital) p.orbital=v.orbital;
+    } else if (v.kind==='species') p.partikel=v.id;
+    else Object.assign(p,{process:v.id,steg:v.step+1});
+    return p;
+  }
+
+  function shareCurrent() {
+    const p=linkedState();
+    updateLink?.(p);
+    try{window.history.replaceState(null,'','#'+new URLSearchParams(p))}catch{}
+  }
+  function initialize(kind, selection, p) {
+    stop();
+    drag=null;
+    current={kind, dimension:p?.get('dim')==='3d'?'3d':'2d',camera:{...initialCamera},...selection};
+  }
+  function openAtom(z, mass=null, charge=null, p=null) {
+    const e=byZ(z), allowed=charges[z]||[0], selectable=isotopes[z]||[];
+    if (!e) return;
+    const requestedLayer=p?.get('modell'), requestedDisplay=p?.get('visning');
+    initialize('atom',{
+      z:e.z, charge:allowed.includes(Number(charge))?Number(charge):0,
+      mass:selectable.includes(Number(mass))?Number(mass):selectable[0],
+      layer:history.some(h=>h.id===requestedLayer)?requestedLayer:'bohr',
+      display:['skal','underskal','rutor'].includes(requestedDisplay)?requestedDisplay:'skal',
+      orbital:p?.get('orbital')||''
+    },p);
+    openLab('Atommodellen · '+e.name);
+  }
+  function openSpecies(id,p=null) {
+    if (!Object.hasOwn(species,id)) return;
+    if (id==='Cl'){openAtom(17,null,-1,p);return}
+    initialize('species',{id},p);
+    openLab(species[id].name);
+  }
+  function openProcess(id,p=null) {
+    const item=processes.find(proc=>proc.id===id);
+    if (!item) return;
+    const step=Number(p?.get('steg')||1)-1;
+    initialize('process',{id,step:Number.isInteger(step)?Math.max(0,Math.min(item.steps.length-1,step)):0},p);
+    openLab(item.name);
+  }
+
+  function openLab(title) {
+    $('dialog').classList.add('lab-dialog');
+    openDialog(title,`<div class="lab-grid">
+      <div class="lab-figure">
+        <div class="lab-topline"><span class="lab-caption" id="labCaption"></span>
+          <div class="seg" role="group" aria-label="Dimension"><button data-dim="2d">2D</button><button data-dim="3d">3D</button></div>
+        </div>
+        <div id="viewport" tabindex="0" aria-label="Modell. Välj 3D för att vrida med piltangenterna."></div>
+        <div class="lab-figfoot"><span id="gesture"></span><div class="camera" id="camera">
+          <button data-move="left" title="Vrid åt vänster" aria-label="Vrid åt vänster">↶</button>
+          <button data-move="right" title="Vrid åt höger" aria-label="Vrid åt höger">↷</button>
+          <button data-move="up" title="Luta uppåt" aria-label="Luta uppåt">↑</button>
+          <button data-move="down" title="Luta nedåt" aria-label="Luta nedåt">↓</button>
+          <button data-move="out" title="Förminska" aria-label="Förminska">−</button>
+          <button data-move="in" title="Förstora" aria-label="Förstora">+</button>
+          <button data-move="reset" title="Återställ vinkel och storlek" aria-label="Återställ vinkel och storlek">⟲</button>
+        </div></div>
+      </div>
+      <div id="labSide" class="lab-side"></div>
+    </div><div id="labBelow"></div>`);
+    updateLink=addDialogLink(linkedState());
+    bindCamera();
+    refresh();
+  }
+
+  // Only the explicit iron, copper and zinc ions below use a d-block configuration.
+  const dElectrons = {'26,2':6,'26,3':5,'29,1':10,'29,2':9,'30,2':10};
+  function configuration(z,charge) {
+    if (!charge) return window.CONFIG[z]??null;
+    const dCount=dElectrons[[z,charge]];
+    if (dCount) return [...window.CONFIG[18],[3,'d',dCount]];
+    if (z===charge) return [];
+    return window.CONFIG[z-charge]??null;
+  }
+  function shellsFrom(config) {
+    if (!config) return null;
+    const shells=[];
+    for (const [n,,count] of config) shells[n-1]=(shells[n-1]||0)+count;
+    return Array.from(shells, n=>n||0);
+  }
+  function atomState() {
+    const v=current, e=byZ(v.z), config=configuration(v.z,v.charge);
+    const shells=v.charge===0?e.shells:shellsFrom(config);
+    const subs=config?.map(([n,l])=>n+l)||[];
+    if (!subs.includes(v.orbital)) v.orbital=subs.at(-1)||'';
+    return {v,e,config,shells,subs,h:history.find(h=>h.id===v.layer)};
+  }
+  const repNames={skal:'Skal',underskal:'Underskal',rutor:'Orbitalrutor'};
+  function electronPanel(config,shells) {
+    const display=current.display;
+    let content;
+    if (!config) content='<p>Elektronkonfigurationen saknas i tabellens källunderlag för detta grundämne.</p>';
+    else if (!config.length) content='<p>Den valda jonen saknar elektroner. Alla skal och orbitaler är tomma.</p>';
+    else if (display==='skal') content='<div class="shell-chips">'+shells.map((n,i)=>'<span><small>Skal '+(i+1)+'</small><b>'+n+'</b></span>').join('')+'</div><p class="model-desc">Varje tal anger hur många elektroner som finns på nivån.</p>';
+    else if (display==='underskal') content='<div class="configuration">'+config.map(([n,l,k])=>'<span>'+n+l+'<sup>'+k+'</sup></span>').join(' ')+'</div><p class="model-desc">Exempelvis betyder 2p<sup>4</sup> fyra elektroner i underskalet 2p. Första siffran anger skalet.</p>';
+    else content='<div class="orbital-boxes">'+config.map(([n,l,k])=>{
+      const slots={s:1,p:3,d:5,f:7}[l];
+      const cells=Array.from({length:slots},(_,j)=>j<k-slots?'↑↓':j<k?'↑':'');
+      return '<span class="subshell" aria-label="'+n+l+', '+k+' elektroner"><strong>'+n+l+'</strong>'+cells.map(s=>'<i aria-hidden="true">'+s+'</i>').join('')+'</span>';
+    }).join('')+'</div><p class="model-desc">En ruta är en orbital. Högst två elektroner med motsatt spinn får plats i varje ruta. I likvärdiga orbitaler fördelas elektronerna en i taget innan de paras. '+source('Om orbitalrutor',scriptSource)+'</p>';
+    return '<section class="lab-section"><div class="section-top"><h3>Elektronkonfiguration</h3><div class="seg" role="group" aria-label="Sätt att visa elektroner">'+Object.entries(repNames).map(([k,l])=>'<button data-display="'+k+'" aria-pressed="'+(k===display)+'">'+l+'</button>').join('')+'</div></div>'+content+'</section>';
+  }
+
+  function historyPanel(h) {
+    return '<section class="lab-section history-panel"><h3>Historiska lager</h3><div class="time-picks">'+history.map(m=>'<button data-era="'+m.id+'" aria-pressed="'+(h.id===m.id)+'"><small>'+m.year+'</small>'+({dalton:'Dalton',thomson:'Thomson',rutherford:'Rutherford',bohr:'Bohr',quantum:'Kvantmekanik'}[m.id])+'</button>').join('')+'</div><div class="history-copy"><h4>'+h.title+' · '+h.year+'</h4><p>'+h.short+'</p><details><summary>Vilka belägg fanns och vad återstod?</summary><p><b>Belägg.</b> '+h.evidence+'</p><p><b>Modellens räckvidd.</b> '+h.limit+'</p><p>'+source(h.source,h.url)+'</p></details></div></section>';
+  }
+  function atomContent() {
+    const {v,e,config,shells,subs,h}=atomState();
+    const zero=v.z===v.charge;
+    const canDraw=v.layer==='quantum'?subs.length>0:v.layer==='bohr'?shells!==null:true;
+    scene=canDraw?LabScene.atom({symbol:e.symbol,z:v.z,charge:v.charge,shells,kind:v.layer,orbital:v.orbital.slice(-1)}):null;
+    $('labCaption').textContent=v.layer==='bohr'?'Bohrs skalmodell':h.title;
+    $('labSide').innerHTML='<div class="lab-id"><span class="notation"><sup>'+(v.mass??'')+'</sup>'+e.symbol+'<sup>'+qStr(v.charge)+'</sup></span><span>'+e.name+'</span></div><label>Atommodell<select id="layer">'+history.map(m=>opt(m.id,m.id==='bohr'?'Bohrs skalmodell':m.title,v.layer)).join('')+'</select></label>'+
+      (isotopes[v.z]?'<label>Isotop<select id="isotope">'+isotopes[v.z].map(a=>opt(a,e.name+'-'+a,v.mass)).join('')+'</select></label>':'')+
+      (charges[v.z]?'<label>Atom eller jon<select id="charge">'+charges[v.z].map(q=>opt(q,chargeLabel(q),v.charge)).join('')+'</select></label>':'')+
+      (v.layer==='quantum'&&subs.length?'<label>Visa formexempel ur underskal<select id="orbital">'+subs.map(s=>opt(s,s,v.orbital)).join('')+'</select></label>':'')+
+      '<div class="particle-strip"><div><b>'+v.z+'</b>protoner</div><div><b>'+(v.mass?v.mass-v.z:'?')+'</b>neutroner</div><div><b>'+(v.z-v.charge)+'</b>elektroner</div></div>'+
+      '<p class="model-desc">'+(v.mass?'Masstalet är '+v.mass+'. ':'Välj ett grundämne med isotopurval för att se antalet neutroner. ')+(v.charge?'Partikelräkningen gäller jonen med laddning '+(v.charge>0?'+':'−')+Math.abs(v.charge)+'.':'Atomen är neutral.')+'</p>';
+    const brief={
+      bohr:'Ringarna visar huvudskalen. Prickarna gör elektronerna lätta att räkna. Deras lägen och avstånden är schematiska.',
+      dalton:'Klotet visar ett atomslag i Daltons modell. Atomens inre delar och skillnaden mellan isotoper blev kända senare.',
+      thomson:'Modellen placerar elektroner i en utbredd positiv laddning. Den innehåller ingen särskild atomkärna.',
+      rutherford:'Den lilla kärnan och det stora utrymmet omkring den står i centrum. Elektronernas lägen är illustrativa.',
+      quantum:'Bilden visar vinkelformen för en representativ orbital i valt underskal. Färger på olika lober anger vågfunktionens tecken. Storlek, radiella noder och elektrontäthet återges inte kvantitativt.'
+    }[v.layer];
+    const dataNote=v.z===103?' För lawrencium visas den teoretiska tilldelningen 7p¹, som får indirekt stöd av den uppmätta första jonisationsenergin.':'';
+    $('labBelow').innerHTML='<p class="lab-note">'+(canDraw?brief:zero?'Jonen har ingen elektron vars orbitalform kan visas.':'Det finns inga verifierade skal- eller orbitaldata för denna vy.')+dataNote+'</p>'+electronPanel(config,shells)+historyPanel(h);
+    $('layer').onchange=e=>{v.layer=e.target.value;refresh('layer')};
+    if($('isotope')) $('isotope').onchange=e=>{v.mass=Number(e.target.value);refresh('isotope')};
+    if($('charge')) $('charge').onchange=e=>{v.charge=Number(e.target.value);refresh('charge')};
+    if($('orbital')) $('orbital').onchange=e=>{v.orbital=e.target.value;refresh('orbital')};
+  }
+  function speciesContent() {
+    const item=species[current.id];
+    scene=LabScene.substance(item,{label:item.name});
+    $('labCaption').textContent=item.type;
+    $('labSide').innerHTML='<div class="lab-formula">'+item.formula+'</div><label>Välj partikel eller material<select id="speciesChoice">'+Object.entries(species).map(([id,s])=>opt(id,s.name,current.id)).join('')+'</select></label><p>'+item.description+'</p>';
+    $('labBelow').innerHTML='<div class="lab-section"><h3>Att läsa modellen</h3><p>'+(item.note||'Kulorna markerar atomernas lägen. Strecken visar bindningar mellan atomer. Färger och storlekar är valda för att olika atomslag ska gå att skilja åt.')+'</p><p class="model-desc">'+source(item.source,item.url)+'</p></div>';
+    $('speciesChoice').onchange=e=>{if(e.target.value==='Cl'){openAtom(17,null,-1,new URLSearchParams({dim:current.dimension}));return}current.id=e.target.value;$('dialogTitle').textContent=species[current.id].name;current.camera={...initialCamera};refresh('speciesChoice')};
+  }
+  function processContent() {
+    const v=current, item=processes.find(p=>p.id===v.id), step=item.steps[v.step];
+    const frame=item.steps.flatMap(s=>[...(s.atoms||[]),...(s.tags||[])]);
+    scene=step.atomScene?LabScene.atom(step.atomScene):LabScene.substance(step,{frame,label:step.title});
+    $('labCaption').textContent='Steg '+(v.step+1)+' av '+item.steps.length;
+    const energy=step.atomScene?'<div class="energy-diagram" aria-label="Energinivåer">'+[3,2,1].map(n=>'<div><small>n = '+n+'</small><i></i><b>'+(step.atomScene.shells[n-1]?'●':'')+'</b></div>').join('')+'</div>':'';
+    $('labSide').innerHTML='<label>Förberedd process<select id="processChoice">'+processes.map(s=>opt(s.id,s.name,v.id)).join('')+'</select></label><h3>'+step.title+'</h3><p aria-live="polite">'+step.text+'</p>'+energy+'<div class="step-buttons"><button class="btn" id="previousStep" '+(v.step===0?'disabled':'')+'>Föregående</button><button class="btn primary" id="nextStep" '+(v.step===item.steps.length-1?'disabled':'')+'>Nästa steg</button></div><button class="textbtn" id="playProcess">'+(timer?'Pausa':'Spela stegen')+'</button>';
+    $('labBelow').innerHTML='<section class="lab-section"><h3>Processens steg</h3><div class="step-track">'+item.steps.map((s,i)=>'<button data-step-index="'+i+'" aria-pressed="'+(i===v.step)+'"><span>'+(i+1)+'</span>'+s.title+'</button>').join('')+'</div><p>'+item.description+'</p><p class="model-desc">'+source(item.source,item.url)+'</p></section>';
+    $('processChoice').onchange=e=>{const id=e.target.value;stop();v.id=id;v.step=0;v.camera={...initialCamera};$('dialogTitle').textContent=processes.find(p=>p.id===id).name;refresh('processChoice')};
+    $('previousStep').onclick=()=>{stop();v.step--;refresh('previousStep')};
+    $('nextStep').onclick=()=>{stop();v.step++;refresh('nextStep')};
+    $('playProcess').onclick=()=>{
+      if (timer) {stop();return}
+      if (v.step===item.steps.length-1) v.step=0;
+      timer=setInterval(()=>{if (!current||!$('dialog').open){stop();return}v.step++;if(v.step>=item.steps.length-1)stop();refresh()},4500);
+      refresh('playProcess');
+    };
+  }
+
+  function renderFigure() {
+    if(!current)return;
+    $('viewport').innerHTML=scene?LabScene.render(scene,{dimension:current.dimension,...current.camera}):'<p class="empty-scene">Ingen elektronmodell för detta urval.</p>';
+  }
+  function cameraToolbar() {
+    const spatial=current.dimension==='3d';
+    document.querySelectorAll('[data-dim]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.dim===current.dimension)));
+    document.querySelectorAll('[data-move]').forEach(b=>{
+      b.hidden=!spatial&&['left','right','up','down'].includes(b.dataset.move);
+      b.disabled=!scene;
+    });
+    $('viewport').classList.toggle('rotatable',spatial&&!!scene);
+    $('gesture').textContent=spatial?'Dra för att vrida eller använd piltangenterna.':'Plan vy';
+  }
+  function refresh(focusId) {
+    if(current.kind==='atom')atomContent();
+    else if(current.kind==='species')speciesContent();
+    else processContent();
+    cameraToolbar();
+    renderFigure();
+    shareCurrent();
+    if(focusId)$(focusId)?.focus({preventScroll:true});
+  }
+  function move(direction) {
+    const cam=current.camera, pitchLimit=Math.PI/2-.02;
+    if(direction==='reset')current.camera={...initialCamera};
+    if(direction==='in')cam.zoom=Math.min(1.65,cam.zoom+.12);
+    if(direction==='out')cam.zoom=Math.max(.6,cam.zoom-.12);
+    if(current.dimension==='3d'){
+      if(direction==='left')cam.yaw-=.22;
+      if(direction==='right')cam.yaw+=.22;
+      if(direction==='up')cam.pitch=Math.min(pitchLimit,cam.pitch+.16);
+      if(direction==='down')cam.pitch=Math.max(-pitchLimit,cam.pitch-.16);
+    }
+    renderFigure();
+  }
+  function bindCamera(){
+    const viewport=$('viewport');
+    const keyDirections={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down','+':'in','=':'in','-':'out',Home:'reset'};
+    viewport.onkeydown=e=>{if(keyDirections[e.key]){e.preventDefault();move(keyDirections[e.key])}};
+    viewport.onpointerdown=e=>{
+      if(current.dimension!=='3d'||!scene||e.button!==0)return;
+      drag={id:e.pointerId,x:e.clientX,y:e.clientY};
+      viewport.setPointerCapture(e.pointerId);
+    };
+    viewport.onpointermove=e=>{
+      if(!drag||drag.id!==e.pointerId||!current)return;
+      current.camera.yaw+=(e.clientX-drag.x)*.012;
+      current.camera.pitch=Math.max(-1.55,Math.min(1.55,current.camera.pitch+(drag.y-e.clientY)*.012));
+      drag.x=e.clientX;drag.y=e.clientY;renderFigure();
+    };
+    viewport.onlostpointercapture=viewport.onpointercancel=viewport.onpointerup=()=>{drag=null};
+    $('camera').onclick=e=>{const b=e.target.closest('[data-move]');if(b)move(b.dataset.move)};
+    const bar=$('viewport').previousElementSibling;
+    bar.onclick=e=>{const b=e.target.closest('[data-dim]');if(!b)return;current.dimension=b.dataset.dim;cameraToolbar();renderFigure();shareCurrent()};
+    $('labBelow').onclick=e=>{
+      const b=e.target.closest('button');if(!b)return;
+      if(b.dataset.era){current.layer=b.dataset.era;refresh();$('labBelow').querySelector('[data-era="'+b.dataset.era+'"]').focus({preventScroll:true})}
+      else if(b.dataset.display){current.display=b.dataset.display;refresh();$('labBelow').querySelector('[data-display="'+b.dataset.display+'"]').focus({preventScroll:true})}
+      else if(b.hasAttribute('data-step-index')){stop();current.step=Number(b.dataset.stepIndex);refresh();$('labBelow').querySelector('[data-step-index="'+current.step+'"]').focus({preventScroll:true})}
+    };
+  }
+  function related(symbol){
+    const parts=Object.entries(species).filter(([,item])=>item.atoms.some(a=>a[0]===symbol));
+    const actions=processes.filter(p=>p.steps.some(s=>s.atomScene?.symbol===symbol||s.atoms?.some(a=>a[0]===symbol)));
+    if(!parts.length&&!actions.length)return '';
+    return '<details class="related-lab"><summary>Relaterade modeller och processer</summary><div>'+
+      parts.map(([id,item])=>'<button class="chip" data-species="'+id+'">'+item.name+' · '+item.formula+'</button>').join('')+
+      actions.map(item=>'<button class="chip" data-process="'+item.id+'">'+item.name+'</button>').join('')+'</div></details>';
+  }
+  function relatedClick(b){
+    if(b.dataset.species){openSpecies(b.dataset.species);return true}
+    if(b.dataset.process){openProcess(b.dataset.process);return true}
+    return false;
+  }
+  function gallery(){
+    const cards=Object.entries(species).map(([id,item])=>{
+      const scene=LabScene.substance(item,{label:item.name});
+      const art=LabScene.render(scene,{dimension:'3d',...initialCamera});
+      return '<button class="specimen" data-species="'+id+'"><span class="specimen-art" aria-hidden="true">'+art+'</span><span class="specimen-text"><span class="label">'+item.type+'</span><b>'+item.name+'</b><small>'+item.formula+'</small></span></button>';
+    }).join('');
+    $('other').innerHTML='<div class="studio-lead"><div><span class="label">Atomer och joner</span><h2>Hur är atomen byggd?</h2><p>Börja med Bohrs skalmodell. Byt sedan historiskt lager eller undersök hur elektroner fördelas mellan orbitaler.</p></div><div class="studio-picker"><label for="galleryElement">Välj grundämne</label><div><select id="galleryElement">'+selectOptions(state.z)+'</select><button class="btn primary" data-open-atom>Öppna modell</button></div></div></div>'+
+    '<section class="gallery-section"><h2>Molekyler, joner och kristaller</h2><div class="specimen-grid">'+cards+'</div></section>'+
+    '<section class="gallery-section"><h2>Förberedda processer</h2><div class="process-grid">'+processes.map(item=>'<button class="process-card" data-process="'+item.id+'"><span class="label">'+item.steps.length+' steg</span><strong>'+item.name+'</strong><span>'+item.description+'</span></button>').join('')+'</div></section>';
+  }
+  function galleryClick(b){
+    if(b.hasAttribute('data-open-atom')){state.z=Number($('galleryElement').value);openAtom(state.z);return true}
+    if(b.dataset.species){openSpecies(b.dataset.species);return true}
+    if(b.dataset.process){openProcess(b.dataset.process);return true}
+    return false;
+  }
+  function restoreLink(p) {
+    if (p.has('partikel'))openSpecies(p.get('partikel'),p);
+    else if(p.has('process'))openProcess(p.get('process'),p);
+  }
+  return {openAtom,openSpecies,openProcess,gallery,galleryClick,restoreLink,related,relatedClick};
+})();
+
+restore();window.addEventListener("hashchange",restore);</script></body></html>
