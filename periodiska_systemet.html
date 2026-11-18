@@ -541,15 +541,18 @@ function openDialog(title,html){
 }
 $('close').onclick=()=>$('dialog').close();
 $('dialog').addEventListener('click',ev=>{if(ev.target!==$('dialog'))return;const r=ev.target.getBoundingClientRect();if(ev.clientX<r.left||ev.clientX>r.right||ev.clientY<r.top||ev.clientY>r.bottom)$('dialog').close()});
-function workshop(z){
- const e=byZ(z),iso=isotopes[z],cs=charges[z]||[0];let mass=iso?.[0],charge=0;
+function workshop(z,initialMass=null,initialCharge=null){
+ const e=byZ(z),iso=isotopes[z],cs=charges[z]||[0];let mass=iso?.includes(Number(initialMass))?Number(initialMass):iso?.[0],charge=cs.includes(Number(initialCharge))?Number(initialCharge):0;
  openDialog('Atommodellen · '+e.name,'<div class="atom-work"><div id="model" class="large-model"></div><div><div class="micro">Partiklar i modellen</div>'+(iso?'<label>Isotop<select id="isotope">'+iso.map(a=>'<option value="'+a+'">'+e.name+'-'+a+'</option>').join('')+'</select></label>':'<p class="model-desc">Här visas den neutrala atomens elektroner. Välj exempelvis väte, kol eller klor för att byta isotop.</p>')+(cs.length>1?'<label>Atom eller jon<select id="charge">'+cs.map(n=>'<option value="'+n+'">'+chargeLabel(n)+'</option>').join('')+'</select></label>':'')+'<div id="notation" class="notation"></div></div></div><div id="modelReport" aria-live="polite"></div><p class="model-desc">Ringarna visar hur elektroner fördelas mellan skal i atomens eller jonens grundtillstånd. Avstånden och prickarnas lägen är schematiska.</p>');
+ const refreshLink=addDialogLink({vy:'explore',z,atom:1});
+ if($('isotope'))$('isotope').value=mass;if($('charge'))$('charge').value=charge;
  function draw(){
+  refreshLink?.({vy:'explore',z,atom:1,...(mass!==undefined?{masstal:mass}:{}),...(charge?{jon:charge}:{})});
   let shells=charge===0?e.shells:(z-charge===0?[]:byZ(z-charge).shells);
   $('model').innerHTML=model(e,shells);$('notation').innerHTML='<sup>'+(mass??'')+'</sup>'+e.symbol+'<sup>'+qStr(charge)+'</sup>';
   $('modelReport').innerHTML='<div class="particle-strip"><div><b>'+z+'</b>protoner</div><div><b>'+(mass===undefined?'?':mass-z)+'</b>neutroner</div><div><b>'+(z-charge)+'</b>elektroner</div></div><p><b>Elektroner per skal</b> '+(Array.isArray(shells)&&!shells.length?'0':shellText(shells))+'.</p><p class="model-desc">'+(mass===undefined?'Antalet neutroner kräver ett känt masstal.':'Masstalet '+mass+' är summan av '+z+' protoner och '+(mass-z)+' neutroner.')+' '+(charge===0?'Laddningen är noll.':'Skillnaden mellan antal protoner och elektroner ger laddningen '+(charge>0?'+':'−')+Math.abs(charge)+'.')+'</p>';
  }
- if($('isotope'))$('isotope').onchange=()=>{mass=+$('isotope').value;draw()};if($('charge'))$('charge').onchange=()=>{charge=+$('charge').value;draw()};draw();addDialogLink({vy:'explore',z,atom:1});
+ if($('isotope'))$('isotope').onchange=()=>{mass=+$('isotope').value;draw()};if($('charge'))$('charge').onchange=()=>{charge=+$('charge').value;draw()};draw();
 }
 const comparisonPairs=[[3,11],[11,17],[17,35],[29,13],[18,19]];
 const trendEnergy=[13.60,24.59,5.39,9.32,8.30,11.26,14.53,13.62,17.42,21.56,5.14,7.65,5.99,8.15,10.49,10.36,12.97,15.76,4.34,6.11];
@@ -602,13 +605,15 @@ function showSources(){
 }
 function addDialogLink(params,printable=false){
  const url=new URL(location.href);url.hash=new URLSearchParams(params).toString();
+ let refresh;
  const row=document.createElement('div');row.className='controls dialog-actions';
  if(printable){const btn=document.createElement('button');btn.className='btn';btn.textContent='Skriv ut uppdrag';btn.onclick=()=>window.print();row.append(btn)}
  if(url.protocol==='https:'||url.protocol==='http:'){
   const link=document.createElement('a');link.href=url.href;link.className='textbtn';link.textContent='Direktlänk';link.title='Kopiera länkadressen för att dela denna vy';row.append(link);
+  refresh=next=>{url.hash=new URLSearchParams(next).toString();link.href=url.href;link.textContent='Direktlänk';btn.textContent='Kopiera länk'};
   const btn=document.createElement('button');btn.className='btn';btn.textContent='Kopiera länk';btn.onclick=async()=>{try{await navigator.clipboard.writeText(url.href);btn.textContent='Länken kopierad'}catch{link.textContent=url.href;link.focus()}};row.append(btn)
  }
- $('dialogBody').append(row);
+ $('dialogBody').append(row);return refresh;
 }
 function syncUrl(){
  const p=new URLSearchParams();p.set('vy',state.mode);if(state.mode==='explore'){p.set('z',state.z);if(state.color!=='category')p.set('farg',state.color)}if(state.mode==='compare'){p.set('a',state.a);p.set('b',state.b)}
@@ -651,7 +656,7 @@ function restore(){
  const p=new URLSearchParams(location.hash.slice(1));for(const k of ['z','a','b']){const n=Number(p.get(k));if(Number.isInteger(n)&&n>=1&&n<=118)state[k]=n}
  if(['category','phase','plain','period'].includes(p.get('farg')))state.color=p.get('farg');
  $('color').value=state.color;boardView();setMode(Object.hasOwn(modes,p.get('vy'))?p.get('vy'):'explore');
- if(state.mode==='explore'&&p.get('atom')==='1')workshop(state.z);
+ if(state.mode==='explore'&&p.get('atom')==='1')workshop(state.z,p.get('masstal'),p.get('jon'));
  const lesson=Number(p.get('uppdrag'));if(state.mode==='lessons'&&Number.isInteger(lesson)&&lesson>=1&&lesson<=lessons.length)lessonDialog(lesson-1);
 }
 restore();window.addEventListener('hashchange',restore);
